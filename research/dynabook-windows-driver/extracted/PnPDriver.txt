@@ -1,0 +1,5 @@
+#  Dynabook  Inc.
+#  PnP  driver  installation  information
+
+[Driver Folder]
+Win10_Win11_1 = "\Drivers"

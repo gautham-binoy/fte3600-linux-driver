@@ -1,0 +1,44 @@
+
+Intel ACPI Component Architecture
+ACPI Binary Table Extraction Utility version 20251212
+Copyright (c) 2000 - 2025 Intel Corporation
+
+  SSDT -   13176 bytes written (0x00003378) - ssdt1.dat
+  MCFG -      60 bytes written (0x0000003C) - mcfg.dat
+  APIC -     300 bytes written (0x0000012C) - apic.dat
+  SSDT -   12911 bytes written (0x0000326F) - ssdt2.dat
+  TPM2 -      76 bytes written (0x0000004C) - tpm2.dat
+  SSDT -     298 bytes written (0x0000012A) - ssdt3.dat
+  NHLT -      45 bytes written (0x0000002D) - nhlt.dat
+  UEFI -      72 bytes written (0x00000048) - uefi.dat
+  DSDT -  342375 bytes written (0x00053967) - dsdt.dat
+  SSDT -    2338 bytes written (0x00000922) - ssdt4.dat
+  WSMT -      40 bytes written (0x00000028) - wsmt.dat
+  SSDT -     324 bytes written (0x00000144) - ssdt5.dat
+  LPIT -     204 bytes written (0x000000CC) - lpit.dat
+  SSDT -   45690 bytes written (0x0000B27A) - ssdt6.dat
+  DBG2 -      84 bytes written (0x00000054) - dbg2.dat
+  SSDT -    3339 bytes written (0x00000D0B) - ssdt7.dat
+  SSDT -   11836 bytes written (0x00002E3C) - ssdt8.dat
+  DMAR -     136 bytes written (0x00000088) - dmar.dat
+  FACP -     276 bytes written (0x00000114) - facp.dat
+  FPDT -      68 bytes written (0x00000044) - fpdt.dat
+  SSDT -    9565 bytes written (0x0000255D) - ssdt9.dat
+  PTDT -    3396 bytes written (0x00000D44) - ptdt.dat
+  MSDM -      85 bytes written (0x00000055) - msdm.dat
+  SSDT -   10016 bytes written (0x00002720) - ssdt10.dat
+  DBGP -      52 bytes written (0x00000034) - dbgp.dat
+  HPET -      56 bytes written (0x00000038) - hpet.dat
+  SSDT -   29088 bytes written (0x000071A0) - ssdt11.dat
+  FIDT -     156 bytes written (0x0000009C) - fidt.dat
+  FACS -      64 bytes written (0x00000040) - facs.dat
+  BGRT -      56 bytes written (0x00000038) - bgrt.dat
+  SSDT -    3459 bytes written (0x00000D83) - ssdt12.dat
+  SSDT -    1162 bytes written (0x0000048A) - ssdt13.dat
+  SSDT -     651 bytes written (0x0000028B) - ssdt14.dat
+  SSDT -    1475 bytes written (0x000005C3) - ssdt15.dat
+  SSDT -    1162 bytes written (0x0000048A) - ssdt16.dat
+  SSDT -    1236 bytes written (0x000004D4) - ssdt17.dat
+  SSDT -    2279 bytes written (0x000008E7) - ssdt18.dat
+  SSDT -     459 bytes written (0x000001CB) - ssdt19.dat
+  SSDT -     916 bytes written (0x00000394) - ssdt20.dat

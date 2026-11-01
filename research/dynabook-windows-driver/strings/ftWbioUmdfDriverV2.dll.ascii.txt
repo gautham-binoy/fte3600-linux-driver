@@ -1,0 +1,4331 @@
+!This program cannot be run in DOS mode.
+=Riche
+.text
+`.rdata
+@.data
+.pdata
+@.gxfg
+@_RDATA
+@.rsrc
+@.reloc
+WAVAWH
+|$0H
+D$ L
+|$0H
+D$ M
+\$`H
+l$hH
+t$pH
+@A_A^_
+WAVAWH
+|$0H
+D$ 2
+|$0H
+D$ 3
+\$`H
+l$hH
+t$pH
+@A_A^_
+WAVAWH
+|$0H
+|$0H
+\$`H
+l$hH
+t$pH
+@A_A^_
+\$0L
+L$ H
+D$ H
+D$ H
+D$(A
+\$ L
+D$ H
+D$ H
+D$ H
+l$ L
+\$P3
+l$XH
+t$`H
+\$ L
+D$ H
+D$ H
+|$ L
+t$ L
+D$ H
+t$ L
+\$@3
+l$HH
+|$PH
+|$8L
+T$ H
+|$ L
+\$`H
+|$pH
+t$ L
+|$ H
+t$ L
+\$PH
+|$XH
+D$0L
+d$ L
+\$(L
+d$ H
+\$ L
+d$ L
+\$@H
+|$PH
+WATAUAVAWH
+D9%y
+D$(A
+|$ L
+D$(A
+|$0L
+|$ L
+|$ L
+|$ L
+u)9-t
+|$ L
+|$ L
+|$ L
+|$(L
+|$ I
+|$ L
+\$(L
+|$ I
+|$ L
+|$ L
+|$ L
+|$0L
+D$(@
+|$0L
+D$(A
+|$0L
+D$(C
+|$ I
+|$ L
+|$ L
+|$ L
+|$ L
+|$(L
+|$ I
+|$ L
+\$(L
+|$ I
+t+9-J
+|$ L
+t&9-
+|$ L
+|$ L
+\$(L
+|$ I
+\$@I
+A_A^A]A\_
+x AVH
+|$(L
+t$ H
+D$(A
+\$@H
+l$HH
+t$PH
+|$XH
+t$ L
+L$(L
+t$ A
+t$ L
+69=_
+D$(H
+t$8L
+t$0M
+T$ H
+t$(H
+D$@H
+t$8M
+\$`H
+t$hH
+|$pH
+\$0H
+|$ L
+|$ L
+WATAUAVAWH
+D$hA
+D$xI
+D$ L
+|$d@
+D$`E
+D$hA
+T$`L
+l$8A
+L$0A
+T$(H
+D$8A
+l$0H
+L$(A
+D!|$(L
+t$`f
+t$`f
+D$8A
+l$0H
+D$(A
+L$`D
+\$HH
+D$@D
+L$8H
+T$ L
+\$HH
+T$@D
+D$8H
+\$0L
+D$(H
+|$(L
+\$ H
+A_A^A]A\_
+D$ L+
+L$0H3
+D$`H
+D$PL
+L$HA
+T$@D
+|$(H
+D$`H
+T$PH
+D$HL
+L$@A
+T$8D
+\$(H
+\$pI
+WAVAWH
+t$@L
+T$ H
+T$8H
+D$0L
+L$(A
+D$0-
+D$(2
+|$ L
+\$PI
+A_A^_
+UATAUAVAWH
+E'95
+D$ L
+D$0L
+T$ H
+L$8A
+T$0H
+|$(L
+L$8A
+T$0H
+|$(L
+D$(A
+T$(H
+D$PH
+L$HL
+T$@A
+|$8H
+D$ L
+|$(A
+D$ L
+M/H3
+A_A^A]A\]
+{ UH
+L$8A
+T$0H
+D$(L
+T$0H
+D$(L
+|$ L
+\$0H
+|$ UATAUAVAWH
+L$ L
+D$ H
+D$(-
+D$ 2
+L$PA
+T$HH
+D$@L
+L$8A
+T$0D
+L$PA
+T$HH
+D$@L
+L$8A
+T$0D
+L$PA
+T$HH
+D$@L
+L$8A
+T$0D
+rNfE
+\$ L
+D$ H
+L$PA
+T$HH
+D$@L
+L$8A
+T$0D
+D9-E
+L$PA
+T$HH
+D$@L
+L$8A
+T$0D
+\$ L
+D$ H
+D$ H
+A_A^A]A\]
+t$ L
+t$ L
+\$@H
+t$HH
+|$ UATAUAVAWH
+D$ L
+D8%t
+D$(-
+D$ 2
+L$PA
+T$HH
+D$@L
+L$8A
+T$0D
+L$PA
+T$HH
+D$@L
+L$8A
+T$0D
+T$PH
+D$HL
+L$@A
+T$8D
+rNfE
+\$ L
+D$ H
+L$PA
+T$HH
+D$@L
+L$8A
+T$0D
+L$PA
+T$HH
+D$@L
+L$8A
+T$0D
+\$ L
+D$ H
+A_A^A]A\]
+WATAUAVAWH
+D9=l
+tQ9-
+|$8I
+D$ L
+tsE3
+t$8D
+D8%};
+tU9-
+t$8D
+D$ L
+&D9=?
+t$ L
+D$(A
+t$ A
+tbD9=
+t$ L
+t$ L
+D9=[
+L$(I
+D$ A
+L$(I
+D$ A
+D8%D9
+tU9-n
+|$8I
+D$ L
+D8%S8
+t`9-|
+|$8H
+D$()
+D$ L
+tY9-
+|$8H
+D$(0
+D$ L
+D8%x
+t[9-?
+|$8L
+D$(8
+D$ L
+D8%I6
+tY9-u
+|$8H
+D$(E
+D$ L
+tY9-
+|$8H
+D$(P
+D$ L
+D8=!
+u2D9=`
+D$ L
+tY9-
+|$8H
+D$(\
+D$ L
+tY9-G
+|$8H
+D$(b
+D$ L
+D8%x3
+tY9-
+|$8H
+D$(i
+D$ L
+D8%C
+tY9-
+|$8H
+D$(}
+D$ L
+|$8H
+D$ L
+D85Q1
+|$8H
+D$ L
+t$8H
+D$ L
+t$8H
+D$ L
+|$8H
+D$ L
+D85@.
+t`95g
+|$8H
+D$ L
+D85s-
+tY95
+|$8H
+D$ L
+tY95
+|$8H
+D$ L
+D85-,
+tY95Y
+|$8L
+T$0L
+D$ L
+(D9=
+D$ L
+\$@I
+A_A^A]A\_
+D$HH
+T$@H
+D$8L
+L$0A
+T$(H
+\$`H
+l$hH
+t$pH
+WATAUAVAWH
+|$ L
+fD;%
+fD;%
+fD;%
+fD;%
+L$hA
+T$`H
+D$XL
+d$PD
+d$HD
+d$@D
+d$8L
+D$(i
+L$ M
+fD;%
+fD;%
+fD;%
+fD;%
+L$hA
+T$`H
+D$XL
+d$PD
+d$HD
+d$@D
+d$8L
+D$(m
+L$ M
+tVD9-/
+L$@A
+D$8M
+|$0L
+D$(r
+T$ H
+tVD9-
+L$@A
+D$8M
+|$0L
+D$(w
+T$ H
+L$(A
+v-A;
+t$(L
+|$ H
+L$0A
+T$(H
+t$(H
+|$ A
+sqA;
+L$HA
+T$@H
+D$8L
+L$0A
+T$(L
+t[D95
+L$8A
+T$0H
+D$(L
+tZD9-
+T$@L
+L$8A
+|$0M
+T$ H
+D$(H
+|$ A
+tYD9-
+D$8M
+|$0L
+A_A^A]A\_
+L$0H
+T$(A
+|D@L+
+DL@D
+T$8H
+D$0H
+\$(L
+UATAUAVAWH
+L$`A
+t$ L
+T$@L
+T$8A
+|$@L
+T$0H
+D$(L
+L$`A
+D$@A
+t$8H
+T$(H
+~8D;
+t$PA:
+~ A:
+D$(H
+T$8E
+D$(?
+L$ H
+L$8A
+D$(I
+|$0L
+D$(5
+L$ L
+D$ A
+|$ L
+A_A^A]A\]
+UATAUAVAWH
+L$PA
+L$(A
+T$ I
+D$@I
+|$DD
+|$@A;
+D$@L
+D$0A
+|$(I
+D$ A
+s)f9D$@s
+v9f9D$@v2H
+|$ A
+f9D$@
+|$ L
+TDPB
+DDQA
+D$@I
+L$DL
+D$@A
+D$0I
+L$(A
+w3A;
+|$ L
+f9D$@
+|$ L
+TDPB
+DDQA
+D$@I
+L$DL
+D$@A
+D$0I
+L$(A
+w0A;
+|$ L
+L$(L
+|$ I
+D$(L
+A_A^A]A\]
+|$ L
+|$ L
+l$0L
+l$0L
+l$0L
+l$ L
+\$PH
+l$XH
+x UATAUAVAWH
+L$XD9%
+t$ L
+T$`D
+D9-4
+L$@A
+T$8H
+D$0L
+L$(A
+L$fD
+T$dD
+L$@A
+T$8H
+D$0L
+L$(A
+D9-t
+L$@A
+T$8H
+D$0L
+L$(A
+L$@A
+T$8H
+D$0L
+L$(A
+`fA;
+\$P3
+O0A;
+}RD9-Q
+|$(L
+t$ H
+DLbf
+DL`fA;
+\$PA
+=~WD9-
+\$(L
+t$ H
+DL^f
+DL`fA;
+t$TD
+}TD9-d
+\$(L
+t$ H
+DL`fA;
+|$PL
+N~UD9-
+|$(L
+|$ H
+DL`fA;
+D$`H
+T$`H
+|$XH
+T$@H
+D$8L
+L$0A
+T$(H
+\$ L
+A_A^A]A\]
+WATAUAVAWH
+~MA+
+\$PH
+l$XH
+t$`H
+ A_A^A]A\_
+WATAUAVAW
+l$ L
+l$ L
+l$0L
+L$ H
+T$`H
+D$XL
+L$PA
+T$HD
+t$(L
+T$`H
+D$XL
+L$PA
+T$HD
+t$(L
+d+~D+
+l$@H
+d$8L
+|$0H
+t$(A
+D$(L
+D$(H
+l$ A
+A_A^A]A\_
+\$0H
+WATAUAVAWH
+D95(
+D8=u
+tWD9%
+|$8I
+L$0A
+D$ L
+D8=Y
+tWD9%
+t$8D
+D$ L
+D95.
+D$(A
+t$ A
+D8=)
+tSD9%R
+|$8I
+L$0A
+D$ L
+D8=g
+tVD9%
+D$8A
+L$0L
+D$ L
+D8=<
+tVD9%
+D$8A
+L$0L
+D$ L
+D85R
+tSD9%
+|$8I
+L$0A
+D$ L
+D8=Q
+tPD9%z
+|$8L
+L$0I
+\$@I
+A_A^A]A\_
+|$ L
+|$ L
+t$ L
+t$ L
+\$@3
+WAVAWH
+\$@H
+l$HH
+t$PH
+ A_A^_
+s WATAUAVAWH
+D$pL
+D$ L
+D$dD
+D$hfA
+D$jC
+D$lE
+D$nfD
+fE;e
+fE;E
+T$@H
+D$8L
+L$0A
+\$`f
+D$ H
+L$pH3
+A_A^A]A\_
+UVWATAUAVAWH
+D9%A
+|$8A
+L$(A
+T$ H
+Zr:fD;
+T$(H
+D$ L
+D$ H
+@A_A^A]A\_^]
+p WH
+D$ H
+L$PL
+T$ H
+D$PH
+\$`H
+t$hH
+s WATAUAVAWH
+D$0H
+t$(A
+v0fA
+fD+=*&
+l$@H
+D$8L
+L$0A
+\$(D
+D$ H
+A_A^A]A\_
+t$ L
+\$0L
+|$(H
+\$PH
+x AVAW3
+l$ H
+t$(H
+|$0A_A^
+WATAUAVAWH
+tHfD;
++fA;
+	fA;
+	fC;
+tLA:
+	t<fA;
+u1fA;
+u&fA;
+s7fC
+l$XH
+t$`H
+ A_A^A]A\_
+\$0H
+L$ D
+t$ WH
+D$BA
+L$@f
+D$0L
+D$(w
+L$HH3
+\$`H
+t$xH
+l$ VWAV
+L$ E
+t4A;
+T$ H
+A^_^
+D$03
+L$"L
+D$(H
+D$,f
+D$#D
+D$(H
+L$0H3
+L$"H
+D$ 	
+L$(H3
+D$0H
+\$$H
+L$ f
+D$"D
+L$)f
+L$0H3
+t$ WH
+D$BA
+L$DH
+D$0L
+D$(O
+L$HH3
+\$`H
+t$xH
+D$0L
+\$PH
+t$XH
+D$`3
+L$ D
+L$`H3
+t$(L
+D$ j
+D$ n
+\$@H
+l$HH
+t$PH
+|$(L
+D$ Q
+D$ U
+\$@H
+l$HH
+D$ L
+T$0H
+T$0H
+D$ L
+L$ SUVWH
+l$xH
+l$(L
+8_^][
+\$0H
+H SVWH
+t$(L
+0_^[
+H SWH
+|$(H
+L$ SVWH
+t$h3
+L$`A
+t$(H
+0_^[
+T$`A
+;wbtY
+	u`f
+|$(L
+D$ L
+\$@H
+t$ WATAUAVAWH
+D$pA
+n@L+
+<]w!
+;\$p
+D$ X
+\$`H
+l$hH
+t$xH
+0A_A^A]A\_
+t$(L
+D$ N
+*t$X
+(t$0
+(|$ H
+\$0H
+D$PI
+D$08
+D$ )
+D$(L
+\$@H
+t$HH
+D$(L
+x AVH
+\$@3
+l$HH
+t$PH
+|$XH
+\$@3
+t$HH
+WATAUAVAWH
+D9%^)
+\$0H
+D$(L
+D9-4(
+|$ L
+\$(L
+D$ q
+D$ H
+\$ H
+\$@I
+A_A^A]A\_
+t$(L
+UWAVH
+L$0H
+D$pH
+D$PA
+D$@8
+D$`D
+t$XD
+t$\H
+T$0L
+T$0H
+T$0E3
+D$(L
+D$(L
+M@H3
+A^_]
+s(Hk
+8B8\
+\$@H
+l$HH
+t$PH
+t$ UWAUAVAWH
+D$ L
+D$ H
+D$ H
+D$@H
+D$@8
+D$HL
+L$ H
+L9-CL
+D$(E
+t$ H
+M'H3
+A_A^A]_]
+s;Hk
+8B8\
+D$xL
+D$pD
+D$xL
+L$pD
+D$(H
+\$PH
+l$XH
+t$`H
+\$0H
+\$0H
+t$8H
+D$8H
+D$@H
+D$@H
+D$ L
+\$`H
+\$0H
+l$ H
+l$ H
+\$@H
+UVWATAUAVAW
+|$(L
+D$ %
+D$@L+
+L$@A
+A_A^A]A\_^]
+D$8H
+|$(L
+D$ ^
+L$8H3
+\$PH
+L$@H3
+|$(L
+\$`H
+|$hH
+\$@H
+t$HH
+l$ VWAVH
+T$6f
+D$3I
+L$4f
+D$53
+D$0p
+D$0q
+L$0H
+D$(H
+L$8H3
+\$`H
+l$xH
+@A^_^
+t$ WH
+L$4f
+D$33
+D$0p
+D$5H
+D$0q
+D$(H
+D$ \
+L$8H3
+\$PH
+t$hH
+WATAUAVAWH
+|$(L
+D$ :
+\$`@
+l$hH
+t$pH
+0A_A^A]A\_
+|$(L
+\$H@
+|$(L
+\$`H
+|$hH
+|$(L
+D$ 8
+\$H@
+\$@H
+t$HH
+UVWAVAWH
+|$3f
+D$0H
+D$(H
+L$pH3
+A_A^_^]
+t$ WH
+D$8f
+L$0f
+D$(H
+L$8H3
+\$PH
+t$hH
+t$ WH
+\$0H
+\$8H
+t$HH
+VWAVH
+\$@H
+l$PH
+ A^_^
+|$(L
+D$ '
+\$H@
+|$(L
+\$@@
+t$HH
+UVWATAUAVAWH
+0A_A^A]A\_^]
+)t$0
+)|$ 
+*|$X
+\$XH
+(t$0
+(|$ H
+\$(H
+\$@H
+l$HH
+t$PH
+uUA:
+D$ D
+\$PH
+)t$pH
+D$hH
+D$XH
+L$8A
+D$0L
+T$(H
+T$0D
+L$(A
+T$ H
+L$hH3
+(t$pH
+WAVAWH
+\$PH
+l$XH
+t$`H
+0A_A^_
+:9\$0u
+l$0H
+D$(L
+D$ H
+\$PH
+l$XH
+|$(E3
+\$PD
+T$ H
+8\$PuP
+8\$Pu=
+|$PPu
+\$XH
+|$0L
+L$(H
+D$ t
+t$0H
+D$(L
+D$ v
+|$(E3
+T$ D
+D$PD
+T$PE3
+|$(D
+D$PL
+D$ H
+\$XH
+t$`H
+x AVH
+t$(E3
+T$ D
+D$PD
+|$PD
+t$(H
+T$ E3
+D$PD
+|$PD
+T$ H
+D$PL
+D$ A
+\$PM
+D$ "
+\$XH
+t$`H
+|$hH
+{ UH
+t$(I
+t$(H
+T$ E3
+T$ H
+D$ H
+\$XH
+t$`H
+|$hH
+L$(L
+D$ *
+L$(L
+D$ a
+T$(H
+T$PH
+T$ H
+L$@H
+L$(L
+D$ u
+D$ z
+L$(L
+T$(H
+T$PH
+T$ H
+L$@H
+L$(L
+T$@3
+D$BL
+D$ H
+@USVH
+L$(L
+t$(A
+T$ H
+U)<+u
+@^[]
+\$(H
+\$(L
+D$ Q
+\$@H
+p WH
+T$PE3
+t$(H
+|$0H
+D$(L
+D$ y
+>@8t$Pt
+D$ A
+\$`H
+t$hH
+t$(E3
+|$QZu
+\$XH
+Buu*H
+T$(H
+T$PH
+T$@3
+X UVWH
+9t$`u%A
+T$h@
+9t$`
+T$pE3
+t$(H
+T$h@
+\$xH
+@_^]
+X UVWH
+9|$`u
+T$h@
+9|$`
+\$xH
+@_^]
+T$pE3
+|$(H
+L$(L
+D$ 0
+uI@8=
+\$@H
+wBt:
+L$(I
+L$ I
+UVAVH
+L$(L
+L$hH
+L$ H
+l$(L
+\$`H
+@A^^]
+L$(L
+D$ j
+L$(L
+D$ Y
+|$0L
+L$(H
+D$ *
+\$ L
+\$PH
+t$XH
+L$(L
+UVWATAUAVAWH
+|$0H
+L$(L
+D$ L
+D$(A
+L$ A
+|$(H
+D$ c
+L$ L
+|$(H
+D$ j
+D$ M
+D$ s
+MXI;
+d$0H
+D$(L
+|$(H
+D$ A
+tKA+
+L$0A
+T$(H
+T$(H
+T$(H
+T$0H
+U@D9j
+D9%J
+D$ A
+D8%(
+rAD8%
+udA;
+PA_A^A]A\_^]
+|$0H
+|$0H
+\$PH
+t$XH
+WAVAWH
+|$0L
+L$(H
+D$ L
+D$ L
+D$(A
+D$ L
+D$ L
+D$ A
+D$ L
+D$ L
+D$ L
+t$ L
+|$ L
+\$ L
+D$(A
+\$`H
+l$hH
+t$pH
+@A_A^_
+UVWAVAWH
+D$hE3
+|$@L
+D$XH
+\$0H
+D$ >
+\$0H
+D$ ?
+T$@I
+D$]A
+l$(H
+D$HH
+|$HA
+|$ H
+T$@L
+H	fA
+D$0A
+T$ H
+T$(H
+L$hH3
+pA_A^_^]
+D$ ,
+D$ -
+|$0H
+|$0H
+D$(H
+\$PH
+WAVAWH
+|$PD
+9|$Pt{H
+\$XA
+t$`H
+0A_A^_
+UWATAVAWH
+|$0H
+D$ w
+|$0H
+D$ x
+L$ H
+d$(L
+H9E0
+L9u0
+L9u0H
+L9u0
+L9u0
+L9u0
+L9u0s\H
+t$(L
+\$xH
+@A_A^A\_]
+L$(L
+D$ /
+@USVWATAUAVH
+|$0H
+D$ D
+|$0H
+D$ E
+L$ A
+t$(H
+D$ K
+D$ R
+T$(D
+T$ @
+t$(H
+D$ a
+L$ L
+t$(H
+D$ i
+T$ H
+D$ s
+PA^A]A\_^[]
+L$(L
+\$(L
+|$ H
+\$@H
+\$(L
+|$ H
+\$@H
+VWATAVAWH
+|$0H
+|$0H
+L$pH
+L$ A
+|$(H
+|$(H
+D$ (
+D$pI
+\$xH
+@A_A^A\_^
+UVWATAUAVAWH
+|$0H
+|$0H
+L$ H
+t$(L
+t$(H
+t$(L
+L$ A
+t$(H
+D$ L
+`A_A^A]A\_^]
+T$ A
+L$(I
+D$ )
+\$ L
+\$@H
+l$HH
+t$PH
+|$0L
+L$(H
+D$ d
+\$PH
+t$XH
+D$PH
+|$0L
+L$(H
+D$ =
+|$Tht
+L$U:H
+L$ H
+L$`H3
+\$pI
+L$(L
+t$0H
+D$(L
+\$PH
+p WH
+\$0L
+L$(H
+t$(H
+l$PD
+\$PE3
+T$ H
+t$PL
+t$(H
+l$ A
+G @:h
+\$XH
+l$`H
+t$hH
+D$ Z
+D$ ^
+l$(L
+D$ b
+l$@3
+|$(L
+\$@H
+|$(L
+D$ y
+\$@3
+L$ L
+L$H3
+L$H9\$@v
+\$0H
+\$0H
+%9\$8u
+L$(L
+D$ f
+D$ j
+\$PH
+D$`H
+L$(L
+D$@H
+D$XH
+L$`H3
+x AVH
+|$0H
+D$ ;
+|$0H
+D$ >
+T$ H
+T$ H
+T$ H
+\$PH
+l$XH
+t$`H
+|$hH
+\$0H
+|$0H
+D$(L
+D$ x
+t$xH
+D$XH
+L$(L
+D$@H
+D$HH
+D$ L
+L$XH3
+\$0H
+VWATAVAWH
+t[D8%t
+t$(H
+D$ 8
+9\$pu
+\$`H
+l$hH
+0A_A^A\_^
+K SUVWAVAWH
+t$(L
+|$ H
+8A_A^_^][
+UVWATAUAVAWH
+|$0L
+L$(H
+A_A^A]A\_^]
+VWAVH
+|$pI
+|$0H
+|$0H
+L$pH
+l$hH
+@A^_^
+t$(L
+D$ t
+t$PH
+l$HH
+D$(H
+x ATAVAWH
+\$PH
+t$`H
+|$hH
+0A_A^A\
+L$ L
+UVWATAUAVAWH
+L$(A
+|$ H
+L$(A
+D$ "
+\$ H
+D$ 6
+D$ A
+D$(A
+t38]
+t.8]
+t$(L
+D$ K
+`A_A^A]A\_^]
+p WATAUAVAWH
+|$0H
+|$0H
+A_A^A]A\_
+UVWATAUAVAWH
+}hE3
+L$ A
+`A_A^A]A\_^]
+L$(L
+L$(L
+t$0H
+D$(L
+\$PH
+l$XH
+VWAVH
+t$hH
+|$0H
+|$0H
+L$hH
+\$`H
+l$pH
+@A^_^
+\$0L
+L$(H
+9\$Xu
+\$PH
+p WH
+L$0H
+\$8H
+t$HH
+WATAUAVAWH
+|$0H
+|$0H
+\$@I
+A_A^A]A\_
+UVWAVAWH
+L$ A
+`A_A^_^]
+L$(L
+L$(L
+t$0H
+D$(L
+\$PH
+l$XH
+@USVWAVH
+t$BI
+D$HH
+|$0L
+L$(H
+D$P8
+T$pH
+t$(H
+\$(L
+T$@L
+D$@H
+t$(H
+A^_^[]
+|$0L
+L$(H
+L$@D
+D$XH
+D$@h
+L$ L
+D$@H
+t$(L
+@USVWAVH
+t$BI
+D$HH
+|$0L
+L$(H
+D$ I
+D$P8
+T$pH
+t$(H
+D$ T
+\$(L
+T$@L
+D$ c
+D$@H
+t$(H
+D$ u
+A^_^[]
+UVWATAUAVAWH
+l$0E3
+L$(E3
+t$(L
+\$ H
+t$(H
+L$0H
+L$(H
+t$(H
+L$0H
+L$(H
+t$(H
+A_A^A]A\_^]
+x UH
+D$8H
+D$0D
+D$(L
+D$ w
+L$@3
+D$0H
+t$(L
+M`H3
+@USVWAVAWH
+L$`L
+|$8H
+L$0H
+L$pH
+L$ H
+|$(L
+A_A^_^[]
+t$ UH
+L$(L
+t$(L
+\$pI
+UVWH
+|$0H
+|$0H
+t$(H
+L$ H
+t$(H
+D$ $
+L$0H
+L$ H
+t$(H
+D$ ,
+t$(H
+D$ 2
+\$0H
+\$0H
+x AWH
+D$(L
+D$ j
+D$ L
+H95*
+tOD8=1
+uF@85/
+t=@85%
+@0fE
+\$PH
+l$XH
+t$`H
+|$hH
+x AVH
+|$0L
+L$(H
+\$PH
+l$XH
+t$`H
+|$hH
+@SUVWATAUAVAWH
+D$@M
+|$0H
+D$ S
+|$0H
+D$ T
+L$Pf
+l$(E3
+L$ E3
+@8|$Pt
+A_A^A]A\_^][
+t$(L
+D$ H
+t$PH
+l$HH
+UWATAVAWH
+D$ |
+9}8u
+D9}8u
+\$`H
+t$pH
+0A_A^A\_]
+xGD9}8uA
+D9}8t
+s WH
+l$(E3
+|$0H
+D$(L
+D$ I
+D$PL
+\$QH
+\$XH
+l$`H
+t$hH
+UVWH
+D$XH
+C E3
+L$@H
+L$(H
+T$ 3
+|$(H
+D$ B
+L$@L
+|$(H
+D$ I
+L$HL
+D$P`
+|$(H
+D$ S
+L$XH3
+`_^]
+D$ ,
+D$ 2
+D$ 8
+D$ $
+\$@H
+t$HH
+\$XH
+\$0L
+L$(H
+D$ Y
+t$(E3
+@8t$X
+\$PH
+t$`H
+x AVH
+|$0H
+D$ @
+|$0H
+D$ A
+\$PH
+l$XH
+t$`H
+|$hH
+@USVWAVAWH
+uXE3
+|$0H
+|$0H
+D$ H
+hA_A^_^[]
+|$0H
+D$ `
+|$0H
+D$ a
+t$0H
+D$(L
+D$ g
+\$PH
+l$XH
+t$`H
+|$0H
+|$0H
+@0ucA
+L$(H
+\$ H
+\$PH
+t$XH
+\$@H
+D$(L
+x AVH
+|$0H
+D$ -
+|$0H
+D$ .
+\$PH
+l$XH
+t$`H
+|$hH
+@SWH
+D$@3
+D$8@H
+D$0H
+T$9H
+D$<fD
+L$:f
+D$0E3
+D$ H
+T$8H
+L$@H3
+VWAVH
+t$hH
+|$0H
+D$ @
+|$0H
+D$ A
+T$hH
+l$0H
+D$(L
+D$ J
+f9D$hH
+\$`H
+l$pH
+@A^_^
+\$03
+L$(L
+D$ n
+I I91
+t$(L
+D$ s
+\$PH
+WAVAWH
+|$0H
+|$0H
+x$fA
+\$`H
+l$hH
+t$pH
+@A_A^_
+VWAVH
+D$XH
+D$ A
+|$8H
+t$0L
+L$@H
+|$ L
+D$LH
+|$ L
+|$ L
+L$XH3
+\$`I
+A^_^
+L$(L
+L$(L
+\$PH
+p WATAUAVAWH
+|$0H
+|$0H
+L$xf
+|$(E3
+L$ E3
+\$@I
+A_A^A]A\_
+UVWATAUAVAWH
+l$0E3
+L$(E3
+t$(L
+\$ H
+t$(H
+L$(H
+L$ H
+t$(H
+L$(H
+L$ H
+t$(H
+A_A^A]A\_^]
+WAVAWH
+t$ L
+D$0H
+t$(L
+\$`H
+l$hH
+t$pH
+@A_A^_
+l$ VWAVH
+D$xH
+D$ v
+L$xH3
+A^_^
+t$0H
+L$(H
+l$(L
+T$@H
+L$8L
+T$0D
+t$ UH
+L$(L
+t$(L
+\$pI
+WATAUAVAWH
+|$0H
+|$0H
+u@E3
+\$@I
+A_A^A]A\_
+t$ WH
+D$HH
+D$0H
+L$@L
+L$ H
+D$ H
+D$@L
+L$HH3
+\$hH
+l$pH
+t$xH
+{ AVH
+t$@E
+-, D
+t$ L
+\$`H
+l$hH
+t$pH
+|$xH
+|$0L
+t$(H
+\$PH
+t$XH
+|$`H
+L$ H
+D$ H
+|$(L
+D$ Q
+C4vH
+\$0H
+``01f
+\$0H
+P@01f
+\$0H
+\$0H
+\$0H
+C4GH
+\$0H
+\$0H
+\$0H
+\$0L
+L$(H
+D$ 0
+,fD;
+\$PH
+\$0L
+L$(H
+0fD;
+\$PH
+UVWATAUAVAWH
+E`E3
+|$0L
+L$(H
+unknown
+l$@H
+L$PH
+T$@H
+L$@f
+D$@H
+L$PH
+D$@H
+L$@M
+D9l$Ht
+D9l$H
+L$DE3
+t$(H
+l$DH
+D$DL
+T$DA
+t$(H
+l$DE
+T$ H
+D$DA
+T$(A
+D$ >
+M`H3
+A_A^A]A\_^]
+t$ WAVAWH
+|$0L
+L$(H
+D$ {
+\$hH
+l$pH
+t$xH
+@A_A^_
+L$(L
+D$ [
+L$Xf
+t$(D
+L$ E3
+D$ k
+\$PH
+|$0L
+L$(H
+\$PH
+UVWATAUAVAWH
+E`E3
+l$@L
+|$0L
+L$(H
+L$@fD
+|$(E3
+L$ E
+L$@H
+D$AA
+D$(M
+L$ A
+|$A8
+M`H3
+A_A^A]A\_^]
+L$@fD
+|$(D
+L$ E3
+l$@H
+L$@H
+D$AA
+D$(M
+L$ A
+L$@E3
+|$(H
+l$@H
+L$@H
+D$AA
+D$(M
+L$ A
+@8t$@t[
+D$ >
+L$XA
+unknown
+l$DH
+L$PH
+D$ P
+T$DH
+L$DfA
+D$DH
+L$PH
+D$DH
+D$ b
+D$ g
+L$DI
+D$ u
+L$@E3
+|$(H
+l$@H
+L$@H
+D$AA
+D$(M
+L$ A
+|$@jt[
+l$@H
+L$@H
+L$ H
+L$@H
+D$AA
+D$(M
+L$ A
+D9l$Ht
+D9l$H
+L$@E3
+t$(H
+D$@L
+T$@A
+t$(H
+l$@E
+T$ H
+D$@A
+T$(A
+t$ UWATAUAVH
+|$0L
+L$(H
+D$ Q
+M0fD
+d$(E3
+L$ E
+D$(M
+L$ A
+D$ d
+\$@I
+A^A]A\_]
+L$ H
+D$(M
+L$ A
+L$ H
+D$(M
+L$ A
+L$ H
+D$(M
+L$ A
+}0jtX
+d$(H
+L$ H
+D$(M
+L$ A
+\$0H
+x AVH
+|$0L
+L$(H
+D$ {
+\$PH
+l$XH
+t$`H
+|$hH
+D$8H
+D$03
+D$0A
+D$4H
+L$8H3
+|$ UH
+\$hH
+|$pL
+|$xH
+\$03
+t$8H
+\$03
+T$ A
+T$ A
+L$@H3
+D$(3
+D$ f
+D$$H
+T$ H
+L$(H3
+)t$pH
+D$`H
+D$@H
+T$@H
+L$8A
+D$0L
+T$(H
+L$ A
+T$(H
+L$ A
+\$0D
+T$(f
+L$ A
+L$`H3
+(t$pH
+L$(L
+D$ %
+D$HE3
+T$HA
+D$JE
+L$KE
+ukA:
+ufA:
+D$ c
+t$PH
+\$0H
+|$0L
+L$(H
+\$PH
+t$XH
+\$(L
+\$@3
+t$HH
+C4vH
+\$0H
+UVWATAUAVAWH
+E`E3
+d$HH
+|$0L
+L$(H
+L$XA
+unknown
+|$@H
+L$PH
+T$@H
+D$@H
+L$PH
+D$@H
+D9|$Ht
+D9|$H
+L$DE3
+d$(H
+|$DH
+D$DL
+T$DA
+d$(H
+|$DE
+T$ H
+D$DA
+T$(A
+M`H3
+A_A^A]A\_^]
+VWATAVAWH
+|$0L
+L$(H
+D$ O
+L$xE3
+|$(H
+D$xH
+D$ M
+L$ H
+D$xH
+D$ M
+D$ x
+\$pH
+@A_A^A\_^
+x AVH
+|$0L
+L$(H
+D$ #
+L$ H
+L$Xf
+l$(E3
+L$ D
+D$ 6
+\$PH
+l$`H
+|$hH
+|$0L
+L$(H
+\$PH
+x ATAUAVH
+l$bt)L
+p3Tv*
+l$ D
+\$PH
+l$XH
+t$`H
+|$hH
+0A^A]A\
+WAVAWH
+API;
+p`WR
+L$ H
+D$03
+D$(H
+\$`H
+l$hH
+t$pH
+@A_A^_
+|$(L
+D$8H
+D$8H
+D$@H
+D$(H
+D$(H
+T$0H
+\$ WH
+T$PH
+L$XH
+T$PL
+L$0L
+L$`H
+L$(3
+\$hH
+@SVWH
+T$`H
+L$hH
+T$`L
+L$0L
+L$pH
+L$(3
+@_^[
+t!eH
+L$PH
+\$0H
+l$8H
+t$@H
+uxHc
+uTL+
+|$ AVH
+D$@@
+\$0H
+t$8H
+|$HH
+\$0H
+VWAVH
+\$xH
+@A^_^
+\$0H
+t$8H
+ntelA
+GenuD
+ineI
+t(=`
+t!=p
+ w$H
+T$ H
+D$ $
+\$(3
+t$0H
+L$0L
+L$(H
+L$ 3
+L$PH
+D$PH
+D$@H
+D$H3
+\$0H
+\$ UH
+M H1E
+ H3E H3E
+\$HH
+\$0H
+\$0H
+ v.H+
+t=L;
+ffff
+HfA;(
+fA;8unI
+fA;(t(fA98t
+\$0H
+t$8H
+|$@H
+\$`I
+\$0H
+t$8H
+L$0H
+T$8D
+D$@H
+T$8H
+L$0H
+T$8L
+D$@D
+L$HE
+T$8A
+9csm
+A - 
+t5HcP
+T$ L
+Success
+Internal error
+No such file or directory
+Interrupted
+I/O error
+try again
+out of memory
+resource busy/timeout
+bad parameter(s)
+Null pointer
+buffer overflow
+bad protocal
+wrong sensor dimension
+device not found
+device is dead
+up to the limit
+template store in REE
+Untrusted enrollment
+unknow err
+CBiometricDevice
+A required pointer is null
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\chips\ff_spi.cpp
+ff_spi_write_then_read_buf
+[Driver] E error at %s[%s:%d]: %s 0x%x
+ff_spi_sfr_write_then_read_buf
+ff_spi_read_image_buf
+[%4d]:'%s' enter.
+focaltech:fw9369
+[%4d]:'%s' leave.
+[%4d]:%s ENTER
+[%4d]:%s RETURN
+[%4d]:%s enter.
+[%4d]:%s leave.
+fw9369_config_power_mode
+wakeup
+[%4d]:switch to '%s' power mode.
+auto sleep
+[%4d]: ...TryReadSysWorkMode: 0x%x
+[%4d]:
+%s got e_Int_RST int
+deep sleep
+[%4d]:switch to '%d' unknown power mode.
+fw9369_config_device_mode
+FF_DEVICE_MODE_GESTURE
+[%4d]:switch to '%s' mode.
+[%4d]:%s Gesture LastWorkMode:%d
+[%4d]:Gesture start finger status: %x
+FF_DEVICE_MODE_WAIT_LEAVE
+FF_DEVICE_MODE_WAIT_TOUCH
+FF_DEVICE_MODE_APK_TEST
+FF_DEVICE_MODE_IDLE
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\chips\fw9369\fw9369.cpp
+error at %s[%s:%d]: switch to '%d' unknown device mode.
+[%4d]:%s RETURN,stat = %d
+fw9369_query_event_status
+[%4d]:%s  ENTER
+[%4d]:%s  get chip id fail ucChipid: 0x%x
+[%4d]:%s  try to enter idle
+[%4d]:%s  check communication ok i:%d
+error at %s[%s:%d]: %s  chip communicate fail
+[%4d]:%s  get chip id ok
+[%4d]:Chip INT type: 0x%X(1=idle 2=down 4=up 8=man 10=inv 20=data 40=afeD 80=halfF 100=fullE 200=rst 400=esd )
+[%4d]:%s call fw9369_GestureStart
+[%4d]:First gesture image....
+[%4d]:%s check again fail
+[%4d]:%s maybe got ESD sistuation, go ESD handle
+[%4d]:%s if you are not in power noise environment pls check FW9366_FDT_CHECK_AGAIN_THR
+[%4d]:%s get finger1:%x
+[%4d]:%s call fw9369_img_base_updata_with_check()
+[%4d]:%s get finger2:%x
+[%4d]:%s go figner touch
+[%4d]:%s go finger down detect
+[%4d]:%s go fw9369_wrong_base_check
+[%4d]:First gesture image2....
+error at %s[%s:%d]: %s host omit or miss interrupt to handle, may be host response
+error at %s[%s:%d]: %s may be host response too slow that the chip already send tow int
+error at %s[%s:%d]: %s get abnormality interrup flag
+[%4d]:%s call fw9366_img_base_updata_with_check()
+[%4d]:%s go fw9366_wrong_base_check
+fw9369_init_chip
+[%4d]:'fw9369_config_power_mode(FF_POWER_MODE_WAKEUP)' failed, try again (%d/%d).
+error at %s[%s:%d]: '%s'.
+fw9369_config_spi_mode
+error at %s[%s:%d]: Configure spi mode failed(%d), try agin(%d/%d).
+fw9369_probe_id
+[%4d]:'%s' Clear 9369 int flag
+[%4d]:'%s' try to get 9369 chip id:0x%x
+[%4d]:got undesired device id 0x%04x
+[%4d]:got device id fw9369 !!!.
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\chips\fw9369\fw9369_afe.cpp
+focaltech:fw
+[%4d]:'%s ENTER
+fw9369_cfg_init
+[%4d]:%s: Fw9369_cfg.IMG_Inte_Times = %d.
+fw9369_check_communication
+[%4d]:%s Got unnormal chip id  0x%X
+fw9369_get_SMIC_IC_flag
+[%4d]:'%s' Get SMIC FLAG OK reg_value:%x  flag:%x
+[%4d]:'%s' Get DB FLAG OK reg_value:%x  flag:%x
+error at %s[%s:%d]: '%s' read reg fail reg_value:%x try again
+error at %s[%s:%d]: '%s'can not get nolmal IC TYPE REG reg_value:%x  flag:%x
+fw9369_Get_OTP_Info
+[%4d]:'%s Freq_Data:%x(4~12)
+[%4d]:'%s Chip version:%x(0-A  1-B  2-C  3-D  4-E  e-E)
+fw9392_fdt_base_fail_check
+[%4d]:%s fail i:%d data:%d
+fw9369_Set_Scan_Rate_Default
+[%4d]:'%s RETURN
+fw9369_fdt_mode_init
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\chips\fw9369\fw9369_fdt.cpp
+error at %s[%s:%d]: usReadData:0x%X, usSramCheckData:0x%X
+[%4d]:'%s PRO FLAG PASS
+[%4d]:'%s para:%x
+[%4d]:'%s RETURN OUT 1
+[%4d]:'%s RETURN OUT 2
+[%4d]:Set FDT %dHZ with set:0x%x
+[%4d]:'%s RETURN OUT 3
+[%4d]:'%s RETURN OUT 4
+[%4d]:'%s RETURN OUT 5
+down
+[%4d]:Switching fdt to '%s' detection mode...
+fw9369_fdt_auto_start
+[%4d]:'%s' write fdt up base:%4d  %4d  %4d  %4d  %4d  %4d  %4d  %4d
+[%4d]:'%s' write fdt down base:%4d  %4d  %4d  %4d %4d  %4d  %4d  %4d
+fw9369_fdt_manual_start
+fw9369_fdt_AutoSDacUpdate
+[%4d]:%s try:%d, dac:%d average:%d
+[%4d]:%s Got FDT DAC OK DAC:%d  middle:%d lastmiddle:%d
+[%4d]:'%s RETURN ret:%d
+error at %s[%s:%d]: %s FAIL
+error at %s[%s:%d]: %s find DAC fail loop:%d dac:%d last:%d MiddleTemp:%d
+[%4d]:%s final dac:%d .(normal 1~125)
+fw9369_fdt_manual_check
+[%4d]:Prepare for fdt manual '%s' detection.
+[%4d]:fw9369_fdt_base: FW9369_FDT_DELT_DOWN_LO = %d; FW9369_FDT_DELT_UP_LO= %d 
+[%4d]:    DIFF :%d  %d  %d  %d  %d  %d  %d  %d  
+[%4d]:DownBase :%d  %d  %d  %d  %d  %d  %d  %d  
+[%4d]:     raw :%d  %d  %d  %d  %d  %d  %d  %d  
+[%4d]:INV DETECT:%d
+[%4d]:FdtDownTrigerBlock %d
+[%4d]:UPBase :%d  %d  %d  %d  %d  %d  %d  %d  
+[%4d]:   raw :%d  %d  %d  %d  %d  %d  %d  %d  
+[%4d]:FdtUpTrigerBlock %d
+[%4d]:Manual check result: %x
+fw9369_fdt_manual_store
+fw9369_wrong_base_check
+error at %s[%s:%d]: '%s' write fdt base:%4d  %4d  %4d  %4d %4d  %4d  %4d  %4d
+error at %s[%s:%d]: '%s' write fdt base:%4d  %4d  %4d  %4d  %4d  %4d  %4d  %4d
+error at %s[%s:%d]: '%s CrcTemp:0x%x   ram:0x%x
+[%4d]:'%s BaseAVGMiddle:%d NewAVGMiddle:%d (>%d triger)
+[%4d]:'--------%s BASE already up out of range  HistMiddle:%d
+[%4d]:'%s IBaseAVGMiddle:%d  AVGMiddle:%d  (<%d triger)
+[%4d]:'%s ulMSE:%d  (<%d triger)
+[%4d]:'%s BASE already down out of range  HistMiddle:%d  base:%d %d %d %d %d
+[%4d]:'%s FDT BASE fail base:%d %d %d %d
+[%4d]:'%s RETURN:0x%x
+error at %s[%s:%d]: '%s BASE FAIL CODE:0X%X  (0x01:down unnormal  0x02:up unnormal  0x04:down all 512   0x08:up all 512  0x10:down crc err  0x20:up crc err  0x40:IMG unnormal  0x80:IMG crc err)
+fw9369_fdt_base_Min_Updata
+error at %s[%s:%d]: '%s  BASE too small i:%d  base:%d
+[%4d]:%s Base[%d] : %d,%d,%d,%d
+[%4d]:%s FW9369_FDT_DELT_DOWN_LO = %d; FW9369_FDT_DELT_UP_LO= %d 
+[%4d]:
+'%s SET FDT FLAG OK
+fw9369_fdt_base_Stable_Update
+error at %s[%s:%d]: '%s fail to get dac, pls check module
+[%4d]:'%s Back: %d %d %d %d
+[%4d]:'%s Data: %d %d %d %d
+[%4d]:Fdt DAC: 0x%x ....stablecnt:%d
+[%4d]:Min base %d, %d, %d, %d ......
+error at %s[%s:%d]: '%s fdt data error:%d %d %d %d
+fw9369_fdt_base_Update
+[%4d]:'%s usBufTemp Data: %d %d %d %d
+[%4d]:'%s fw9369_FDT_Max: %d %d %d %d
+fw9369_fdt_up_check_again
+[%4d]:%s detected power noise loop:%d Diff:%d %d %d %d
+fw9369_Set_Scan_Rate_2M
+fw9369_img_mode_init
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\chips\fw9369\fw9369_image.cpp
+[%4d]:'%s last mode is image mode RETURN
+[%4d]:'%s last mode is fdt mode RETURN
+[%4d]:'%s power on or ESD revert initial RETURN
+fw9369_img_scan_start
+fw9369_img_scan_end
+fw9369_Img_Get_Better_DAC
+[%4d]:'%s old DAC:%d middle:%d
+[%4d]:'%s Left_Point:%d Right_Point:%d
+[%4d]:'%s case 1 left and right both ok return direct
+[%4d]:'%s case 2 left and right both fail return direct
+[%4d]:'%s case 3 left ok and right fail
+[%4d]:'%s new Left_Point:%d Right_Point:%d
+[%4d]:'%s restore last dac
+[%4d]:'%s get new better dac:%d  old_dac:%d
+[%4d]:'%s case 4 left fail and right ok
+[%4d]:'%s newDAC:%d middle:%d
+Img_Get_Avg_Middle
+[%4d]:'%s got half i:%d uiTempSum:%d thr:%d
+fw9369_AutoSDacUpdate
+[%4d]:%s IMG par SHILD L:%d R:%d U:%d D:%d
+[%4d]:%s IMG par BADTH 1:%d 2:%d 3:%d 4:%d
+[%4d]:%s Try %d AVG DAC_Temp:%d Last_DAC:%d MiddleTemp:%d
+[%4d]:%s Got Img Dac ok DAC:%d 
+error at %s[%s:%d]: '%s Got image DAC FAIL!!!!!!
+error at %s[%s:%d]: fw9369_AutoSDacUpdate find DAC fail loop:%d dac:%d last:%d MiddleTemp:%d
+[%4d]:fw9369_AutoSDacUpdate final dac:%d ......
+fw9369_img_base_Update
+[%4d]:'%s call fw9369_AutoSDacUpdate
+error at %s[%s:%d]: '%s fail to get img dac
+[%4d]:%s IMG Base  new:%d  %d  %d  %d  %d  %d  %d  %d  %d  %d  
+[%4d]:%s IMG Base  old:%d  %d  %d  %d  %d  %d  %d  %d  %d  %d  
+[%4d]:%s >300 up:%d down:%d left:%d right:%d
+[%4d]:%s Get fake point i:%d new:%d back:%d
+[%4d]:%s get normal updata point :%d
+fw9369_white_Point_Handle
+[%4d]:'white_Point_Handleindex:%d old:%d %d %d %d %d  new:%d
+fw9369_Update_Base
+error at %s[%s:%d]: '%s get fdt base fail
+error at %s[%s:%d]: '%s get img base fail
+error at %s[%s:%d]: %s fail
+[%4d]:%s ok
+fw9369_capture_image
+[%4d]: %s img line 0 base:%d  %d  %d  %d  %d
+[%4d]: %s img line 0 raw :%d  %d  %d  %d  %d
+[%4d]: %s img line 10 base:%d  %d  %d  %d  %d
+[%4d]: %s img line 10 raw :%d  %d  %d  %d  %d
+[%4d]: %s sheld row:%d
+[%4d]: %s sheld line:%d
+[%4d]: %s img out:%d  %d  %d  %d  %d
+fw9369_GestureDirection
+[%4d]:NAV Frame dis_cur:%d dis_last1:%d,dis_last2:%d
+[%4d]:NAV Frame disR:%d disC:%d, endframe:%d endframe_cnt:%d cover_cnt:%d.
+fw9369_GestureDetectFirst
+[%4d]:'%s ENTER 
+[%4d]:NAV Frame:%3d coorR:%d  coorC:%d  TouchCnt:%d  first
+fw9369_GestureDetect
+[%4d]:NAV Frame:%3d coorR:%d  coorC:%d  TouchCnt:%d
+[%4d]:NAV Frame: endframe:%d, allcover_cnt:%d, ret = %d (L-1 R-2 U-4 D-8 C-32)
+fw9369_GestureStart
+[%4d]:'%s RETURN Trigger_Num:%d ret:%d
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\chips\fw9369\fw9369_spidrv.cpp
+fw9369_sram_write_bulk
+fw9369_sram_read_bulk_withecc
+fw9369_fifo_read
+c:\focaltech\
+ft_commmon_binfile_GetBinFileName
+[Driver] W %s[%d]: Directory c:\focaltech creat failed.
+*bin
+%s%s
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\common\src\ft_binfile.cpp
+ft_commmon_binfile_GetBinFileLength
+[Driver] E error at %s[%s:%d]: open file %s failed.
+[Driver] E error at %s[%s:%d]: fseek fialed.
+ft_commmon_binfile_GetBinBuff
+[%s] 
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\common\src\ft_protocal.cpp
+ft_common_protocal_convert
+[Driver] E error at %s[%s:%d]: unknown protocal: 0x%x
+%04x  
+0x%02x 
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\common\src\ft_util.cpp
+ft_common_util_hexdump
+[Driver] E error at %s[%s:%d]: %s
+[Driver] E error at %s[%s:%d]: ....
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\common\src\ft_WaitLock.cpp
+clsWdfWaitLock::ft_common_waitlock_create
+[Driver] E error at %s[%s:%d]: Create wait lock failed
+ft_common_waitlock_create
+[Driver] I %s[%d]: Create wait lock success
+K2;=
+_1g?y
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\Device.cpp
+CBiometricDevice::ft_drv_device_onCreateDevice
+[Driver] E error at %s[%s:%d]: queue initialize fail
+[Driver] E error at %s[%s:%d]: create interface fail
+[Driver] E error at %s[%s:%d]: CreateEvent fail 0x%x
+[Driver] E error at %s[%s:%d]: create device object fail
+CBiometricDevice::ft_drv_device_EvtDevicePrepareHardware
+[Driver] E error at %s[%s:%d]: get scene type none
+[Driver] E error at %s[%s:%d]: get alg type none
+interface preparehardware return failed
+ft_drv_device_EvtDevicePrepareHardware
+[Driver] W %s[%d]: No finger press on sensor
+[Driver] I %s[%d]: Detect sensor %d timer
+[Driver] E error at %s[%s:%d]: FT9368 update fail 0x%p!
+[Driver] I %s[%d]: 9368 Chipid = 0x%x
+[Driver] I %s[%d]: 9369 ChipID: 0x%x
+[Driver] E error at %s[%s:%d]: The sensor don't support powerkey
+[Driver] E error at %s[%s:%d]: The sensor don't support USB
+ft_drv_device_EvtDeviceSelfManagedIoSuspend
+[Driver] I %s[%d]: DeviceSelfManagedIoSuspend ENTRY>>
+[Driver] I %s[%d]: DeviceSelfManagedIoSuspend LEAVE<<
+ft_drv_device_EvtDeviceD0Entry
+[Driver] I %s[%d]: DeviceD0Entry ENTRY>>
+[Driver] I %s[%d]: system power action : %d
+[Driver] I %s[%d]: DeviceD0Entry LEAVE<<
+ft_drv_device_EvtDeviceD0Exit
+[Driver] I %s[%d]: D0Exit ENTRY>>
+[Driver] I %s[%d]: D0Exit LEAVE<<
+CBiometricDevice::ft_drv_device_CreateInterface
+[Driver] E error at %s[%s:%d]: get bus type none
+[Driver] E error at %s[%s:%d]: creae interface object failed(%d) 
+ft_drv_device_CreateInterface
+[Driver] I %s[%d]: Create interface object success
+CBiometricDevice::ft_drv_device_CreateSensor
+[Driver] E error at %s[%s:%d]: creae sensor object failed(%d) 
+ft_drv_device_CreateSensor
+[Driver] I %s[%d]: Create sensor object success
+DriverEntry
+[Driver] I %s[%d]: Support modern standby
+[Driver] I %s[%d]: Support Legacy standby
+2.0.3.81
+[Driver] I %s[%d]: Driver version: %s
+2782
+[Driver] I %s[%d]: Driver svn id: %s
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\feature\src\FT9368_Updata.cpp
+Factory_Exit
+[Driver] E error at %s[%s:%d]: ERROR ret=%d
+Factory_Workmdoe_Set
+SPI0_Wakeup
+SPI0_CMD_Set
+[Driver] E error at %s[%s:%d]: ERROR ret=%d;
+SPI0_Write
+SPI0_Read_SPI
+SPI0_Read_USB
+SPI0_Read
+[Driver] E error at %s[%s:%d]: Unknow Bus Type
+IIC_Mode_Set
+IIC_FLASH_Write
+IIC_FLASH_Read_USB
+IIC_FLASH_Read_SPI
+IIC_FLASH_Read
+IIC_SFR_Write
+Check_CallBack_Fun
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\feature\src\ft_devinit.cpp
+ft_feature_devinit_GetDevContext
+ft_feature_devinit_QueryMCUStatus
+[Driver] I %s[%d]: MCU is idle
+query fingerprint on sensor failed
+ft_feature_devinit_QueryFpOnSensor
+[Driver] I %s[%d]: =======>Detect fingerpirnt on senor<==============tid:%d
+ft_feature_devinit_SwitchNextSensorWorkModeEx
+[Driver] I %s[%d]: ENTER SENSOR MODE >>>>>
+[Driver] I %s[%d]: QUICKLY ENTER SENSOR MODE >>>>>
+[Driver] I %s[%d]: ENTER PAO MODE >>>>>
+[Driver] I %s[%d]: ENTER STOP MODE >>>>>
+[Driver] I %s[%d]: Sensor switch low power work mode success
+[Driver] W %s[%d]: Sensor switch low power work mode fail
+ft_feature_devinit_SwitchNextSensorWorkMode
+[Driver] W %s[%d]: MCU is busy
+ft_feature_devinit_ReturnIdleMode
+[Driver] I %s[%d]: <Already exit sensor mode>
+[Driver] I %s[%d]: <Already exit POA mode>
+[Driver] I %s[%d]: <Already exit STOP mode>
+[Driver] I %s[%d]: <unknow work mode>
+ft_feature_devinit_GetDevEnumeratorName
+[Driver] I %s[%d]: enumerator name = %S, resultlength = %d
+[Driver] E error at %s[%s:%d]: get unexpect interface
+[Driver] E error at %s[%s:%d]: get device enumerator name fail
+ft_feature_devinit_GetDevHwID
+[Driver] I %s[%d]: hw-id = %S, resultlength = %d
+[Driver] E error at %s[%s:%d]: get unexpect hw-id
+[Driver] E error at %s[%s:%d]: get device hw-id fail
+ft_feature_devinit_CheckFWExist
+[Driver] I %s[%d]: FW is exist
+[Driver] I %s[%d]: FW is not exist
+ft_feature_devinit_MultiCheckFWExist
+[Driver] W %s[%d]: 'ft_feature_devinit_CheckFWExist()'failed(%x), retry again(%d/%d).
+ft_feature_devinit_DetectSensorTypeWithoutFW
+[Driver] I %s[%d]: Get sensor boot edition A
+ft_feature_devinit_MultiDetectSensorTypeWithoutFW
+[Driver] E error at %s[%s:%d]: Detect sensor type failed 0x%x
+ft_feature_devinit_JudgeBootEdition
+[Driver] I %s[%d]: Get reg 0x90 value: 0x%x(0xEF marked boot edition A)
+ft_feature_devinit_DistinguishByRegFile
+Enter download mode failed
+[Driver] I %s[%d]: read 0xFE reg value:0x%x(0x02 marked FT9536)
+ft_feature_devinit_JudgeByChipId
+[Driver] I %s[%d]: read addr 0x85C0 value:0x%x
+ft_feature_devinit_DistinguishSensorFT95A8byOtp
+[Driver] I %s[%d]: read 95A8 OTP:0x%x
+[Driver] I %s[%d]: the real opt value: 0x%x
+[Driver] E error at %s[%s:%d]: Get unknown opt value
+ft_feature_devinit_DistinguishSensorFT9338byOtp
+[Driver] I %s[%d]: read 9338 OTP:0x%x
+[Driver] I %s[%d]: read 9338 OTP is 0xff then set FT9338
+[Driver] I %s[%d]: Get sensor boot edition B
+ft_feature_devinit_9368POADetectFingerPress
+[Driver] E error at %s[%s:%d]: wake fail
+[Driver] I %s[%d]: FT9368 POA detect finger press
+ft_feature_devinit_9368ReadChipID
+[Driver] I %s[%d]: agc1=%d agc2=%d agc3=%d agc4=%d
+[Driver] I %s[%d]: Sensor version:%d chipid = 0x%x
+[Driver] I %s[%d]: manufactor = 0x%x Sensor W = %d H = %d
+detect sensor type failed without FW
+ft_feature_devinit_DetectSensorType
+[Driver] I %s[%d]: Sensor type: %d(1=FT9338W, 2=FT9348W, 3=FT9361W, 4=FT9368W, 5=FT9371W, 6=FT9536W, 7=FT9362W)
+[Driver] I %s[%d]: Boot edition: %d(0=A, 1=B)
+User_TL_Transmit_N_Byte
+[Driver] E error at %s[%s:%d]: Transmit NBytes failed timers: %d/3
+ft_feature_devinit_93A8_PreGetImage
+[Driver] I %s[%d]: pre get image
+@E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\feature\src\ft_esdcheck.cpp
+ft_feature_esdcheck_HealthCheck
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\feature\src\ft_iocontrol.cpp
+ft_feature_iocontrol_OnMultiDistrute
+[Driver] E error at %s[%s:%d]: WdfRequestRetrieveOutputBuffer failed 0x%x
+[Driver] E error at %s[%s:%d]: Output buffer NULL or too small to return size information.
+[Driver] E error at %s[%s:%d]: Buffer too small - return size necessary in PayloadSize - 0x%x.
+ft_feature_iocontrol_OnGetAttributes
+[Driver] I %s[%d]: DONE Dump sensor attributes>>>>
+[Driver] I %s[%d]: DONE Payload Size: %d
+[Driver] I %s[%d]: DONE WinBio Hresult: 0x%lx
+[Driver] I %s[%d]: DONE WinBio Version: %lx.%lx
+[Driver] I %s[%d]: DONE Sensor Type: 0x%lx
+[Driver] I %s[%d]: DONE Sensor Sub Type: 0x%lx
+[Driver] I %s[%d]: DONE Capabilities: 0x%lx
+[Driver] I %s[%d]: DONE Supported Format Entries: 0x%lx
+[Driver] I %s[%d]: DONE Supported Format Owner: 0x%lx
+[Driver] I %s[%d]: DONE Supported Format Type: 0x%lx
+[Driver] I %s[%d]: DONE Manufacturer Name: %ws
+[Driver] I %s[%d]: DONE Model Name: %ws
+[Driver] I %s[%d]: DONE Serial Number: %ws
+[Driver] I %s[%d]: DONE Firmware Version: %lx.%lx
+ft_feature_iocontrol_OnReset
+ft_feature_iocontrol_OnCalibrate
+ft_feature_iocontrol_OnGetSensorStatus
+[Driver] I %s[%d]:  SensorStatus=%d
+[Driver] I %s[%d]: PayloadSize=%d WinBioHresult=0x%x
+ft_feature_iocontrol_OnPrivateSensorType
+ft_feature_iocontrol_OnCaptureData
+[Driver] I %s[%d]: OnCaptureData ENTRY>>
+[Driver] I %s[%d]: Request =0x%p m_pPendingCaptureDataRequest=0x%p
+[Driver] I %s[%d]: Already a capture data request pending, directly completed.
+[Driver] I %s[%d]: There aren't any capture data request pending.
+[Driver] E error at %s[%s:%d]: WdfRequestRetrieveInputBuffer failed 0x%x
+[Driver] I %s[%d]: outputBufferSize=0x%llx.
+[Driver] E error at %s[%s:%d]: Invalid argument(s).
+[Driver] I %s[%d]: Output buffer NULL or too small to return size information.
+[Driver] E error at %s[%s:%d]: Buffer too small - return size necessary in outputBufferSize=0x%llx RequiredBufferSize - 0x%lx.
+[Driver] I %s[%d]: captureData->WinBioHresult=0x%x.
+[Driver] I %s[%d]: Capture information: purpose 0x%lx
+[Driver] I %s[%d]: ***purpose for verify***
+[Driver] I %s[%d]: ***purpose for identify***
+[Driver] I %s[%d]: ***purpose for enroll***
+[Driver] I %s[%d]: ***purpose for verification***
+[Driver] I %s[%d]: ***purpose for identification***
+[Driver] I %s[%d]: ***purpose for audit***
+[Driver] W %s[%d]: unknown purpose
+[Driver] I %s[%d]: format owner 0x%lx, format type 0x%lx, data type 0x%lx
+[Driver] E error at %s[%s:%d]: Capture information: purpose 0x%lx WinBioHresult = 0x%lx.
+[Driver] E error at %s[%s:%d]: Capture information: Owner 0x%lx  ,Type  0x%lx  ,WinBioHresult = 0x%lx.
+[Driver] E error at %s[%s:%d]: Capture information: Flags 0x%lx WinBioHresult = 0x%lx.
+[Driver] I %s[%d]: display off, pend capture request
+[Driver] I %s[%d]: OnCaptureData LEAVE<<
+ft_feature_iocontrol_OnGetSensorSize
+ft_feature_iocontrol_OnGetSensorInfo
+[Driver] I %s[%d]: fw = 0x%x, pw = 0x%x, agc = 0x%x
+[Driver] I %s[%d]: w = %d, h = %d, SensorType = %d
+ft_feature_iocontrol_OnDownloadFw
+ft_feature_iocontrol_OnAppLock
+[Driver] I %s[%d]: AppLock stop idle
+ft_feature_iocontrol_OnAppUnlock
+[Driver] I %s[%d]: OnAppUnlock resume idle
+ft_feature_iocontrol_OnAppMatchUnknowId3Times
+ft_feature_iocontrol_OnAppMatchOKNotify
+ft_feature_iocontrol_OnGetTestSpi
+[Driver] E error at %s[%s:%d]: Int test failed
+ft_feature_iocontrol_OnWriteDevice
+[Driver] I %s[%d]: writedevice-->bycmd 0x%x, addr = 0x%x, val = 0x%x
+[Driver] E error at %s[%s:%d]: ft_interface_base_WriteDevice failed 0x%x
+ft_feature_iocontrol_OnReadDevice
+[Driver] I %s[%d]: readdevice-->bycmd 0x%x, addr = 0x%x, val = 0x%x
+[Driver] I %s[%d]: mcu status : 0x%x 0x%x
+ft_feature_iocontrol_OnWriteReadData
+[Driver] I %s[%d]: readwritedevice-->bycmd 0x%x, addr = %d, output len = %d
+[Driver] E error at %s[%s:%d]: out of memory
+[Driver] E error at %s[%s:%d]: ft_interface_base_WriteData failed 0x%x
+[Driver] I %s[%d]: readwritedevice-->output size %d
+ft_feature_iocontrol_CaptureDateEvtRequestCancel
+[Driver] E error at %s[%s:%d]: invalid param
+[Driver] I %s[%d]: request ==.
+ft_feature_iocontrol_OnWdfRequestCompleteWithInformation
+[Driver] I %s[%d]: Status =0X%X, Information=0x%llx.
+ft_feature_iocontrol_OnWdfRequestCompletePendingCaptureData
+[Driver] I %s[%d]: m_pPendingCaptureDataRequest=0x%p
+[Driver] I %s[%d]: WdfRequestCompleteWithInformation
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\feature\src\ft_loadfirmware.cpp
+ft_feature_loadfirmware_isUpdateVersion
+[Driver] I %s[%d]: FW version:0x%x, AGC Version:0x%x
+[Driver] W %s[%d]: >>>>>>>>>>>>>>Firmware is exist>>>>>>>>>>>>>>>
+[Driver] W %s[%d]: Firmware is not exist or version update>>>>>>>>>>>>>>need load Firmware>>>>>>>>>>>>>>>
+ft_feature_loadfirmware_FT9368isUpdateVersion
+[Driver] I %s[%d]: There is a newer FT9368 FW to update 0x%x => 0x%x
+ft_feature_loadfirmware_DistributeSensorFirmware
+ft_feature_loadfirmware_LoadFW
+Mcu config fail
+ft_feature_FT9368_loadfirmware_LoadFW
+[Driver] I %s[%d]: start load app len = %d
+[Driver] I %s[%d]: FT9368 update fw success
+[Driver] I %s[%d]: Down fail, try again(%d/5)
+PowerNotificationCallback
+[Driver] I %s[%d]: The display is off.
+[Driver] I %s[%d]: The display is on.
+[Driver] I %s[%d]: The display is dimmed.
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\feature\src\ft_powernotification.cpp
+[Driver] E error at %s[%s:%d]: received an unexpected power notification.
+[Driver] E error at %s[%s:%d]: received a null Setting parameter.
+[Driver] E error at %s[%s:%d]: received an unexpected notification with type 0x%08X.
+ff_PowerNotificationInit
+[Driver] E error at %s[%s:%d]: Failed to register for power state notifications, hr = 0x%x
+ff_PowerNotificationDeInit
+[Driver] E error at %s[%s:%d]: Failed to unregister for power state notifications, hr = 0x%x
+[Driver] V clsFpDevInterface construct
+[Driver] V clsFpDevInterface destruct
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\interface\src\ft_fpdevinterface.cpp
+ft_interface_base_CanCaptureDataFlg
+[Driver] I %s[%d]: finger press
+clsFpDevInterface::ft_interface_fpdevinterface_CreateForwardToDevRequest
+[Driver] E error at %s[%s:%d]: m_pForwardToDevRequest create failed
+clsFpDevInterface::ft_interface_fpdevinterface_ReuseForwardToDevRequest
+[Driver] E error at %s[%s:%d]: 0x%p m_pForwardToDevRequest failed with status %!STATUS!
+clsFpDevInterface::ft_interface_fpdevinterface_WakePolicy
+ft_interface_fpdevinterface_WakePolicy
+[Driver] W %s[%d]: WdfDeviceAssignSxWakeSettings failed 0x%x
+clsFpDevInterface::ft_interface_fpdevinterface_EnableDev
+ft_interface_fpdevinterface_FuncCom
+[Driver] I %s[%d]: open remote wake policy
+clsFpDevInterface::ft_interface_base_PrepareHardware
+[Driver] E error at %s[%s:%d]: param is null pointer
+clsFpDevInterface::ft_interface_fpdevinterface_FixCaptureData
+ft_interface_fpdevinterface_FixCaptureData
+[Driver] I %s[%d]: m_pCaptureData->WinBioHresult=0x%x.
+[Driver] I %s[%d]: image width: %d, height: %d
+[Driver] I %s[%d]: m_pCaptureData->CaptureData.Size=0x%lx.
+[Driver] I %s[%d]: m_pCaptureData->PayloadSize=0x%lx.
+[Driver] V IInterfaceBase destruct
+[Driver] V clsSpiDev construct
+[Driver] V clsSpiDev destruct
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\interface\src\ft_spi.cpp
+clsSpiDev::ft_interface_spi_CreateSpiTarget
+[Driver] E error at %s[%s:%d]: WdfIoTargetCreate failed %!STATUS!
+[Driver] E error at %s[%s:%d]: RESOURCE_HUB_CREATE_PATH_FROM_ID failed!
+[Driver] E error at %s[%s:%d]: WdfIoTargetOpen failed! %!STATUS!
+clsSpiDev::ft_interface_spi_CreateGpioTarget
+OnInterruptIsr
+[Driver] I %s[%d]: get a interrupt>>>>>>>>>>>>>>>>>>>>>>>>
+[Driver] W %s[%d]: Interrupt clear
+[Driver] W %s[%d]: capture request has canceled, exit thread
+[Driver] E error at %s[%s:%d]: failed to get event source %d
+[Driver] I %s[%d]: event status: FF_EVENT_STAT_FINGER_TOUCH
+[Driver] W %s[%d]: capture request is not exit
+[Driver] I %s[%d]: event status: FF_EVENT_STAT_FINGER_LEAVE
+[Driver] I %s[%d]: event status: FF_EVENT_STAT_ESD
+[Driver] I %s[%d]: event status: FF_EVENT_STAT_SW_RESET
+[Driver] I %s[%d]: unknown event status
+[Driver] W %s[%d]: no fingerprint press on sensor, to check health
+clsSpiDev::ft_interface_spi_CreateInterrupt
+[Driver] E error at %s[%s:%d]: WdfInterruptCreate failed %!STATUS!
+clsSpiDev::ft_interface_spi_SetPowerPolicy
+[Driver] E error at %s[%s:%d]: WdfDeviceSetPowerPolicyS0IdlePolicy failed %x
+clsSpiDev::ft_interface_base_PrepareHardware
+ft_interface_base_PrepareHardware
+[Driver] I %s[%d]: resourceCount %d interfaces
+[Driver] I %s[%d]: Type %d interfaces
+[Driver] I %s[%d]: SPB resource found with ID=0x%llx LowPart=%d,HighPart=%d
+[Driver] E error at %s[%s:%d]: Create spb target failed
+[Driver] I %s[%d]: Duplicate SPB resource found with ID=0x%llx
+[Driver] I %s[%d]: GPIO resource found with ID=0x%llx LowPart=%d,HighPart=%d
+[Driver] E error at %s[%s:%d]: Create GPIO target failed
+[Driver] I %s[%d]: Duplicate GPIO resource found with ID=0x%llx
+[Driver] I %s[%d]: Interrupt resource found interruptIndex =%d
+[Driver] E error at %s[%s:%d]: Create interrupt target failed
+[Driver] I %s[%d]: Duplicate resource found interruptIndex =%d
+[Driver] I %s[%d]: Class = %d   Type = %d
+[Driver] E error at %s[%s:%d]:  resource not found - %!STATUS!
+clsSpiDev::ft_interface_spi_SendControlTransferSynchronously
+[Driver] E error at %s[%s:%d]: Invalid parameters.
+[Driver] E error at %s[%s:%d]: WdfIoTargetSendIoctlSynchronously failed 0x%x
+clsSpiDev::ft_interface_spi_RWDevData
+[Driver] E error at %s[%s:%d]: WdfMemoryCreate failed - % !STATUS!
+[Driver] E error at %s[%s:%d]: WdfMemoryCopyFromBuffer failed 0x%x
+[Driver] E error at %s[%s:%d]: WdfUsbTargetPipeReadSynchronously failed 0x%x
+[Driver] E error at %s[%s:%d]: WdfUsbTargetPipeWriteSynchronously failed 0x%x
+[Driver] E error at %s[%s:%d]: none cmd
+clsSpiDev::ft_interface_spi_WriteGPIO
+[Driver] E error at %s[%s:%d]: WdfRequestCreate failed 0x%x
+[Driver] E error at %s[%s:%d]: WdfMemoryCreatePreallocated failed 0x%x
+[Driver] E error at %s[%s:%d]: WdfIoTargetFormatRequestForIoctl send error 0x%x
+[Driver] E error at %s[%s:%d]: WdfRequestSend failed 0x%x
+clsSpiDev::ft_interface_base_WriteData
+A required size is zero
+clsSpiDev::ft_interface_base_ReadData
+clsSpiDev::ft_interface_base_9368WriteData
+clsSpiDev::ft_interface_base_9368ReadData
+clsSpiDev::ft_interface_spi_ReOpenGpioIoTarget
+clsSpiDev::ft_interface_base_SendNBytes
+clsSpiDev::ft_interface_base_WriteFirmware
+Write firmware file failed
+clsSpiDev::ft_interface_base_ReadFirmware
+Read firmware file failed
+clsSpiDev::ft_interface_base_FunctionforTestPin
+[Driver] E error at %s[%s:%d]: Int is not low %d
+clsSpiDev::ft_interface_base_StartCaptureData
+clsSpiDev::ft_interface_base_CaptureImageData
+[Driver] E error at %s[%s:%d]: ft_sensor_sensorbase_CaptureData error: 0x%8x
+ft_interface_base_CaptureImageData
+[Driver] I %s[%d]: ========>get capture image <===============
+[Driver] V clsUsbDev construct
+[Driver] V clsUsbDev destruct
+Get bridge version failed
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\interface\src\ft_usb.cpp
+clsUsbDev::ft_interface_base_GetBridgeVersion
+ft_interface_base_GetBridgeVersion
+[Driver] I %s[%d]: USB bridge version: 0x%x
+clsUsbDev::ft_interface_base_QuerySensorPinStatus
+clsUsbDev::ft_interface_usb_CreateUsbDevice
+[Driver] E error at %s[%s:%d]: WdfUsbTargetDeviceCreateWithParameters failed 0x%x
+ft_interface_usb_CreateUsbDevice
+[Driver] I %s[%d]: Create usb target success
+clsUsbDev::ft_interface_usb_GetUsbPipeHandle
+[Driver] E error at %s[%s:%d]: m_UsbDevice is null pointer
+ft_interface_usb_GetUsbPipeHandle
+[Driver] I %s[%d]: Found %u interfaces
+[Driver] E error at %s[%s:%d]: WdfUsbTargetDeviceGetInterface 0 failed %!STATUS!
+[Driver] E error at %s[%s:%d]: Has %d endpoints, expected %d, returning %!STATUS!  
+[Driver] I %s[%d]: Interrupt Pipe is 0x%p
+[Driver] I %s[%d]: BulkInput Pipe is 0x%p
+[Driver] I %s[%d]: BulkOutput Pipe is 0x%p
+[Driver] E error at %s[%s:%d]: Input or output pipe not found, returning %!STATUS!
+clsUsbDev::ft_interface_usb_UsbdVersionInfo
+ft_interface_usb_UsbdVersionInfo
+[Driver] I %s[%d]: deviceInfo.Traits: 0x%x
+TRUE
+FALSE
+[Driver] I %s[%d]: IsDeviceHighSpeed: %s
+[Driver] I %s[%d]: IsDeviceSelfPowered: %s
+[Driver] I %s[%d]: IsDeviceRemoteWakeable: %s
+[Driver] E error at %s[%s:%d]: retrieve device information failed
+clsUsbDev::ft_interface_usb_SetPowerPolicy
+clsUsbDev::ft_interface_base_PrepareHardware
+[Driver] E error at %s[%s:%d]: Create USB Device failed
+[Driver] E error at %s[%s:%d]: Get usb pipe handle failed
+[Driver] E error at %s[%s:%d]: retrieve usb version information failed
+clsUsbDev::ft_interface_usb_SendControlTransferSynchronously
+[Driver] E error at %s[%s:%d]: WdfUsbTargetDeviceSendControlTransferSynchronously failed 0x%x
+[Driver] E error at %s[%s:%d]: [SetupPacket: 0x%x, 0x%x, 0x%x, 0x%x, 0x%x]
+clsUsbDev::ft_interface_usb_RWDevData
+clsUsbDev::ft_interface_base_ReadDevice
+clsUsbDev::ft_interface_base_WriteData
+clsUsbDev::ft_interface_base_ReadData
+clsUsbDev::ft_interface_base_9368WriteData
+clsUsbDev::ft_interface_base_9368ReadData
+clsUsbDev::ft_interface_base_SendNBytes
+clsUsbDev::ft_interface_usb_DownloadWriteFirmware
+clsUsbDev::ft_interface_usb_UpgradeWriteFirmware
+clsUsbDev::ft_interface_usb_NewSiuVersion
+clsUsbDev::ft_interface_usb_OldSiuVersion
+clsUsbDev::ft_interface_base_WriteFirmware
+Get siu board version fail
+clsUsbDev::ft_interface_base_ReadFirmware
+Read firmware data failed
+clsUsbDev::ft_interface_base_FunctionforTestPin
+[Driver] E error at %s[%s:%d]: RST PIN test fail
+[Driver] E error at %s[%s:%d]: Int is not level High
+[Driver] E error at %s[%s:%d]: Int is not level low
+[Driver] E error at %s[%s:%d]: Int need level high, but low, test failed
+ft_interface_usb_RequestReadCompletionRoutine
+[Driver] W %s[%d]: capture data request equal NULL
+[Driver] I %s[%d]: Number of bytes read: %I64d
+[Driver] E error at %s[%s:%d]: Read failed - request status 0x%x UsbdStatus 0x%x
+[Driver] I %s[%d]: Invalid image data size captured.
+clsUsbDev::ft_interface_base_InitiatePendingRead
+[Driver] E error at %s[%s:%d]: WdfMemoryCreate failed 0x%x
+[Driver] E error at %s[%s:%d]: WdfUsbTargetPipeFormatRequestForRead failed 0x%x
+[Driver] E error at %s[%s:%d]: WdfRequestSend  status = 0x%x
+CaptureThread
+[Driver] I %s[%d]: CaptureThread enter  tid:%d
+[Driver] I %s[%d]: capture request has canceled, exit thread
+[Driver] I %s[%d]: ========>detect finger press on <===============
+[Driver] I %s[%d]: start to health check
+[Driver] E error at %s[%s:%d]: traslate error: 0x%x(STATUS_NO_SUCH_DEVICE)
+ft_interface_base_StartCaptureData
+[Driver] I %s[%d]: Create capture thread...
+clsUsbDev::ft_interface_base_StartCaptureData
+[Driver] E error at %s[%s:%d]: Create thread failed 0x%x
+clsUsbDev::ft_interface_base_CaptureImageData
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\Queue.cpp
+ft_drv_queue_onQueueInitialize
+[Driver] E error at %s[%s:%d]: WdfIoQueueCreate failed %!STATUS!
+ft_drv_queue_EvtIoDeviceControl
+[Driver] I %s[%d]: Queue 0x%p, Request 0x%p OutputBufferLength %d InputBufferLength %d IoControlCode 0X%X = BIO_CTL_CODE(%d)
+[Driver] I %s[%d]: IOCTL_BIOMETRIC_GET_ATTRIBUTES
+[Driver] I %s[%d]: IOCTL_BIOMETRIC_RESET
+[Driver] I %s[%d]: IOCTL_BIOMETRIC_CALIBRATE
+[Driver] I %s[%d]: IOCTL_BIOMETRIC_GET_SENSOR_STATUS
+[Driver] I %s[%d]: IOCTL_BIOMETRIC_GET_PRIVATE_SENSOR_TYPE
+[Driver] I %s[%d]: IOCTL_BIOMETRIC_CAPTURE_DATA
+[Driver] I %s[%d]: IOCTL_BIOMETRIC_SENSOR_SIZE
+[Driver] I %s[%d]: IOCTL_BIOMETRIC_SENSOR_INFO
+[Driver] I %s[%d]: IOCTL_BIOMETRIC_TEST_RST
+[Driver] I %s[%d]: IOCTL_BIOMETRIC_DOWNLOAD_FW
+[Driver] I %s[%d]: IOCTL_BIOMETRIC_APP_LOCK
+[Driver] I %s[%d]: IOCTL_BIOMETRIC_APP_UNLOCK
+[Driver] I %s[%d]: IOCTL_BIOMETRIC_APP_MATCH_3_FAIL
+[Driver] I %s[%d]: IOCTL_BIOMETRIC_APP_MATCH_OK
+[Driver] I %s[%d]: IOCTL_BIOMETRIC_TEST_SPI
+[Driver] I %s[%d]: IOCTL_BIOMETRIC_APP_EXIT
+[Driver] I %s[%d]: IOCTL_BIOMETRIC_APP_ENTRY
+[Driver] I %s[%d]: IOCTL_BIOMETRIC_WRITE_DEVICE
+[Driver] I %s[%d]: IOCTL_BIOMETRIC_READ_DEVICE
+[Driver] I %s[%d]: IOCTL_BIOMETRIC_WRITEREAD_DATA
+[Driver] W %s[%d]: Unsupported IOCTL - 0x%x.
+ft_drv_queue_EvtIoStop
+[Driver] I %s[%d]: IoStop ENTRY>>
+[Driver] I %s[%d]: Queue 0x%p, Request 0x%p ActionFlags %d
+[Driver] I %s[%d]: Reserved for internal use only.
+[Driver] I %s[%d]: The framework is stopping the I/O queue because the device is leaving its working (D0) state.
+[Driver] I %s[%d]: The framework is stopping the I/O queue because the device is being removed.
+[Driver] I %s[%d]: The I/O request is cancelable.
+[Driver] I %s[%d]: Unkown event .
+[Driver] I %s[%d]: IoStop LEAVE<<
+[Driver] V clsFT9338 construct
+clsFT9338
+[Driver] I %s[%d]: 9338 bin code size %d
+[Driver] V clsFT9338 destruct
+[Driver] V clsFT9348 construct
+clsFT9348
+[Driver] I %s[%d]: 9348 bin code size %d
+[Driver] V clsFT9348 destruct
+[Driver] V clsFT9361 construct
+clsFT9361
+[Driver] I %s[%d]: 9361 bin code size %d
+[Driver] V clsFT9361 destruct
+[Driver] V clsFT9368 construct
+clsFT9368
+[Driver] I %s[%d]: 9368 bin code size %d
+[Driver] I %s[%d]: 9368 pramboot bin code size %d
+[Driver] V clsFT9368 destruct
+[Driver] V clsFT9369 construct
+[Driver] V clsFT9369 destruct
+[Driver] V clsFT9536 construct
+clsFT9536
+[Driver] I %s[%d]: 9536 bin code size %d
+[Driver] V clsFT9536 destruct
+[Driver] V clsFT9338Base construct
+[Driver] V clsFT9338Base destruct
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\sensor\src\ft_sensor9338base.cpp
+clsFT9338Base::ft_sensor_9338base_DownloadVerify
+clsFT9338Base::ft_sensor_sensorbase_InitMcuConfig
+[Driver] E error at %s[%s:%d]: failed that config fw reset flg
+clsFT9338Base::ft_sensor_sensorbase_DownloadSensorFirmware
+ft_sensor_sensorbase_DownloadSensorFirmware
+[Driver] I %s[%d]: entry downlaod mode
+[Driver] I %s[%d]: config device register param
+[Driver] I %s[%d]: Ready to write firmware file to device
+[Driver] I %s[%d]: Ready to read firmware file from device 
+[Driver] E error at %s[%s:%d]: out of memory!
+[Driver] E error at %s[%s:%d]: Read firmware file failed
+[Driver] I %s[%d]: Ready to verify firmware
+[Driver] E error at %s[%s:%d]: Firmware vefify failed
+[Driver] I %s[%d]: Skip to run app
+[Driver] I %s[%d]: DOWNLOAD SUCCESS>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+[Driver] E error at %s[%s:%d]: Downlaod Fail!
+clsFT9338Base::ft_sensor_sensorbase_DownloadSensorBinFirmware
+ft_sensor_sensorbase_DownloadSensorBinFirmware
+unknown
+[Driver] E error at %s[%s:%d]: No bin code file.
+clsFT9338Base::ft_sensor_sensorbase_UpgradeSensorFirmware
+ft_sensor_sensorbase_UpgradeSensorFirmware
+[Driver] I %s[%d]: Get PromBoot id: 0x%x,0x%x
+[Driver] I %s[%d]: Get Promboot id success
+[Driver] E error at %s[%s:%d]: Retrieve Promboot ID timeout
+[Driver] I %s[%d]: Enable enter upgrade mode
+[Driver] I %s[%d]: Retrieve firmware version
+[Driver] I %s[%d]: Get firmware version: 0x%x,0x%x
+[Driver] I %s[%d]: Start to check MCU status
+[Driver] I %s[%d]: Get MCU status: 0x%x,0x%x
+[Driver] I %s[%d]: Check MCU status, ready
+[Driver] E error at %s[%s:%d]: Check MCU status, timeout
+[Driver] I %s[%d]: Close WDT reset
+[Driver] I %s[%d]: Get verify result: 0x%x,0x%x
+[Driver] I %s[%d]: Verify firmware file, ok
+[Driver] E error at %s[%s:%d]: Verify firmware file, timeout
+[Driver] I %s[%d]: Verify firmware file result, ok
+[Driver] E error at %s[%s:%d]: Verify firmware file result, timeout
+[Driver] I %s[%d]: Remap firmware file to Pram App
+clsFT9338Base::ft_sensor_sensorbase_UpgradeSensorBinFirmware
+ft_sensor_sensorbase_UpgradeSensorBinFirmware
+clsFT9338Base::ft_sensor_sensorbase_ReturnIdleByReset
+[Driver] V clsFT9368Base construct
+[Driver] V clsFT9368Base destruct
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\sensor\src\ft_sensor9368base.cpp
+clsFT9368Base::ft_sensor_sensorbase_ReadInfo
+ft_sensor_sensorbase_ReadChipID
+[Driver] I %s[%d]: Sensor version:%d chidoid = 0x%x
+clsFT9368Base::ft_sensor_sensorbase_WakeDevice
+[Driver] E error at %s[%s:%d]: wake fail, try again
+ft_sensor_sensorbase_DetectFingerPress
+[Driver] I %s[%d]: INT pull up 2
+[Driver] I %s[%d]: Detect finger press on sensor
+[Driver] I %s[%d]: ------>get ESD state<---------
+ft_sensor_sensorbase_POADetectFingerPress
+[Driver] I %s[%d]: POA Detect finger press on sensor
+ft_sensor_sensorbase_EntryPOA
+[Driver] I %s[%d]: Entry POA
+clsFT9368Base::ft_sensor_sensorbase_CaptureData
+[Driver] V clsFT9369Base construct
+[Driver] V clsFT9369Base destruct
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\sensor\src\ft_sensor9369base.cpp
+clsFT9369Base::ft_sensor_sensorbase_DevD0Entry
+ft_sensor_sensorbase_DevD0Entry
+clsFT9369Base::ft_sensor_sensorbase_CaptureData
+[Driver] V clsFT95a8Base construct
+[Driver] V clsFT95a8Base destruct
+E:\work\9368\ftWbioUmdfDriverV2\ftWbioUmdfDriverV2\sensor\src\ft_sensor95A8base.cpp
+clsFT95a8Base::ft_sensor_sensorbase_InitMcuConfig
+clsFT95a8Base::ft_sensor_sensorbase_DownloadSensorFirmware
+[Driver] I %s[%d]: read sensor x: %d
+[Driver] I %s[%d]: read sensor y: %d
+clsFT95a8Base::ft_sensor_sensorbase_DownloadSensorBinFirmware
+clsFT95a8Base::ft_sensor_sensorbase_ReturnIdleByReset
+[Driver] V ISensorBase destruct
+FxDriverEntryUm: invalid LoaderInterface 0x%x
+Wudfx2000: 
+FxDriverEntrydUm Enter PDRIVER_OBJECT_UM 0x%p
+FxDriverEntryUm: VersionBind status 0x%x
+FxDriverEntryUm: PDRIVER_OBJECT_UM 0x%p Successfully bound to version library
+FxDriverEntryUm: PDRIVER_OBJECT_UM 0x%p Successfully bound to class library if present
+FxDriverEntryUm: DriverEntry failed 0x%x for driver %wZ
+FxDriverEntryUm: PDRIVER_OBJECT_UM 0x%p Successfully returned from driver's DriverEntry
+FxStubBindClasses: invalid driver image, the address of symbol __KMDF_CLASS_BIND_START 0x%p is greater than the address of symbol __KMDF_CLASS_BIND_END 0x%p, status 0x%x
+FxGetNextClassBindInfo failed
+FxStubBindClasses: ClientBindClass %p, WDF_CLASS_BIND_INFO 0x%p, class %S, returned status 0x%x
+FxStubBindClasses: VersionBindClass WDF_CLASS_BIND_INFO 0x%p, class %S, returned status 0x%x
+Unknown exception
+bad allocation
+bad array new length
+__based(
+__cdecl
+__pascal
+__stdcall
+__thiscall
+__fastcall
+__vectorcall
+__clrcall
+__eabi
+__swift_1
+__swift_2
+__ptr64
+__restrict
+__unaligned
+restrict(
+ new
+ delete
+operator
+`vftable'
+`vbtable'
+`vcall'
+`typeof'
+`local static guard'
+`string'
+`vbase destructor'
+`vector deleting destructor'
+`default constructor closure'
+`scalar deleting destructor'
+`vector constructor iterator'
+`vector destructor iterator'
+`vector vbase constructor iterator'
+`virtual displacement map'
+`eh vector constructor iterator'
+`eh vector destructor iterator'
+`eh vector vbase constructor iterator'
+`copy constructor closure'
+`udt returning'
+`RTTI
+`local vftable'
+`local vftable constructor closure'
+ new[]
+ delete[]
+`omni callsig'
+`placement delete closure'
+`placement delete[] closure'
+`managed vector constructor iterator'
+`managed vector destructor iterator'
+`eh vector copy constructor iterator'
+`eh vector vbase copy constructor iterator'
+`dynamic initializer for '
+`dynamic atexit destructor for '
+`vector copy constructor iterator'
+`vector vbase copy constructor iterator'
+`managed vector copy constructor iterator'
+`local static thread guard'
+operator "" 
+operator co_await
+operator<=>
+ Type Descriptor'
+ Base Class Descriptor at (
+ Base Class Array'
+ Class Hierarchy Descriptor'
+ Complete Object Locator'
+RSDS*
+{~ED
+E:\work\9368\ftWbioUmdfDriverV2\x64\Release\ftWbioUmdfDriverV2.pdb
+.text$di
+.text$mn
+.text$mn$00
+.text$x
+.text$yd
+.idata$5
+.00cfg
+.CRT$XCA
+.CRT$XCU
+.CRT$XCZ
+.CRT$XIA
+.CRT$XIZ
+.CRT$XPA
+.CRT$XPZ
+.CRT$XTA
+.CRT$XTZ
+.gfids
+.rdata
+.rdata$r
+.rdata$zzzdbg
+.rtc$IAA
+.rtc$IZZ
+.rtc$TAA
+.rtc$TZZ
+.xdata
+.xdata$x
+.edata
+.idata$2
+.idata$3
+.idata$4
+.idata$6
+.data
+.data$r
+.kmdfclassbind$a
+.kmdfclassbind$c
+.kmdfclassbind$d
+.bss
+.pdata
+.gxfg$y
+_RDATA
+.rsrc$01
+.rsrc$02
+ftWbioUmdfDriverV2.dll
+FxDriverEntryUm
+DbgPrintEx
+ntdll.dll
+InitializeCriticalSection
+EnterCriticalSection
+LeaveCriticalSection
+DeleteCriticalSection
+OutputDebugStringA
+GetTickCount
+Sleep
+QueryPerformanceCounter
+QueryPerformanceFrequency
+CloseHandle
+GetLastError
+SetEvent
+ResetEvent
+CreateEventW
+TraceMessage
+WppAutoLogTrace
+CallNtPowerInformation
+RegisterTraceGuidsW
+UnregisterTraceGuids
+GetTraceLoggerHandle
+GetTraceEnableLevel
+GetTraceEnableFlags
+WppAutoLogStart
+WppAutoLogStop
+GetCurrentThreadId
+WaitForSingleObject
+WTSGetActiveConsoleSessionId
+PowerSettingRegisterNotification
+PowerSettingUnregisterNotification
+WTSQuerySessionInformationW
+WTSFreeMemory
+CreateThread
+KERNEL32.dll
+ADVAPI32.dll
+WppRecorderUM.dll
+api-ms-win-power-base-l1-1-0.dll
+api-ms-win-power-setting-l1-1-0.dll
+WTSAPI32.dll
+free
+malloc
+_access
+_findclose
+_findfirst64i32
+_findnext64i32
+_mkdir
+fclose
+fopen
+fread
+fseek
+ftell
+__stdio_common_vsprintf_s
+__stdio_common_vsprintf
+__stdio_common_vswprintf
+strcmp
+api-ms-win-crt-heap-l1-1-0.dll
+api-ms-win-crt-filesystem-l1-1-0.dll
+api-ms-win-crt-stdio-l1-1-0.dll
+api-ms-win-crt-string-l1-1-0.dll
+RtlCaptureContext
+RtlLookupFunctionEntry
+RtlVirtualUnwind
+UnhandledExceptionFilter
+SetUnhandledExceptionFilter
+GetCurrentProcess
+TerminateProcess
+IsProcessorFeaturePresent
+__C_specific_handler
+IsDebuggerPresent
+GetCurrentProcessId
+GetSystemTimeAsFileTime
+InitializeSListHead
+RtlPcToFileHeader
+RaiseException
+InterlockedFlushSList
+SetLastError
+FlsAlloc
+FlsGetValue
+FlsSetValue
+FlsFree
+InitializeCriticalSectionEx
+_seh_filter_dll
+_configure_narrow_argv
+_initialize_narrow_environment
+_initialize_onexit_table
+_register_onexit_function
+_execute_onexit_table
+_crt_atexit
+_cexit
+_callnewh
+_initterm
+_initterm_e
+terminate
+abort
+strcpy_s
+calloc
+api-ms-win-crt-runtime-l1-1-0.dll
+z -1z
+*~4x
+z -1z
+~(0B
+~(0n
+~(0p
+~(0r
+~(0h
+W~(0 
+1-?>4.44
+PmD~
+1-?>4.44
+PmD~
+1-?>4.44
+PmD~
+1-?>4.44
+PmD~
+1-?>4.44
+PmD~
+1-?>4.44
+PmD~
+1-?>4.44
+PmD~
+1-?>4.44
+PmD~
+1-?>4.44
+PmD~
+VmD.D
+WmD.D
+VmD.D
+WmD.D
+VmD.D
+WmD.D
+VmD.D
+7m".$
+VmD.D
+WmD.D
+VmD.D
+WmD.D
+VmD.D
+WmD.D
+VmD.D
+7m".$
+}1>4.4
+1-?>4.44
+}>>4.4
+0m"z
+}1>4.4
+PmD~
+}1>4.4
+PmD~
+	<}1>4.4
+PmD~
+}1m"/
+R}1m".$
+}QmD.D
+.(6i~+`zc
+}QmD.D
+.(6|~+pzs
+UmD.D
+.(6K~+P
+VmD.D
+.(6O~+`
+7m".$
+	|~7
+~(0h
+ m3~
+~h0B
+~h0n
+~h0p
+~h0r
+~(0 
+Z0m"z
+Z0m"z
+PmD~
+PmD~
+PmD~
+1M3h
+7m".$
+m".$
+m".$
+2m"z
+_mD~
+/F}#}]
+2m"z
+_mD~7
+/F}#}]
+/F}#}]
+}1.7
+S-T~
+S-T~
+C>D>D>D>D>D~3
+S>T>T>T>T>T>T>T-T~3
+C>D>D>D-E~3
+S-T~
+0m"z
+PmD~
+PmD~
+PmD~
+TmDz/
+}=m"/
+/F}#~
+}1.7
+TmDz/
+/F}#~
+}1.7
+im3z7
+:m".$
+|klw
+:m".$
+|KlU
+;-2~0
+~(0n
+* ~$
+~(0p
+* ~(0r
+* ~$
+* ~$
+3m"~(0
+* ~$"
+* ~$
+* ~$
+j~(0
+>$>$>$>$>$~3
+%>$>$>$-!~3
+ mD~
+ ~$	
+j ~$
+j ~T@
+zP~x0
+xm3z7
+@(~s
+|GlU~s
+7-2z7
+~T7d~D
+* -1~
+"M~s
+"M~s
+x3~s
+|GlU~s
+7-2z7
+|G~s
+7-2z7
+"M~7
+@p~s
+x\~s
+~T7d~D
+* -1~
+m3z7
+#}lwt
+2O~p
+m3~P
+7m".$
+m".$
+m".$
+7m".$
+m".$
+m".$
+52~s
+}>>4.44
+}+m3~
+e}<z7
+}=^p
+2O~p
+(Nlwt
+}tXz
+m3z7
+3A~T
+@}4^4
+3m3z7
+1}6z7
+}7z7
+7m"t
+j|[t
+j|klwt
+|szs
+y|ut
+5-!"}
+-!"m
+M"x'
+m""}C}2m"/
+m"}4"}A}
+}#}1}
+j|k|vNp
+|v^p
+Jpmf~O
+m/CzO
+?-2|
+?-1} z
+};>4}
+};m"
+};>4I
+#.44
+."~s
+|{Lwh"
+."~s
+@]Dh
+}!}RmD
+T|k}QmDz+`
+@}4^4
+"m3}
+}Q.T4
+* Y!
+"m3z7
+"m3}
+m3z7
+}2"m3
+:::WWW
+***LLL
+---OOO
+(2<FPZb"
+m3z7
+@]Dh
+$]3x
+|C|P|a|r
+\;\{
+|y-5
+lUm33
+|v|e
+|["-
+}B-DP
+",DP
+|["~
+lEm3"}Q
+5-!"}
+-!"m
+M"x'
+m""}C}2m"/
+m"}4"}A}
+}#}1}
+&&2??
+..=LL
+))5BB
+"11@OO
+	~t z
+p}7^4
+	A"u
+( ~4
+m3z7
+}1~C
+}Q>T.T4
+E"|{~
+GLwh	
+};-<
+};-<
+};-4
+};-4.44
+2()~
+$p#l
+m3z7
+P5m3z7
+};^4
+1~(2
+m3z7
+`}6^4
+"m3}
+!{mf}F}6
+.~d4
+}6m"
+v>4.44
+"}>>4.4
+}:zq
+-}/>$>$IR
+"}>>4-=},"m
+~x0f
+b-<~
+}<|glw}
+f-1~
+j-<~
+|klw
+@.40 
+P~TD
+}1m"
+0}#m3
+})m3~
+@o~_
+T}:z7
+};^p
+3m3z7
+}QmD
+*Pz/
+}EmUz/
+PmD~
+1}6z7
+}7z7
+7m"t
+':m3z7
+am" 
+4p3~
+2m3}
+}Q.T4
+* Y!
+}Q.W
+* Y!
+@}4^4
+}kmw
+y}s~T
+ ~Th
+e"~s
+0"~4
+Ht`z
+o~4{
+HtPz
+nt@z
+o~4[
+9t2z
+5t1z
+Wtiz
+VtDz
+Qt:z
+;t@z
+J"m3z7
+m3z7
+7m".$
+7m".$
+7m".$
+"`(0
+>m"/
+>m".$
+>m".$
+>m".$
+}2.4
+m3~$
+(	~4
+2"m3
+h:$.xB"~
+5pCz
+*~4x
+z -1z
+|G~s
+7-2z7
+{2~s
+7-2"~7
+|GlU~s
+7-2"~7
+* -1"
+&*x6
+{2~4
+"|kl
+z -$z)0
+0-2z9
+&-$~
+?-2|
+?-1} z
+	A~4
+	A>4.44
+(2<FPZb"
+m3z7
+@]Dh
+$]3x
+|C|P|a|r
+\;\{
+|y-5
+lUm33
+|v|e
+|["-
+}B-DP
+",DP
+|["~
+lEm3"}Q
+5-!"}
+-!"m
+M"x'
+m""}C}2m"/
+m"}4"}A}
+}#}1}
+&&2??
+..=LL
+))5BB
+"11@OO
+Yt z
+p}7^4
+m3z7
+"m3}
+}1~C
+GLwh	
+h?m"}2m
+}B.D
+}S>T.T4
+};-<
+};-<
+([~[
+};-4
+};-4.44
+2()~
+$p#l
+m3z7
+P5m3z7
+};^4
+1~(2
+mf}F}6
+.~d4
+}6m"
+v>4.44
+"}>>4.4
+}:zq
+-}/>$>$IR
+"}>>4-=},"m3}
+* Y!
+}Q.W
+* Y!
+~x0f
+b-<~
+}<|glw}
+f-1~
+j-<~
+|klw
+@.40 
+m3z7
+`}6^4
+}1m"
+0}#m3
+})m3~
+@o~_
+T}:z7
+};^p
+am" 
+|"~4
+"m3z7
+">T.T4
+mD">
+4p3~
+m3z7
+@}4^4
+}kmw
+y}s~T
+ ~Th
+e"~s
+Ht`z
+o~4{
+HtPz
+nt@z
+o~4[
+9t2z
+5t1z
+Wtiz
+VtDz
+Qt:z
+;t@z
+3m3z7
+}QmD
+*Pz/
+}EmUz/
+PmD~
+1}6z7
+}7z7
+7m"t
+P~TD
+m3z7
+7m".$
+7m".$
+7m".$
+>m"/
+>m".$
+>m".$
+>m".$
+}2.4
+m3~$
+(	~4
+2"m3
+h:$.xB"~
+5pCz
+*~4x
+z -1z
+%&z7
+%&z7
+|G~s
+7-2z7
+{2~s
+7-2"~7
+|GlU~s
+7-2"~7
+* -1"
+&cx6
+{2~4
+"|kl
+z -$z)0
+0-2z9
+&-$~
+?-2|
+?-1} z
+h">4.44
+`?	~
+`9	x
+9i:k%
+`<	x
+=,>m
+UPGRADE f
+3FLAG
+FTS5682P001
+?h<i/
+vvvv<nvvvP
+NB2***
+/?R'
+9X"$
+:h<b
+<S,`9
+_<R$
+<s9h
+h9/8
+<b	!
+W9h<
+^)%=
+@<o/
+;e:e
+:o;n
+}>n=
+:h<j
+)e<b
+<b	!
+u:h<
+e9h<
+K9h<
+:9h<
+|9h|
+,?b=
+@:z>
+-<.&
+-<(&
+x:h<`
+=m:m9
+A<B	a
+@:h<`
+x9h<`
+;i:j
+;i:j
+<`9i
+#9W=c
+)m<b
+m<b<
+`?	~
+`?	~
+`<	x
+`<	x
+`<	x
+`<	x
+`<	x
+`<	x
+`<	x
+`<	x
+|9h,
+=,>m
+FTS5682P001
+ !"#$%&'()(
+nnnnnnnnnnnnnnnnnnnnnnnnnn
+????????????????????????
+??????????????????????????????
+4@ /
+6@ 3
+UPGR
+ADE 
+FLAG
+`?	~
+`9	x
+9i:k%
+`<	x
+=,>m
+UPGRADE f
+3FLAG
+~"""2
+@(~s
+Q|GlU~s
+7-2z7
+dm"~
+x(~s
+* -1~
+m3z7
+* -1~
+x3~s
+Q|GlU~s
+7-2z7
+U|G~s
+7-2z7
+dm"~
+U|GlU
+;-2z7
+* -1~
+~x0h
+z0~$
+~(0n
+* ~$
+~(0p
+* ~(0r
+* ~$
+* ~$
+* ~$
+* ~$
+j~(0
+z0Np
+_]"h
+$]3x
+|C|P|a|r
+lUm33
+|v|e
+|["|
+"|E|V|glw$
+}B-DP
+",DP
+|["~
+lEm3"}Q
+5-!"}
+-!"m
+M"x'
+m""}C}2m"/
+m"}4"}A}
+}#}1}
+|{Np
+~h12
+}8^4
+}8^4
+*lwt
+gm3z7
+(V~p
+'B}8zq
+'F}8zq
+'J}8zq
+z.4'(~$
+}8.4'Mzq
+}8.4'Zzq
+'g}8zq
+}8.4'Mzq
+;.4'Bzq
+}8.4'Zzq
+;.4'Fzq
+'g}8zq
+'J}8zq
+}?>4.4
+S}?>4.44
+B}g~
+-@z1
+d>d>d>d}
+-Bz1
+-Az1
+'}}>t>t>t>t>t>t}
+-#~s
+}?>4.44
+|}Np
+ |}^p
+Z0m3~h12
+"~D@
+}.|ElU}
+}RmD
+T|k}QmDz+`
+Z0m3~h12
+(V~p
+}>>4.44
+}+m3~
+e}<z7
+}=^p
+;mf~
+3m3z7
+m3z7
+/1~7
+1}6z7
+}7z7
+ ~p$t
+@}4^4
+}<.4'
+}]mD
+$Q}<>4
+* }<
+~(0B
+Q>T>T>T>T>T~
+[>T>T>T-P~
+~(0n
+~(0p
+~(0r
+~(0h
+~(0 
+y}s~T.
+}I>D.D4
+Jpmf~O
+/CzO
+  @@``
+??__
+(2<FPZc
+?-2|
+?-1} z
+h4$.x?L
+z -1z
+|klwt
+ |vt
+@]Dh
+|6|%
+@}4^4
+"m3}
+}Q.T4
+* Y!
+"m3z7
+"m3}
+*r~7
+m3z7
+.?AVbad_alloc@std@@
+.?AVexception@std@@
+.?AVbad_array_new_length@std@@
+.?AVtype_info@@
+4S"E
+5XlO
+OA.;
+c	ae;
+CEKb
+s@H"L
+#<z=
+YL0O
+Y1w(k
+	K7d
+{Ixs@
+JHrve
+	8l:
+""Ue
+ZY229
+[!IE"
+;BH(
++g/d
+9daq-
++ON-
+)XScp
+e@g< 14"
+	0nV
+rMCOzW
+DigiCert Inc1
+www.digicert.com110/
+(DigiCert SHA2 Assured ID Timestamping CA0
+210101000000Z
+310106000000Z0H1
+DigiCert, Inc.1 0
+DigiCert Timestamp 20210
+vv:S
+|]E-K
+A:7V
+1)J\
+_lCI	
+ /K	
+:0806
+0)0'
+http://www.digicert.com/CPS0
+j0h02
+,http://crl3.digicert.com/sha2-assured-ts.crl02
+,http://crl4.digicert.com/sha2-assured-ts.crl0
+y0w0$
+http://ocsp.digicert.com0O
+Chttp://cacerts.digicert.com/DigiCertSHA2AssuredIDTimestampingCA.crt0
+BrQt
+QJxy6z'
+dwc_#Ri
+e9pK
+a$%O
+DigiCert Inc1
+www.digicert.com1$0"
+DigiCert Assured ID Root CA0
+160107120000Z
+310107120000Z0r1
+DigiCert Inc1
+www.digicert.com110/
+(DigiCert SHA2 Assured ID Timestamping CA0
+9T(W
+}Mh~
+M$#0]
+fnVa')
+m0k0$
+http://ocsp.digicert.com0C
+7http://cacerts.digicert.com/DigiCertAssuredIDRootCA.crt0
+z0x0:
+4http://crl4.digicert.com/DigiCertAssuredIDRootCA.crl0:
+4http://crl3.digicert.com/DigiCertAssuredIDRootCA.crl0P
+I0G08
+0*0(
+https://www.digicert.com/CPS0
+8aMbF$
+|BB(
+V3"/"6
+Washington1
+Redmond1
+Microsoft Corporation1)0'
+ Microsoft Code Verification Root0
+110415194533Z
+210415195533Z0l1
+DigiCert Inc1
+www.digicert.com1+0)
+"DigiCert High Assurance EV Root CA0
+Mr	=
+:8P[w1
+AA"Nea
+	TPk
+N0L0J
+Dhttp://crl.microsoft.com/pki/crl/products/MicrosoftCodeVerifRoot.crl0
+ELAP
+]fpA
+{9:$
+}k*L
+gE62
+DigiCert Inc1
+www.digicert.com1+0)
+"DigiCert EV Code Signing CA (SHA2)0
+200720000000Z
+210804120000Z0
+Private Organization1
+280699001
+Hsinchu City1$0"
+Focaltech Systems Co., Ltd.1$0"
+Focaltech Systems Co., Ltd.0
+1P8v
+94RY
+	~4	z'$
+TW-280699000
+t0r07
+1http://crl3.digicert.com/EVCodeSigningSHA2-g1.crl07
+1http://crl4.digicert.com/EVCodeSigningSHA2-g1.crl0K
+D0B07
+0*0(
+https://www.digicert.com/CPS0
+r0p0$
+http://ocsp.digicert.com0H
+<http://cacerts.digicert.com/DigiCertEVCodeSigningCA-SHA2.crt0
+V!VZ
+==:Cw
+=o?*2`
+DigiCert Inc1
+www.digicert.com1+0)
+"DigiCert High Assurance EV Root CA0
+120418120000Z
+270418120000Z0l1
+DigiCert Inc1
+www.digicert.com1+0)
+"DigiCert EV Code Signing CA (SHA2)0
++.+1Xf
+=:	%
+s0q0$
+http://ocsp.digicert.com0I
+=http://cacerts.digicert.com/DigiCertHighAssuranceEVRootCA.crt0
+:http://crl3.digicert.com/DigiCertHighAssuranceEVRootCA.crl0@
+:http://crl4.digicert.com/DigiCertHighAssuranceEVRootCA.crl0
+.http://www.digicert.com/ssl-cps-repository.htm0
+:fk{
+DigiCert Inc1
+www.digicert.com1+0)
+"DigiCert EV Code Signing CA (SHA2)
+zMJ>
+_mZ2_
+DigiCert Inc1
+www.digicert.com110/
+(DigiCert SHA2 Assured ID Timestamping CA
+210730033237Z0/
+%9Cg
+v\%gH
+mn?amg
+N0L0
+Washington1
+Redmond1
+Microsoft Corporation1806
+/Microsoft Windows Third Party Component CA 20120
+201215221533Z
+211202221533Z0
+Washington1
+Redmond1
+Microsoft Corporation1;09
+2Microsoft Windows Hardware Compatibility Publisher0
+9&~76}4
+V?0s0P
+E0C1)0'
+ Microsoft Operations Puerto Rico1
+232825+4631910
+!vOR
+m0k0i
+chttp://www.microsoft.com/pkiops/crl/Microsoft%20Windows%20Third%20Party%20Component%20CA%202012.crl0
+u0s0q
+ehttp://www.microsoft.com/pkiops/certs/Microsoft%20Windows%20Third%20Party%20Component%20CA%202012.crt0
+x`'0
+V%E%Tj
+H,zCG
+hX)d
+Washington1
+Redmond1
+Microsoft Corporation1200
+)Microsoft Root Certificate Authority 20100
+120418234838Z
+270418235838Z0
+Washington1
+Redmond1
+Microsoft Corporation1806
+/Microsoft Windows Third Party Component CA 20120
+^W1&
+-g<'<V
+}PH.=C
+!vOR
+O0M0K
+Ehttp://crl.microsoft.com/pki/crl/products/MicRooCerAut_2010-06-23.crl0Z
+N0L0J
+>http://www.microsoft.com/pki/certs/MicRooCerAut_2010-06-23.crt0
+i+w#
+ip(sf
+83ha
+p%|Yi1$
+pCq<
+fvr`
+/^ r
+ot?`
+Washington1
+Redmond1
+Microsoft Corporation1806
+/Microsoft Windows Third Party Component CA 2012
+1h0f
+(https://www.microsoft.com/en-us/windows 0
+{do)
+f9oi\'
+20210730140932.433Z0
+Washington1
+Redmond1
+Microsoft Corporation1)0'
+ Microsoft Operations Puerto Rico1&0$
+Thales TSS ESN:C4BD-E37F-5FFC1%0#
+Microsoft Time-Stamp Service
+Washington1
+Redmond1
+Microsoft Corporation1&0$
+Microsoft Time-Stamp PCA 20100
+210114190213Z
+220411190213Z0
+Washington1
+Redmond1
+Microsoft Corporation1)0'
+ Microsoft Operations Puerto Rico1&0$
+Thales TSS ESN:C4BD-E37F-5FFC1%0#
+Microsoft Time-Stamp Service0
+C{|F
+mU0V
+O0M0K
+Ehttp://crl.microsoft.com/pki/crl/products/MicTimStaPCA_2010-07-01.crl0Z
+N0L0J
+>http://www.microsoft.com/pki/certs/MicTimStaPCA_2010-07-01.crt0
+#3DS=D
+@X{D
+Washington1
+Redmond1
+Microsoft Corporation1200
+)Microsoft Root Certificate Authority 20100
+100701213655Z
+250701214655Z0|1
+Washington1
+Redmond1
+Microsoft Corporation1&0$
+Microsoft Time-Stamp PCA 20100
+|hK,_
+>f+[
+|a0Y
+s0W&
+$`2X`F
+BM@Q
+C{|F
+O0M0K
+Ehttp://crl.microsoft.com/pki/crl/products/MicRooCerAut_2010-06-23.crl0Z
+N0L0J
+>http://www.microsoft.com/pki/certs/MicRooCerAut_2010-06-23.crt0
+1http://www.microsoft.com/PKI/docs/CPS/default.htm0@
+$VKt
+7}Z?
+oK0D$"<
+~cY%
+z.9Wv
+r~akow
+/T'!
+Washington1
+Redmond1
+Microsoft Corporation1)0'
+ Microsoft Operations Puerto Rico1&0$
+Thales TSS ESN:C4BD-E37F-5FFC1%0#
+Microsoft Time-Stamp Service
+~0|1
+Washington1
+Redmond1
+Microsoft Corporation1&0$
+Microsoft Time-Stamp PCA 20100
+20210730102721Z
+20210731102721Z0w0=
+1/0-0
+1(0&0
+saEq
+Washington1
+Redmond1
+Microsoft Corporation1&0$
+Microsoft Time-Stamp PCA 2010
+D1"xR
+6t\YZA
+~0|1
+Washington1
+Redmond1
+Microsoft Corporation1&0$
+Microsoft Time-Stamp PCA 2010
+c>OB
+{#F[p
+A&Npf
+J<A)"
+J;'*

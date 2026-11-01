@@ -1,0 +1,2 @@
+gpiochip0: 360 GPIOs, parent: platform/INT34C5:00, INT34C5:00:
+ gpio-264 (                    |TPD1 GpioInt(0)     ) in  hi IRQ ACTIVE LOW

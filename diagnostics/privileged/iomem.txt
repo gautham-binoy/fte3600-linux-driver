@@ -1,0 +1,111 @@
+00000000-00000fff : Reserved
+00001000-0009efff : System RAM
+0009f000-000fffff : Reserved
+  000a0000-000bffff : PCI Bus 0000:00
+  000e0000-000fffff : PCI Bus 0000:00
+    000f0000-000fffff : System ROM
+00100000-6981efff : System RAM
+6981f000-6983afff : Reserved
+6983b000-69b51fff : System RAM
+69b52000-69b52fff : Reserved
+69b53000-6bd79fff : System RAM
+6bd7a000-71bf3fff : Reserved
+71bf4000-71cbffff : ACPI Tables
+71cc0000-71d78fff : ACPI Non-volatile Storage
+  71ce9000-71ce9fff : USBC000:00
+71d79000-727fefff : Reserved
+727ff000-727fffff : System RAM
+72800000-78ffffff : Reserved
+79d00000-79dfffff : Reserved
+7a200000-803fffff : Reserved
+  7c800000-803fffff : Graphics Stolen Memory
+80400000-bfffffff : PCI Bus 0000:00
+  80400000-804fffff : PCI Bus 0000:02
+    80400000-80403fff : 0000:02:00.0
+      80400000-80403fff : nvme
+  80500000-805fffff : PCI Bus 0000:01
+    80500000-80503fff : 0000:01:00.0
+    80504000-80504fff : 0000:01:00.0
+      80504000-80504fff : r8169
+  80600000-80600fff : 0000:00:1f.5
+    80600000-80600fff : spi_intel_pci
+c0000000-cfffffff : PCI ECAM 0000 [bus 00-ff]
+  c0000000-cfffffff : PNP0C02:01
+fd000000-fd68ffff : PNP0C02:02
+fd690000-fd69ffff : INT34C5:00
+  fd690000-fd69ffff : INT34C5:00 INT34C5:00
+fd6a0000-fd6affff : INT34C5:00
+  fd6a0000-fd6affff : INT34C5:00 INT34C5:00
+fd6b0000-fd6cffff : PNP0C02:02
+fd6d0000-fd6dffff : INT34C5:00
+  fd6d0000-fd6dffff : INT34C5:00 INT34C5:00
+fd6e0000-fd6effff : INT34C5:00
+  fd6e0000-fd6effff : INT34C5:00 INT34C5:00
+fd6f0000-fdffffff : PNP0C02:02
+fe000000-fe010fff : Reserved
+fe04c000-fe04ffff : PNP0C02:02
+fe050000-fe0affff : PNP0C02:02
+fe0d0000-fe0fffff : PNP0C02:02
+fe200000-fe7fffff : PNP0C02:02
+fec00000-fec00fff : Reserved
+  fec00000-fec003ff : IOAPIC 0
+fed00000-fed00fff : Reserved
+  fed00000-fed003ff : HPET 0
+    fed00000-fed003ff : PNP0103:00
+fed20000-fed7ffff : Reserved
+  fed40000-fed44fff : MSFT0101:00
+    fed40000-fed44fff : MSFT0101:00
+fed90000-fed90fff : dmar0
+fed91000-fed91fff : dmar1
+feda0000-feda0fff : PNP0C02:01
+feda1000-feda1fff : PNP0C02:01
+fedc0000-fedc7fff : PNP0C02:01
+fee00000-fee00fff : Reserved
+ff000000-ffffffff : PNP0C02:02
+100000000-47fbfffff : System RAM
+  113200000-114c6dcbf : Kernel code
+  114e00000-115f26fff : Kernel rodata
+  116000000-11642c4bf : Kernel data
+  116eed000-1173fffff : Kernel bss
+47fc00000-47fffffff : RAM buffer
+4000000000-7fffffffff : PCI Bus 0000:00
+  4000000000-400fffffff : 0000:00:02.0
+  4010000000-4016ffffff : 0000:00:02.0
+  4017000000-4017000fff : 0000:00:15.0
+    4017000000-40170001ff : lpss_dev
+      4017000000-40170001ff : i2c_designware.0 lpss_dev
+    4017000200-40170002ff : lpss_priv
+    4017000800-4017000fff : idma64.0
+      4017000800-4017000fff : idma64.0 idma64.0
+  4017001000-4017001fff : 0000:00:1e.0
+    4017001000-40170011ff : lpss_dev
+      4017001000-40170011ff : serial
+    4017001200-40170012ff : lpss_priv
+    4017001800-4017001fff : idma64.1
+      4017001800-4017001fff : idma64.1 idma64.1
+  4017002000-4017002fff : 0000:00:1e.3
+    4017002000-40170021ff : lpss_dev
+      4017002000-40170021ff : pxa2xx-spi.2 lpss_dev
+    4017002200-40170022ff : lpss_priv
+    4017002800-4017002fff : idma64.2
+      4017002800-4017002fff : idma64.2 idma64.2
+  4020000000-40ffffffff : 0000:00:02.0
+  6000000000-6000ffffff : 0000:00:02.0
+  6001000000-60010fffff : 0000:00:1f.3
+  6001100000-600111ffff : 0000:00:04.0
+    6001100000-600111ffff : proc_thermal
+  6001120000-600112ffff : 0000:00:14.0
+    6001120000-600112ffff : xhci-hcd
+  6001130000-600113ffff : 0000:00:0d.0
+    6001130000-600113ffff : xhci-hcd
+  6001140000-6001143fff : 0000:00:1f.3
+    6001140000-6001143fff : ICH HD audio
+  6001144000-6001147fff : 0000:00:14.3
+    6001144000-6001147fff : iwlwifi
+  6001148000-600114bfff : 0000:00:14.2
+  600114c000-600114c0ff : 0000:00:1f.4
+    600114c000-600114c0ff : i801_smbus
+  600114f000-600114ffff : 0000:00:16.0
+    600114f000-600114ffff : mei_me
+  6001151000-6001151fff : 0000:00:14.2
+  6001152000-6001152fff : 0000:00:08.0

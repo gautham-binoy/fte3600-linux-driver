@@ -1,0 +1,2054 @@
+[17441.626211] IPv6: MLD: clamping QRV from 1 to 2!
+[17447.668387] IPv6: MLD: clamping QRV from 1 to 2!
+[17447.668392] IPv6: MLD: clamping QRV from 1 to 2!
+[17453.606967] IPv6: MLD: clamping QRV from 1 to 2!
+[17453.606974] IPv6: MLD: clamping QRV from 1 to 2!
+[17459.750850] IPv6: MLD: clamping QRV from 1 to 2!
+[17459.750858] IPv6: MLD: clamping QRV from 1 to 2!
+[17465.690116] IPv6: MLD: clamping QRV from 1 to 2!
+[17465.690122] IPv6: MLD: clamping QRV from 1 to 2!
+[17471.629143] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=55255 DF PROTO=2 
+[17471.632053] IPv6: MLD: clamping QRV from 1 to 2!
+[17471.632063] IPv6: MLD: clamping QRV from 1 to 2!
+[17477.773291] IPv6: MLD: clamping QRV from 1 to 2!
+[17477.773297] IPv6: MLD: clamping QRV from 1 to 2!
+[17483.712541] IPv6: MLD: clamping QRV from 1 to 2!
+[17483.712546] IPv6: MLD: clamping QRV from 1 to 2!
+[17489.651655] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=55941 DF PROTO=2 
+[17489.651667] IPv6: MLD: clamping QRV from 1 to 2!
+[17489.651671] IPv6: MLD: clamping QRV from 1 to 2!
+[17495.796399] IPv6: MLD: clamping QRV from 1 to 2!
+[17495.796414] IPv6: MLD: clamping QRV from 1 to 2!
+[17501.735394] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=56677 DF PROTO=2 
+[17501.735410] IPv6: MLD: clamping QRV from 1 to 2!
+[17501.735414] IPv6: MLD: clamping QRV from 1 to 2!
+[17507.673989] IPv6: MLD: clamping QRV from 1 to 2!
+[17507.673996] IPv6: MLD: clamping QRV from 1 to 2!
+[17513.818269] IPv6: MLD: clamping QRV from 1 to 2!
+[17513.818276] IPv6: MLD: clamping QRV from 1 to 2!
+[17519.654709] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=57749 DF PROTO=2 
+[17519.654712] IPv6: MLD: clamping QRV from 1 to 2!
+[17519.654716] IPv6: MLD: clamping QRV from 1 to 2!
+[17525.798698] IPv6: MLD: clamping QRV from 1 to 2!
+[17525.798703] IPv6: MLD: clamping QRV from 1 to 2!
+[17531.738203] IPv6: MLD: clamping QRV from 1 to 2!
+[17531.738210] IPv6: MLD: clamping QRV from 1 to 2!
+[17537.677039] IPv6: MLD: clamping QRV from 1 to 2!
+[17537.677045] IPv6: MLD: clamping QRV from 1 to 2!
+[17543.821097] IPv6: MLD: clamping QRV from 1 to 2!
+[17543.821102] IPv6: MLD: clamping QRV from 1 to 2!
+[17549.760232] IPv6: MLD: clamping QRV from 1 to 2!
+[17549.760238] IPv6: MLD: clamping QRV from 1 to 2!
+[17555.699398] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=60205 DF PROTO=2 
+[17555.699404] IPv6: MLD: clamping QRV from 1 to 2!
+[17555.903933] IPv6: MLD: clamping QRV from 1 to 2!
+[17561.639050] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=60291 DF PROTO=2 
+[17561.639054] IPv6: MLD: clamping QRV from 1 to 2!
+[17561.843113] IPv6: MLD: clamping QRV from 1 to 2!
+[17567.782571] IPv6: MLD: clamping QRV from 1 to 2!
+[17567.782576] IPv6: MLD: clamping QRV from 1 to 2!
+[17573.721821] IPv6: MLD: clamping QRV from 1 to 2!
+[17573.721828] IPv6: MLD: clamping QRV from 1 to 2!
+[17579.661137] IPv6: MLD: clamping QRV from 1 to 2!
+[17579.661142] IPv6: MLD: clamping QRV from 1 to 2!
+[17579.866145] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:fb:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.251 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=27832 DF PROTO=2 
+[17579.868443] IPv6: MLD: clamping QRV from 1 to 2!
+[17579.868451] IPv6: MLD: clamping QRV from 1 to 2!
+[17580.072940] IPv6: MLD: clamping QRV from 1 to 2!
+[17580.072946] IPv6: MLD: clamping QRV from 1 to 2!
+[17580.072947] IPv6: MLD: clamping QRV from 1 to 2!
+[17580.072948] IPv6: MLD: clamping QRV from 1 to 2!
+[17585.716410] IPv6: MLD: clamping QRV from 1 to 2!
+[17585.716416] IPv6: MLD: clamping QRV from 1 to 2!
+[17591.744734] IPv6: MLD: clamping QRV from 1 to 2!
+[17591.744741] IPv6: MLD: clamping QRV from 1 to 2!
+[17592.472248] IPv6: MLD: clamping QRV from 1 to 2!
+[17592.473631] IPv6: MLD: clamping QRV from 1 to 2!
+[17592.473637] IPv6: MLD: clamping QRV from 1 to 2!
+[17593.767286] IPv6: MLD: clamping QRV from 1 to 2!
+[17597.648119] IPv6: MLD: clamping QRV from 1 to 2!
+[17597.655298] IPv6: MLD: clamping QRV from 1 to 2!
+[17603.827098] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=63211 DF PROTO=2 
+[17603.827395] IPv6: MLD: clamping QRV from 1 to 2!
+[17603.827405] IPv6: MLD: clamping QRV from 1 to 2!
+[17606.088945] IPv6: MLD: clamping QRV from 1 to 2!
+[17606.694519] IPv6: MLD: clamping QRV from 1 to 2!
+[17609.768941] IPv6: MLD: clamping QRV from 1 to 2!
+[17609.768945] IPv6: MLD: clamping QRV from 1 to 2!
+[17615.707572] IPv6: MLD: clamping QRV from 1 to 2!
+[17615.707577] IPv6: MLD: clamping QRV from 1 to 2!
+[17621.851818] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=63443 DF PROTO=2 
+[17621.851832] IPv6: MLD: clamping QRV from 1 to 2!
+[17621.851836] IPv6: MLD: clamping QRV from 1 to 2!
+[17627.788834] IPv6: MLD: clamping QRV from 1 to 2!
+[17627.788839] IPv6: MLD: clamping QRV from 1 to 2!
+[17633.657503] IPv6: MLD: clamping QRV from 1 to 2!
+[17633.662518] IPv6: MLD: clamping QRV from 1 to 2!
+[17639.667731] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=63941 DF PROTO=2 
+[17639.667737] IPv6: MLD: clamping QRV from 1 to 2!
+[17639.667742] IPv6: MLD: clamping QRV from 1 to 2!
+[17645.811236] IPv6: MLD: clamping QRV from 1 to 2!
+[17645.811241] IPv6: MLD: clamping QRV from 1 to 2!
+[17651.750326] IPv6: MLD: clamping QRV from 1 to 2!
+[17651.750331] IPv6: MLD: clamping QRV from 1 to 2!
+[17657.689431] IPv6: MLD: clamping QRV from 1 to 2!
+[17657.689436] IPv6: MLD: clamping QRV from 1 to 2!
+[17663.833704] IPv6: MLD: clamping QRV from 1 to 2!
+[17663.833709] IPv6: MLD: clamping QRV from 1 to 2!
+[17669.773203] IPv6: MLD: clamping QRV from 1 to 2!
+[17669.773209] IPv6: MLD: clamping QRV from 1 to 2!
+[17675.714493] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=65083 DF PROTO=2 
+[17675.714500] IPv6: MLD: clamping QRV from 1 to 2!
+[17675.714504] IPv6: MLD: clamping QRV from 1 to 2!
+[17681.855683] IPv6: MLD: clamping QRV from 1 to 2!
+[17681.855690] IPv6: MLD: clamping QRV from 1 to 2!
+[17687.795570] IPv6: MLD: clamping QRV from 1 to 2!
+[17687.795577] IPv6: MLD: clamping QRV from 1 to 2!
+[17693.734258] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=829 DF PROTO=2 
+[17693.734263] IPv6: MLD: clamping QRV from 1 to 2!
+[17693.734268] IPv6: MLD: clamping QRV from 1 to 2!
+[17699.775821] IPv6: MLD: clamping QRV from 1 to 2!
+[17699.775826] IPv6: MLD: clamping QRV from 1 to 2!
+[17705.714925] IPv6: MLD: clamping QRV from 1 to 2!
+[17705.714931] IPv6: MLD: clamping QRV from 1 to 2!
+[17711.859488] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=1799 DF PROTO=2 
+[17711.859494] IPv6: MLD: clamping QRV from 1 to 2!
+[17711.859498] IPv6: MLD: clamping QRV from 1 to 2!
+[17717.798475] IPv6: MLD: clamping QRV from 1 to 2!
+[17717.798481] IPv6: MLD: clamping QRV from 1 to 2!
+[17723.737127] IPv6: MLD: clamping QRV from 1 to 2!
+[17723.737134] IPv6: MLD: clamping QRV from 1 to 2!
+[17729.881118] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=2616 DF PROTO=2 
+[17729.881195] IPv6: MLD: clamping QRV from 1 to 2!
+[17729.881199] IPv6: MLD: clamping QRV from 1 to 2!
+[17735.820503] IPv6: MLD: clamping QRV from 1 to 2!
+[17735.820509] IPv6: MLD: clamping QRV from 1 to 2!
+[17741.759446] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=3282 DF PROTO=2 
+[17741.759524] IPv6: MLD: clamping QRV from 1 to 2!
+[17741.759528] IPv6: MLD: clamping QRV from 1 to 2!
+[17747.698795] IPv6: MLD: clamping QRV from 1 to 2!
+[17747.698800] IPv6: MLD: clamping QRV from 1 to 2!
+[17753.842969] IPv6: MLD: clamping QRV from 1 to 2!
+[17753.842976] IPv6: MLD: clamping QRV from 1 to 2!
+[17759.781943] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=4091 DF PROTO=2 
+[17759.781949] IPv6: MLD: clamping QRV from 1 to 2!
+[17759.781953] IPv6: MLD: clamping QRV from 1 to 2!
+[17765.723993] IPv6: MLD: clamping QRV from 1 to 2!
+[17765.723999] IPv6: MLD: clamping QRV from 1 to 2!
+[17771.865077] IPv6: MLD: clamping QRV from 1 to 2!
+[17771.865083] IPv6: MLD: clamping QRV from 1 to 2!
+[17777.804220] IPv6: MLD: clamping QRV from 1 to 2!
+[17777.804227] IPv6: MLD: clamping QRV from 1 to 2!
+[17783.743543] IPv6: MLD: clamping QRV from 1 to 2!
+[17783.743550] IPv6: MLD: clamping QRV from 1 to 2!
+[17789.784987] IPv6: MLD: clamping QRV from 1 to 2!
+[17789.784992] IPv6: MLD: clamping QRV from 1 to 2!
+[17795.724793] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=5544 DF PROTO=2 
+[17795.724798] IPv6: MLD: clamping QRV from 1 to 2!
+[17795.724802] IPv6: MLD: clamping QRV from 1 to 2!
+[17801.868165] IPv6: MLD: clamping QRV from 1 to 2!
+[17801.868170] IPv6: MLD: clamping QRV from 1 to 2!
+[17807.807625] IPv6: MLD: clamping QRV from 1 to 2!
+[17807.807630] IPv6: MLD: clamping QRV from 1 to 2!
+[17813.746537] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=7295 DF PROTO=2 
+[17813.746541] IPv6: MLD: clamping QRV from 1 to 2!
+[17813.746545] IPv6: MLD: clamping QRV from 1 to 2!
+[17819.890540] IPv6: MLD: clamping QRV from 1 to 2!
+[17819.890547] IPv6: MLD: clamping QRV from 1 to 2!
+[17825.832977] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=7589 DF PROTO=2 
+[17825.832983] IPv6: MLD: clamping QRV from 1 to 2!
+[17825.832987] IPv6: MLD: clamping QRV from 1 to 2!
+[17831.768945] IPv6: MLD: clamping QRV from 1 to 2!
+[17831.768950] IPv6: MLD: clamping QRV from 1 to 2!
+[17837.912764] IPv6: MLD: clamping QRV from 1 to 2!
+[17837.912769] IPv6: MLD: clamping QRV from 1 to 2!
+[17843.852033] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=8369 DF PROTO=2 
+[17843.852039] IPv6: MLD: clamping QRV from 1 to 2!
+[17843.852043] IPv6: MLD: clamping QRV from 1 to 2!
+[17849.791120] IPv6: MLD: clamping QRV from 1 to 2!
+[17849.791126] IPv6: MLD: clamping QRV from 1 to 2!
+[17855.730408] IPv6: MLD: clamping QRV from 1 to 2!
+[17855.730415] IPv6: MLD: clamping QRV from 1 to 2!
+[17861.874269] IPv6: MLD: clamping QRV from 1 to 2!
+[17861.874274] IPv6: MLD: clamping QRV from 1 to 2!
+[17867.813552] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=9533 DF PROTO=2 
+[17867.813555] IPv6: MLD: clamping QRV from 1 to 2!
+[17867.813559] IPv6: MLD: clamping QRV from 1 to 2!
+[17873.752652] IPv6: MLD: clamping QRV from 1 to 2!
+[17873.752657] IPv6: MLD: clamping QRV from 1 to 2!
+[17879.896688] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=10199 DF PROTO=2 
+[17879.896725] IPv6: MLD: clamping QRV from 1 to 2!
+[17879.896730] IPv6: MLD: clamping QRV from 1 to 2!
+[17885.835810] IPv6: MLD: clamping QRV from 1 to 2!
+[17885.835815] IPv6: MLD: clamping QRV from 1 to 2!
+[17891.775449] IPv6: MLD: clamping QRV from 1 to 2!
+[17891.775460] IPv6: MLD: clamping QRV from 1 to 2!
+[17897.918981] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=11179 DF PROTO=2 
+[17897.919023] IPv6: MLD: clamping QRV from 1 to 2!
+[17897.919027] IPv6: MLD: clamping QRV from 1 to 2!
+[17903.858282] IPv6: MLD: clamping QRV from 1 to 2!
+[17903.858319] IPv6: MLD: clamping QRV from 1 to 2!
+[17909.797592] IPv6: MLD: clamping QRV from 1 to 2!
+[17909.797598] IPv6: MLD: clamping QRV from 1 to 2!
+[17915.739823] IPv6: MLD: clamping QRV from 1 to 2!
+[17915.739829] IPv6: MLD: clamping QRV from 1 to 2!
+[17921.880555] IPv6: MLD: clamping QRV from 1 to 2!
+[17921.880561] IPv6: MLD: clamping QRV from 1 to 2!
+[17927.819760] IPv6: MLD: clamping QRV from 1 to 2!
+[17927.819768] IPv6: MLD: clamping QRV from 1 to 2!
+[17933.758929] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=13172 DF PROTO=2 
+[17933.758941] IPv6: MLD: clamping QRV from 1 to 2!
+[17933.758945] IPv6: MLD: clamping QRV from 1 to 2!
+[17939.902807] IPv6: MLD: clamping QRV from 1 to 2!
+[17939.902812] IPv6: MLD: clamping QRV from 1 to 2!
+[17945.842738] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=13684 DF PROTO=2 
+[17945.842743] IPv6: MLD: clamping QRV from 1 to 2!
+[17945.842746] IPv6: MLD: clamping QRV from 1 to 2!
+[17951.783984] IPv6: MLD: clamping QRV from 1 to 2!
+[17951.783990] IPv6: MLD: clamping QRV from 1 to 2!
+[17957.925331] IPv6: MLD: clamping QRV from 1 to 2!
+[17957.925336] IPv6: MLD: clamping QRV from 1 to 2!
+[17963.864436] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=14798 DF PROTO=2 
+[17963.864440] IPv6: MLD: clamping QRV from 1 to 2!
+[17963.864444] IPv6: MLD: clamping QRV from 1 to 2!
+[17969.803574] IPv6: MLD: clamping QRV from 1 to 2!
+[17969.803578] IPv6: MLD: clamping QRV from 1 to 2!
+[17975.947581] IPv6: MLD: clamping QRV from 1 to 2!
+[17975.947588] IPv6: MLD: clamping QRV from 1 to 2!
+[17981.784417] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=15801 DF PROTO=2 
+[17981.784421] IPv6: MLD: clamping QRV from 1 to 2!
+[17981.784425] IPv6: MLD: clamping QRV from 1 to 2!
+[17987.928251] IPv6: MLD: clamping QRV from 1 to 2!
+[17987.928255] IPv6: MLD: clamping QRV from 1 to 2!
+[17993.867515] IPv6: MLD: clamping QRV from 1 to 2!
+[17993.867520] IPv6: MLD: clamping QRV from 1 to 2!
+[17999.806749] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=16405 DF PROTO=2 
+[17999.806752] IPv6: MLD: clamping QRV from 1 to 2!
+[17999.806771] IPv6: MLD: clamping QRV from 1 to 2!
+[18005.950690] IPv6: MLD: clamping QRV from 1 to 2!
+[18005.950695] IPv6: MLD: clamping QRV from 1 to 2!
+[18011.787642] IPv6: MLD: clamping QRV from 1 to 2!
+[18011.787649] IPv6: MLD: clamping QRV from 1 to 2!
+[18017.931413] IPv6: MLD: clamping QRV from 1 to 2!
+[18017.931418] IPv6: MLD: clamping QRV from 1 to 2!
+[18023.870525] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=18076 DF PROTO=2 
+[18023.870531] IPv6: MLD: clamping QRV from 1 to 2!
+[18023.870535] IPv6: MLD: clamping QRV from 1 to 2!
+[18029.809822] IPv6: MLD: clamping QRV from 1 to 2!
+[18029.809827] IPv6: MLD: clamping QRV from 1 to 2!
+[18035.953777] IPv6: MLD: clamping QRV from 1 to 2!
+[18035.953782] IPv6: MLD: clamping QRV from 1 to 2!
+[18041.892908] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=18862 DF PROTO=2 
+[18041.892913] IPv6: MLD: clamping QRV from 1 to 2!
+[18042.097817] IPv6: MLD: clamping QRV from 1 to 2!
+[18047.832785] IPv6: MLD: clamping QRV from 1 to 2!
+[18047.832791] IPv6: MLD: clamping QRV from 1 to 2!
+[18053.773227] IPv6: MLD: clamping QRV from 1 to 2!
+[18053.975798] IPv6: MLD: clamping QRV from 1 to 2!
+[18059.915482] IPv6: MLD: clamping QRV from 1 to 2!
+[18059.915488] IPv6: MLD: clamping QRV from 1 to 2!
+[18065.857090] IPv6: MLD: clamping QRV from 1 to 2!
+[18065.857094] IPv6: MLD: clamping QRV from 1 to 2!
+[18071.793798] IPv6: MLD: clamping QRV from 1 to 2!
+[18071.793803] IPv6: MLD: clamping QRV from 1 to 2!
+[18077.937551] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=19499 DF PROTO=2 
+[18077.937638] IPv6: MLD: clamping QRV from 1 to 2!
+[18077.937641] IPv6: MLD: clamping QRV from 1 to 2!
+[18083.876761] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=20026 DF PROTO=2 
+[18083.876769] IPv6: MLD: clamping QRV from 1 to 2!
+[18083.876773] IPv6: MLD: clamping QRV from 1 to 2!
+[18089.816001] IPv6: MLD: clamping QRV from 1 to 2!
+[18089.816008] IPv6: MLD: clamping QRV from 1 to 2!
+[18095.960039] IPv6: MLD: clamping QRV from 1 to 2!
+[18095.960046] IPv6: MLD: clamping QRV from 1 to 2!
+[18101.899087] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=20457 DF PROTO=2 
+[18101.899089] IPv6: MLD: clamping QRV from 1 to 2!
+[18101.899094] IPv6: MLD: clamping QRV from 1 to 2!
+[18107.838379] IPv6: MLD: clamping QRV from 1 to 2!
+[18113.982304] IPv6: MLD: clamping QRV from 1 to 2!
+[18113.982310] IPv6: MLD: clamping QRV from 1 to 2!
+[18119.921613] IPv6: MLD: clamping QRV from 1 to 2!
+[18119.921617] IPv6: MLD: clamping QRV from 1 to 2!
+[18125.860777] IPv6: MLD: clamping QRV from 1 to 2!
+[18125.860783] IPv6: MLD: clamping QRV from 1 to 2!
+[18131.799836] IPv6: MLD: clamping QRV from 1 to 2!
+[18131.799841] IPv6: MLD: clamping QRV from 1 to 2!
+[18137.867484] IPv6: MLD: clamping QRV from 1 to 2!
+[18137.867490] IPv6: MLD: clamping QRV from 1 to 2!
+[18143.883002] IPv6: MLD: clamping QRV from 1 to 2!
+[18143.883008] IPv6: MLD: clamping QRV from 1 to 2!
+[18149.822615] IPv6: MLD: clamping QRV from 1 to 2!
+[18149.822621] IPv6: MLD: clamping QRV from 1 to 2!
+[18155.968994] IPv6: MLD: clamping QRV from 1 to 2!
+[18155.968999] IPv6: MLD: clamping QRV from 1 to 2!
+[18161.905223] IPv6: MLD: clamping QRV from 1 to 2!
+[18161.908007] IPv6: MLD: clamping QRV from 1 to 2!
+[18167.844548] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=23818 DF PROTO=2 
+[18167.844551] IPv6: MLD: clamping QRV from 1 to 2!
+[18167.844555] IPv6: MLD: clamping QRV from 1 to 2!
+[18173.988531] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=24036 DF PROTO=2 
+[18173.988550] IPv6: MLD: clamping QRV from 1 to 2!
+[18173.988554] IPv6: MLD: clamping QRV from 1 to 2!
+[18179.928231] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=24500 DF PROTO=2 
+[18179.928236] IPv6: MLD: clamping QRV from 1 to 2!
+[18180.132457] IPv6: MLD: clamping QRV from 1 to 2!
+[18185.866829] IPv6: MLD: clamping QRV from 1 to 2!
+[18185.866838] IPv6: MLD: clamping QRV from 1 to 2!
+[18192.010984] IPv6: MLD: clamping QRV from 1 to 2!
+[18192.010989] IPv6: MLD: clamping QRV from 1 to 2!
+[18198.054694] IPv6: MLD: clamping QRV from 1 to 2!
+[18198.054713] IPv6: MLD: clamping QRV from 1 to 2!
+[18203.991442] IPv6: MLD: clamping QRV from 1 to 2!
+[18204.196279] IPv6: MLD: clamping QRV from 1 to 2!
+[18209.930931] IPv6: MLD: clamping QRV from 1 to 2!
+[18209.930940] IPv6: MLD: clamping QRV from 1 to 2!
+[18215.871885] IPv6: MLD: clamping QRV from 1 to 2!
+[18215.871890] IPv6: MLD: clamping QRV from 1 to 2!
+[18222.016498] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=27450 DF PROTO=2 
+[18222.016503] IPv6: MLD: clamping QRV from 1 to 2!
+[18222.016507] IPv6: MLD: clamping QRV from 1 to 2!
+[18227.955127] IPv6: MLD: clamping QRV from 1 to 2!
+[18227.955133] IPv6: MLD: clamping QRV from 1 to 2!
+[18233.894883] IPv6: MLD: clamping QRV from 1 to 2!
+[18233.894888] IPv6: MLD: clamping QRV from 1 to 2!
+[18240.038271] IPv6: MLD: clamping QRV from 1 to 2!
+[18240.038277] IPv6: MLD: clamping QRV from 1 to 2!
+[18245.977423] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=28126 DF PROTO=2 
+[18245.977469] IPv6: MLD: clamping QRV from 1 to 2!
+[18245.977474] IPv6: MLD: clamping QRV from 1 to 2!
+[18251.916579] IPv6: MLD: clamping QRV from 1 to 2!
+[18251.916585] IPv6: MLD: clamping QRV from 1 to 2!
+[18257.854137] IPv6: MLD: clamping QRV from 1 to 2!
+[18257.854137] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=28489 DF PROTO=2 
+[18257.854149] IPv6: MLD: clamping QRV from 1 to 2!
+[18263.997796] IPv6: MLD: clamping QRV from 1 to 2!
+[18263.997801] IPv6: MLD: clamping QRV from 1 to 2!
+[18269.937040] IPv6: MLD: clamping QRV from 1 to 2!
+[18269.937054] IPv6: MLD: clamping QRV from 1 to 2!
+[18275.876114] IPv6: MLD: clamping QRV from 1 to 2!
+[18275.876123] IPv6: MLD: clamping QRV from 1 to 2!
+[18282.020216] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=29310 DF PROTO=2 
+[18282.020219] IPv6: MLD: clamping QRV from 1 to 2!
+[18282.020223] IPv6: MLD: clamping QRV from 1 to 2!
+[18287.959262] IPv6: MLD: clamping QRV from 1 to 2!
+[18287.959267] IPv6: MLD: clamping QRV from 1 to 2!
+[18294.000975] IPv6: MLD: clamping QRV from 1 to 2!
+[18294.000982] IPv6: MLD: clamping QRV from 1 to 2!
+[18299.940093] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=30341 DF PROTO=2 
+[18299.940162] IPv6: MLD: clamping QRV from 1 to 2!
+[18299.940166] IPv6: MLD: clamping QRV from 1 to 2!
+[18305.879210] IPv6: MLD: clamping QRV from 1 to 2!
+[18305.879217] IPv6: MLD: clamping QRV from 1 to 2!
+[18312.023384] IPv6: MLD: clamping QRV from 1 to 2!
+[18312.023390] IPv6: MLD: clamping QRV from 1 to 2!
+[18317.963131] IPv6: MLD: clamping QRV from 1 to 2!
+[18317.963138] IPv6: MLD: clamping QRV from 1 to 2!
+[18323.904364] IPv6: MLD: clamping QRV from 1 to 2!
+[18323.904369] IPv6: MLD: clamping QRV from 1 to 2!
+[18330.045823] IPv6: MLD: clamping QRV from 1 to 2!
+[18330.045837] IPv6: MLD: clamping QRV from 1 to 2!
+[18335.985251] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=31926 DF PROTO=2 
+[18335.985257] IPv6: MLD: clamping QRV from 1 to 2!
+[18335.985262] IPv6: MLD: clamping QRV from 1 to 2!
+[18341.923874] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=32087 DF PROTO=2 
+[18341.923954] IPv6: MLD: clamping QRV from 1 to 2!
+[18341.923958] IPv6: MLD: clamping QRV from 1 to 2!
+[18347.863085] IPv6: MLD: clamping QRV from 1 to 2!
+[18347.863085] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=32338 DF PROTO=2 
+[18347.863091] IPv6: MLD: clamping QRV from 1 to 2!
+[18354.007770] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=32374 DF PROTO=2 
+[18354.007776] IPv6: MLD: clamping QRV from 1 to 2!
+[18354.007780] IPv6: MLD: clamping QRV from 1 to 2!
+[18359.946441] IPv6: MLD: clamping QRV from 1 to 2!
+[18359.946448] IPv6: MLD: clamping QRV from 1 to 2!
+[18365.885396] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=32929 DF PROTO=2 
+[18365.885440] IPv6: MLD: clamping QRV from 1 to 2!
+[18365.885444] IPv6: MLD: clamping QRV from 1 to 2!
+[18372.029576] IPv6: MLD: clamping QRV from 1 to 2!
+[18372.029580] IPv6: MLD: clamping QRV from 1 to 2!
+[18377.968603] IPv6: MLD: clamping QRV from 1 to 2!
+[18377.968607] IPv6: MLD: clamping QRV from 1 to 2!
+[18383.907834] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=33667 DF PROTO=2 
+[18383.907839] IPv6: MLD: clamping QRV from 1 to 2!
+[18383.907842] IPv6: MLD: clamping QRV from 1 to 2!
+[18390.051797] IPv6: MLD: clamping QRV from 1 to 2!
+[18390.051804] IPv6: MLD: clamping QRV from 1 to 2!
+[18395.990943] IPv6: MLD: clamping QRV from 1 to 2!
+[18395.990948] IPv6: MLD: clamping QRV from 1 to 2!
+[18401.929889] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=34952 DF PROTO=2 
+[18401.930159] IPv6: MLD: clamping QRV from 1 to 2!
+[18401.930163] IPv6: MLD: clamping QRV from 1 to 2!
+[18408.079262] IPv6: MLD: clamping QRV from 1 to 2!
+[18408.079269] IPv6: MLD: clamping QRV from 1 to 2!
+[18414.025643] IPv6: MLD: clamping QRV from 1 to 2!
+[18414.219752] IPv6: MLD: clamping QRV from 1 to 2!
+[18419.954542] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=35661 DF PROTO=2 
+[18419.954546] IPv6: MLD: clamping QRV from 1 to 2!
+[18419.954550] IPv6: MLD: clamping QRV from 1 to 2!
+[18425.893639] IPv6: MLD: clamping QRV from 1 to 2!
+[18425.893645] IPv6: MLD: clamping QRV from 1 to 2!
+[18432.037618] IPv6: MLD: clamping QRV from 1 to 2!
+[18432.037625] IPv6: MLD: clamping QRV from 1 to 2!
+[18437.974479] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=37288 DF PROTO=2 
+[18437.974947] IPv6: MLD: clamping QRV from 1 to 2!
+[18437.974951] IPv6: MLD: clamping QRV from 1 to 2!
+[18443.916626] IPv6: MLD: clamping QRV from 1 to 2!
+[18443.916631] IPv6: MLD: clamping QRV from 1 to 2!
+[18450.060041] IPv6: MLD: clamping QRV from 1 to 2!
+[18450.060046] IPv6: MLD: clamping QRV from 1 to 2!
+[18455.999181] IPv6: MLD: clamping QRV from 1 to 2!
+[18455.999187] IPv6: MLD: clamping QRV from 1 to 2!
+[18461.938963] IPv6: MLD: clamping QRV from 1 to 2!
+[18461.938968] IPv6: MLD: clamping QRV from 1 to 2!
+[18468.082387] IPv6: MLD: clamping QRV from 1 to 2!
+[18474.022131] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=39634 DF PROTO=2 
+[18474.022137] IPv6: MLD: clamping QRV from 1 to 2!
+[18474.022141] IPv6: MLD: clamping QRV from 1 to 2!
+[18479.958849] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=40142 DF PROTO=2 
+[18479.961157] IPv6: MLD: clamping QRV from 1 to 2!
+[18479.961161] IPv6: MLD: clamping QRV from 1 to 2!
+[18485.899222] IPv6: MLD: clamping QRV from 1 to 2!
+[18485.899242] IPv6: MLD: clamping QRV from 1 to 2!
+[18491.939613] IPv6: MLD: clamping QRV from 1 to 2!
+[18491.939617] IPv6: MLD: clamping QRV from 1 to 2!
+[18504.022950] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=41494 DF PROTO=2 
+[18504.022956] IPv6: MLD: clamping QRV from 1 to 2!
+[18504.022960] IPv6: MLD: clamping QRV from 1 to 2!
+[18509.903561] IPv6: MLD: clamping QRV from 1 to 2!
+[18509.916183] IPv6: MLD: clamping QRV from 1 to 2!
+[18516.114548] IPv6: MLD: clamping QRV from 1 to 2!
+[18516.114555] IPv6: MLD: clamping QRV from 1 to 2!
+[18522.047645] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=42593 DF PROTO=2 
+[18522.047729] IPv6: MLD: clamping QRV from 1 to 2!
+[18522.047733] IPv6: MLD: clamping QRV from 1 to 2!
+[18533.925213] IPv6: MLD: clamping QRV from 1 to 2!
+[18534.127918] IPv6: MLD: clamping QRV from 1 to 2!
+[18540.069400] IPv6: MLD: clamping QRV from 1 to 2!
+[18540.069405] IPv6: MLD: clamping QRV from 1 to 2!
+[18546.008420] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=43935 DF PROTO=2 
+[18546.008482] IPv6: MLD: clamping QRV from 1 to 2!
+[18546.008486] IPv6: MLD: clamping QRV from 1 to 2!
+[18546.667852] usb 3-4: reset high-speed USB device number 13 using xhci_hcd
+[18551.946429] IPv6: MLD: clamping QRV from 1 to 2!
+[18551.946434] IPv6: MLD: clamping QRV from 1 to 2!
+[18558.089729] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=44685 DF PROTO=2 
+[18558.089740] IPv6: MLD: clamping QRV from 1 to 2!
+[18558.089746] IPv6: MLD: clamping QRV from 1 to 2!
+[18564.028966] IPv6: MLD: clamping QRV from 1 to 2!
+[18564.028970] IPv6: MLD: clamping QRV from 1 to 2!
+[18569.968016] IPv6: MLD: clamping QRV from 1 to 2!
+[18569.968021] IPv6: MLD: clamping QRV from 1 to 2!
+[18576.111948] IPv6: MLD: clamping QRV from 1 to 2!
+[18576.111959] IPv6: MLD: clamping QRV from 1 to 2!
+[18582.051124] IPv6: MLD: clamping QRV from 1 to 2!
+[18582.051124] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=46156 DF PROTO=2 
+[18582.051130] IPv6: MLD: clamping QRV from 1 to 2!
+[18594.137125] IPv6: MLD: clamping QRV from 1 to 2!
+[18594.137146] IPv6: MLD: clamping QRV from 1 to 2!
+[18600.073265] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=47181 DF PROTO=2 
+[18600.074085] IPv6: MLD: clamping QRV from 1 to 2!
+[18600.074090] IPv6: MLD: clamping QRV from 1 to 2!
+[18606.013328] IPv6: MLD: clamping QRV from 1 to 2!
+[18606.013332] IPv6: MLD: clamping QRV from 1 to 2!
+[18611.952216] IPv6: MLD: clamping QRV from 1 to 2!
+[18611.952222] IPv6: MLD: clamping QRV from 1 to 2!
+[18618.095705] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=48063 DF PROTO=2 
+[18618.098518] IPv6: MLD: clamping QRV from 1 to 2!
+[18618.098523] IPv6: MLD: clamping QRV from 1 to 2!
+[18624.035681] IPv6: MLD: clamping QRV from 1 to 2!
+[18624.035687] IPv6: MLD: clamping QRV from 1 to 2!
+[18629.974160] IPv6: MLD: clamping QRV from 1 to 2!
+[18629.974166] IPv6: MLD: clamping QRV from 1 to 2!
+[18636.118165] IPv6: MLD: clamping QRV from 1 to 2!
+[18636.118169] IPv6: MLD: clamping QRV from 1 to 2!
+[18642.057399] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=49021 DF PROTO=2 
+[18642.057405] IPv6: MLD: clamping QRV from 1 to 2!
+[18642.057409] IPv6: MLD: clamping QRV from 1 to 2!
+[18647.999155] IPv6: MLD: clamping QRV from 1 to 2!
+[18647.999162] IPv6: MLD: clamping QRV from 1 to 2!
+[18654.140662] IPv6: MLD: clamping QRV from 1 to 2!
+[18654.140667] IPv6: MLD: clamping QRV from 1 to 2!
+[18660.079692] IPv6: MLD: clamping QRV from 1 to 2!
+[18660.079697] IPv6: MLD: clamping QRV from 1 to 2!
+[18666.021760] IPv6: MLD: clamping QRV from 1 to 2!
+[18666.021765] IPv6: MLD: clamping QRV from 1 to 2!
+[18672.162799] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=50668 DF PROTO=2 
+[18672.162877] IPv6: MLD: clamping QRV from 1 to 2!
+[18672.162880] IPv6: MLD: clamping QRV from 1 to 2!
+[18678.101977] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=51236 DF PROTO=2 
+[18678.101985] IPv6: MLD: clamping QRV from 1 to 2!
+[18678.101991] IPv6: MLD: clamping QRV from 1 to 2!
+[18684.041456] IPv6: MLD: clamping QRV from 1 to 2!
+[18684.041463] IPv6: MLD: clamping QRV from 1 to 2!
+[18690.185257] IPv6: MLD: clamping QRV from 1 to 2!
+[18690.185263] IPv6: MLD: clamping QRV from 1 to 2!
+[18696.125050] IPv6: MLD: clamping QRV from 1 to 2!
+[18696.125056] IPv6: MLD: clamping QRV from 1 to 2!
+[18696.947400] IPv6: MLD: clamping QRV from 1 to 2!
+[18697.151309] IPv6: MLD: clamping QRV from 1 to 2!
+[18697.151316] IPv6: MLD: clamping QRV from 1 to 2!
+[18697.151318] IPv6: MLD: clamping QRV from 1 to 2!
+[18702.063365] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=52159 DF PROTO=2 
+[18702.063505] IPv6: MLD: clamping QRV from 1 to 2!
+[18702.268145] IPv6: MLD: clamping QRV from 1 to 2!
+[18708.107737] IPv6: MLD: clamping QRV from 1 to 2!
+[18708.107743] IPv6: MLD: clamping QRV from 1 to 2!
+[18714.044305] IPv6: MLD: clamping QRV from 1 to 2!
+[18714.248936] IPv6: MLD: clamping QRV from 1 to 2!
+[18720.188248] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=52974 DF PROTO=2 
+[18720.188249] IPv6: MLD: clamping QRV from 1 to 2!
+[18720.188254] IPv6: MLD: clamping QRV from 1 to 2!
+[18726.127552] IPv6: MLD: clamping QRV from 1 to 2!
+[18726.127558] IPv6: MLD: clamping QRV from 1 to 2!
+[18732.066783] IPv6: MLD: clamping QRV from 1 to 2!
+[18732.066789] IPv6: MLD: clamping QRV from 1 to 2!
+[18738.005701] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=53365 DF PROTO=2 
+[18738.008539] IPv6: MLD: clamping QRV from 1 to 2!
+[18738.008545] IPv6: MLD: clamping QRV from 1 to 2!
+[18744.149795] IPv6: MLD: clamping QRV from 1 to 2!
+[18744.149801] IPv6: MLD: clamping QRV from 1 to 2!
+[18750.088954] IPv6: MLD: clamping QRV from 1 to 2!
+[18750.088960] IPv6: MLD: clamping QRV from 1 to 2!
+[18756.028264] IPv6: MLD: clamping QRV from 1 to 2!
+[18756.028269] IPv6: MLD: clamping QRV from 1 to 2!
+[18762.172248] IPv6: MLD: clamping QRV from 1 to 2!
+[18762.172262] IPv6: MLD: clamping QRV from 1 to 2!
+[18768.111205] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=55332 DF PROTO=2 
+[18768.113990] IPv6: MLD: clamping QRV from 1 to 2!
+[18768.113999] IPv6: MLD: clamping QRV from 1 to 2!
+[18774.050562] IPv6: MLD: clamping QRV from 1 to 2!
+[18774.050568] IPv6: MLD: clamping QRV from 1 to 2!
+[18780.194629] IPv6: MLD: clamping QRV from 1 to 2!
+[18780.194635] IPv6: MLD: clamping QRV from 1 to 2!
+[18786.031330] IPv6: MLD: clamping QRV from 1 to 2!
+[18786.031336] IPv6: MLD: clamping QRV from 1 to 2!
+[18792.175455] IPv6: MLD: clamping QRV from 1 to 2!
+[18792.175459] IPv6: MLD: clamping QRV from 1 to 2!
+[18798.114321] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=56665 DF PROTO=2 
+[18798.117195] IPv6: MLD: clamping QRV from 1 to 2!
+[18798.117200] IPv6: MLD: clamping QRV from 1 to 2!
+[18804.053671] IPv6: MLD: clamping QRV from 1 to 2!
+[18804.053677] IPv6: MLD: clamping QRV from 1 to 2!
+[18810.200497] IPv6: MLD: clamping QRV from 1 to 2!
+[18810.200502] IPv6: MLD: clamping QRV from 1 to 2!
+[18816.137638] IPv6: MLD: clamping QRV from 1 to 2!
+[18816.137644] IPv6: MLD: clamping QRV from 1 to 2!
+[18822.078048] IPv6: MLD: clamping QRV from 1 to 2!
+[18822.078055] IPv6: MLD: clamping QRV from 1 to 2!
+[18828.221875] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=58898 DF PROTO=2 
+[18828.221911] IPv6: MLD: clamping QRV from 1 to 2!
+[18828.221914] IPv6: MLD: clamping QRV from 1 to 2!
+[18834.160484] IPv6: MLD: clamping QRV from 1 to 2!
+[18834.160489] IPv6: MLD: clamping QRV from 1 to 2!
+[18840.098818] IPv6: MLD: clamping QRV from 1 to 2!
+[18840.098825] IPv6: MLD: clamping QRV from 1 to 2!
+[18846.243091] IPv6: MLD: clamping QRV from 1 to 2!
+[18846.243096] IPv6: MLD: clamping QRV from 1 to 2!
+[18852.181465] IPv6: MLD: clamping QRV from 1 to 2!
+[18852.181470] IPv6: MLD: clamping QRV from 1 to 2!
+[18858.120681] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=61121 DF PROTO=2 
+[18858.123358] IPv6: MLD: clamping QRV from 1 to 2!
+[18858.123365] IPv6: MLD: clamping QRV from 1 to 2!
+[18864.060342] IPv6: MLD: clamping QRV from 1 to 2!
+[18870.203760] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=61408 DF PROTO=2 
+[18870.203828] IPv6: MLD: clamping QRV from 1 to 2!
+[18870.203832] IPv6: MLD: clamping QRV from 1 to 2!
+[18876.143638] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=61533 DF PROTO=2 
+[18876.143646] IPv6: MLD: clamping QRV from 1 to 2!
+[18876.143650] IPv6: MLD: clamping QRV from 1 to 2!
+[18882.082123] IPv6: MLD: clamping QRV from 1 to 2!
+[18882.082131] IPv6: MLD: clamping QRV from 1 to 2!
+[18888.226246] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=62183 DF PROTO=2 
+[18888.226250] IPv6: MLD: clamping QRV from 1 to 2!
+[18888.226254] IPv6: MLD: clamping QRV from 1 to 2!
+[18894.167412] IPv6: MLD: clamping QRV from 1 to 2!
+[18894.167417] IPv6: MLD: clamping QRV from 1 to 2!
+[18900.104564] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=63030 DF PROTO=2 
+[18900.104568] IPv6: MLD: clamping QRV from 1 to 2!
+[18900.104571] IPv6: MLD: clamping QRV from 1 to 2!
+[18906.249295] IPv6: MLD: clamping QRV from 1 to 2!
+[18906.249301] IPv6: MLD: clamping QRV from 1 to 2!
+[18912.188095] IPv6: MLD: clamping QRV from 1 to 2!
+[18912.188101] IPv6: MLD: clamping QRV from 1 to 2!
+[18918.126797] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=64159 DF PROTO=2 
+[18918.126802] IPv6: MLD: clamping QRV from 1 to 2!
+[18918.126808] IPv6: MLD: clamping QRV from 1 to 2!
+[18924.271644] IPv6: MLD: clamping QRV from 1 to 2!
+[18924.271649] IPv6: MLD: clamping QRV from 1 to 2!
+[18930.210004] IPv6: MLD: clamping QRV from 1 to 2!
+[18930.210009] IPv6: MLD: clamping QRV from 1 to 2!
+[18936.149221] IPv6: MLD: clamping QRV from 1 to 2!
+[18936.149226] IPv6: MLD: clamping QRV from 1 to 2!
+[18942.088487] IPv6: MLD: clamping QRV from 1 to 2!
+[18942.088494] IPv6: MLD: clamping QRV from 1 to 2!
+[18948.232214] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=119 DF PROTO=2 
+[18948.234935] IPv6: MLD: clamping QRV from 1 to 2!
+[18948.234943] IPv6: MLD: clamping QRV from 1 to 2!
+[18954.273939] IPv6: MLD: clamping QRV from 1 to 2!
+[18954.273946] IPv6: MLD: clamping QRV from 1 to 2!
+[18960.213137] IPv6: MLD: clamping QRV from 1 to 2!
+[18960.213143] IPv6: MLD: clamping QRV from 1 to 2!
+[18966.152417] IPv6: MLD: clamping QRV from 1 to 2!
+[18966.152421] IPv6: MLD: clamping QRV from 1 to 2!
+[18972.194467] IPv6: MLD: clamping QRV from 1 to 2!
+[18972.194472] IPv6: MLD: clamping QRV from 1 to 2!
+[18978.133093] IPv6: MLD: clamping QRV from 1 to 2!
+[18978.133098] IPv6: MLD: clamping QRV from 1 to 2!
+[18984.277687] IPv6: MLD: clamping QRV from 1 to 2!
+[18984.277692] IPv6: MLD: clamping QRV from 1 to 2!
+[18990.216281] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=2264 DF PROTO=2 
+[18990.216284] IPv6: MLD: clamping QRV from 1 to 2!
+[18990.216289] IPv6: MLD: clamping QRV from 1 to 2!
+[18996.155371] IPv6: MLD: clamping QRV from 1 to 2!
+[18996.155376] IPv6: MLD: clamping QRV from 1 to 2!
+[19002.299511] IPv6: MLD: clamping QRV from 1 to 2!
+[19002.299517] IPv6: MLD: clamping QRV from 1 to 2!
+[19008.238533] IPv6: MLD: clamping QRV from 1 to 2!
+[19008.238543] IPv6: MLD: clamping QRV from 1 to 2!
+[19014.177893] IPv6: MLD: clamping QRV from 1 to 2!
+[19020.116886] IPv6: MLD: clamping QRV from 1 to 2!
+[19020.116891] IPv6: MLD: clamping QRV from 1 to 2!
+[19026.261123] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=3761 DF PROTO=2 
+[19026.261129] IPv6: MLD: clamping QRV from 1 to 2!
+[19026.261133] IPv6: MLD: clamping QRV from 1 to 2!
+[19032.200418] IPv6: MLD: clamping QRV from 1 to 2!
+[19032.200423] IPv6: MLD: clamping QRV from 1 to 2!
+[19038.139186] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=4418 DF PROTO=2 
+[19038.139190] IPv6: MLD: clamping QRV from 1 to 2!
+[19038.139195] IPv6: MLD: clamping QRV from 1 to 2!
+[19044.180769] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=4508 DF PROTO=2 
+[19044.180852] IPv6: MLD: clamping QRV from 1 to 2!
+[19044.180856] IPv6: MLD: clamping QRV from 1 to 2!
+[19050.120101] IPv6: MLD: clamping QRV from 1 to 2!
+[19050.120106] IPv6: MLD: clamping QRV from 1 to 2!
+[19056.274294] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=4993 DF PROTO=2 
+[19056.274297] IPv6: MLD: clamping QRV from 1 to 2!
+[19056.274302] IPv6: MLD: clamping QRV from 1 to 2!
+[19062.203209] IPv6: MLD: clamping QRV from 1 to 2!
+[19062.203223] IPv6: MLD: clamping QRV from 1 to 2!
+[19068.142270] IPv6: MLD: clamping QRV from 1 to 2!
+[19068.142275] IPv6: MLD: clamping QRV from 1 to 2!
+[19074.286537] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=5374 DF PROTO=2 
+[19074.286542] IPv6: MLD: clamping QRV from 1 to 2!
+[19074.286547] IPv6: MLD: clamping QRV from 1 to 2!
+[19080.225743] IPv6: MLD: clamping QRV from 1 to 2!
+[19080.225751] IPv6: MLD: clamping QRV from 1 to 2!
+[19086.165349] IPv6: MLD: clamping QRV from 1 to 2!
+[19086.165355] IPv6: MLD: clamping QRV from 1 to 2!
+[19092.309126] IPv6: MLD: clamping QRV from 1 to 2!
+[19092.309131] IPv6: MLD: clamping QRV from 1 to 2!
+[19098.247944] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=6403 DF PROTO=2 
+[19098.247947] IPv6: MLD: clamping QRV from 1 to 2!
+[19098.247951] IPv6: MLD: clamping QRV from 1 to 2!
+[19104.187091] IPv6: MLD: clamping QRV from 1 to 2!
+[19104.187095] IPv6: MLD: clamping QRV from 1 to 2!
+[19110.331137] IPv6: MLD: clamping QRV from 1 to 2!
+[19110.331142] IPv6: MLD: clamping QRV from 1 to 2!
+[19116.270243] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=7033 DF PROTO=2 
+[19116.270247] IPv6: MLD: clamping QRV from 1 to 2!
+[19116.270251] IPv6: MLD: clamping QRV from 1 to 2!
+[19122.209147] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=7037 DF PROTO=2 
+[19122.211416] IPv6: MLD: clamping QRV from 1 to 2!
+[19122.211421] IPv6: MLD: clamping QRV from 1 to 2!
+[19128.150460] IPv6: MLD: clamping QRV from 1 to 2!
+[19128.150468] IPv6: MLD: clamping QRV from 1 to 2!
+[19134.294559] IPv6: MLD: clamping QRV from 1 to 2!
+[19134.294567] IPv6: MLD: clamping QRV from 1 to 2!
+[19140.231842] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=7590 DF PROTO=2 
+[19140.231847] IPv6: MLD: clamping QRV from 1 to 2!
+[19140.231851] IPv6: MLD: clamping QRV from 1 to 2!
+[19146.170868] IPv6: MLD: clamping QRV from 1 to 2!
+[19146.170874] IPv6: MLD: clamping QRV from 1 to 2!
+[19152.314753] IPv6: MLD: clamping QRV from 1 to 2!
+[19152.519515] IPv6: MLD: clamping QRV from 1 to 2!
+[19158.253997] IPv6: MLD: clamping QRV from 1 to 2!
+[19158.253997] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=8837 DF PROTO=2 
+[19158.254003] IPv6: MLD: clamping QRV from 1 to 2!
+[19164.193351] IPv6: MLD: clamping QRV from 1 to 2!
+[19164.193358] IPv6: MLD: clamping QRV from 1 to 2!
+[19170.337307] IPv6: MLD: clamping QRV from 1 to 2!
+[19170.337314] IPv6: MLD: clamping QRV from 1 to 2!
+[19176.277044] IPv6: MLD: clamping QRV from 1 to 2!
+[19176.277050] IPv6: MLD: clamping QRV from 1 to 2!
+[19182.215495] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=9906 DF PROTO=2 
+[19182.215500] IPv6: MLD: clamping QRV from 1 to 2!
+[19182.215505] IPv6: MLD: clamping QRV from 1 to 2!
+[19188.359547] IPv6: MLD: clamping QRV from 1 to 2!
+[19188.359552] IPv6: MLD: clamping QRV from 1 to 2!
+[19194.298972] IPv6: MLD: clamping QRV from 1 to 2!
+[19200.340365] IPv6: MLD: clamping QRV from 1 to 2!
+[19200.340374] IPv6: MLD: clamping QRV from 1 to 2!
+[19206.279457] IPv6: MLD: clamping QRV from 1 to 2!
+[19206.279461] IPv6: MLD: clamping QRV from 1 to 2!
+[19212.218708] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=11390 DF PROTO=2 
+[19212.218710] IPv6: MLD: clamping QRV from 1 to 2!
+[19212.218715] IPv6: MLD: clamping QRV from 1 to 2!
+[19218.362376] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=11440 DF PROTO=2 
+[19218.362813] IPv6: MLD: clamping QRV from 1 to 2!
+[19218.362823] IPv6: MLD: clamping QRV from 1 to 2!
+[19224.301821] IPv6: MLD: clamping QRV from 1 to 2!
+[19224.301828] IPv6: MLD: clamping QRV from 1 to 2!
+[19230.241011] IPv6: MLD: clamping QRV from 1 to 2!
+[19230.241019] IPv6: MLD: clamping QRV from 1 to 2!
+[19236.183109] IPv6: MLD: clamping QRV from 1 to 2!
+[19236.183116] IPv6: MLD: clamping QRV from 1 to 2!
+[19242.324184] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=12626 DF PROTO=2 
+[19242.324186] IPv6: MLD: clamping QRV from 1 to 2!
+[19242.324190] IPv6: MLD: clamping QRV from 1 to 2!
+[19248.263539] IPv6: MLD: clamping QRV from 1 to 2!
+[19248.263544] IPv6: MLD: clamping QRV from 1 to 2!
+[19254.202538] IPv6: MLD: clamping QRV from 1 to 2!
+[19254.202542] IPv6: MLD: clamping QRV from 1 to 2!
+[19260.346490] IPv6: MLD: clamping QRV from 1 to 2!
+[19260.346495] IPv6: MLD: clamping QRV from 1 to 2!
+[19266.285654] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=13652 DF PROTO=2 
+[19266.285718] IPv6: MLD: clamping QRV from 1 to 2!
+[19266.285722] IPv6: MLD: clamping QRV from 1 to 2!
+[19272.327921] IPv6: MLD: clamping QRV from 1 to 2!
+[19272.327928] IPv6: MLD: clamping QRV from 1 to 2!
+[19278.266386] IPv6: MLD: clamping QRV from 1 to 2!
+[19278.266392] IPv6: MLD: clamping QRV from 1 to 2!
+[19284.206148] IPv6: MLD: clamping QRV from 1 to 2!
+[19284.410397] IPv6: MLD: clamping QRV from 1 to 2!
+[19290.349632] IPv6: MLD: clamping QRV from 1 to 2!
+[19290.349637] IPv6: MLD: clamping QRV from 1 to 2!
+[19296.289307] IPv6: MLD: clamping QRV from 1 to 2!
+[19296.289312] IPv6: MLD: clamping QRV from 1 to 2!
+[19302.227953] IPv6: MLD: clamping QRV from 1 to 2!
+[19302.227960] IPv6: MLD: clamping QRV from 1 to 2!
+[19308.371890] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=15375 DF PROTO=2 
+[19308.371940] IPv6: MLD: clamping QRV from 1 to 2!
+[19308.371944] IPv6: MLD: clamping QRV from 1 to 2!
+[19314.311117] IPv6: MLD: clamping QRV from 1 to 2!
+[19314.311130] IPv6: MLD: clamping QRV from 1 to 2!
+[19320.250945] IPv6: MLD: clamping QRV from 1 to 2!
+[19320.250952] IPv6: MLD: clamping QRV from 1 to 2!
+[19326.395099] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=16156 DF PROTO=2 
+[19326.395106] IPv6: MLD: clamping QRV from 1 to 2!
+[19326.395110] IPv6: MLD: clamping QRV from 1 to 2!
+[19332.343222] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=16317 DF PROTO=2 
+[19338.272330] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=16372 DF PROTO=2 
+[19338.272691] IPv6: MLD: clamping QRV from 1 to 2!
+[19338.272700] IPv6: MLD: clamping QRV from 1 to 2!
+[19344.416905] IPv6: MLD: clamping QRV from 1 to 2!
+[19344.416911] IPv6: MLD: clamping QRV from 1 to 2!
+[19350.356015] IPv6: MLD: clamping QRV from 1 to 2!
+[19350.356021] IPv6: MLD: clamping QRV from 1 to 2!
+[19356.298054] IPv6: MLD: clamping QRV from 1 to 2!
+[19356.298059] IPv6: MLD: clamping QRV from 1 to 2!
+[19362.236164] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=16566 DF PROTO=2 
+[19362.438802] IPv6: MLD: clamping QRV from 1 to 2!
+[19362.438995] IPv6: MLD: clamping QRV from 1 to 2!
+[19368.378232] IPv6: MLD: clamping QRV from 1 to 2!
+[19368.378239] IPv6: MLD: clamping QRV from 1 to 2!
+[19374.317228] IPv6: MLD: clamping QRV from 1 to 2!
+[19374.522044] IPv6: MLD: clamping QRV from 1 to 2!
+[19380.256163] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=17662 DF PROTO=2 
+[19380.256448] IPv6: MLD: clamping QRV from 1 to 2!
+[19380.256460] IPv6: MLD: clamping QRV from 1 to 2!
+[19386.400679] IPv6: MLD: clamping QRV from 1 to 2!
+[19386.400691] IPv6: MLD: clamping QRV from 1 to 2!
+[19392.341725] IPv6: MLD: clamping QRV from 1 to 2!
+[19392.544175] IPv6: MLD: clamping QRV from 1 to 2!
+[19398.278793] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=18607 DF PROTO=2 
+[19398.278817] IPv6: MLD: clamping QRV from 1 to 2!
+[19398.278821] IPv6: MLD: clamping QRV from 1 to 2!
+[19404.423114] IPv6: MLD: clamping QRV from 1 to 2!
+[19404.423120] IPv6: MLD: clamping QRV from 1 to 2!
+[19410.362040] IPv6: MLD: clamping QRV from 1 to 2!
+[19410.362045] IPv6: MLD: clamping QRV from 1 to 2!
+[19416.301114] IPv6: MLD: clamping QRV from 1 to 2!
+[19416.301118] IPv6: MLD: clamping QRV from 1 to 2!
+[19422.445031] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=19566 DF PROTO=2 
+[19422.445373] IPv6: MLD: clamping QRV from 1 to 2!
+[19422.445377] IPv6: MLD: clamping QRV from 1 to 2!
+[19428.384335] IPv6: MLD: clamping QRV from 1 to 2!
+[19428.384340] IPv6: MLD: clamping QRV from 1 to 2!
+[19434.323843] IPv6: MLD: clamping QRV from 1 to 2!
+[19434.323848] IPv6: MLD: clamping QRV from 1 to 2!
+[19440.263230] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=20443 DF PROTO=2 
+[19440.263235] IPv6: MLD: clamping QRV from 1 to 2!
+[19440.468085] IPv6: MLD: clamping QRV from 1 to 2!
+[19446.406720] IPv6: MLD: clamping QRV from 1 to 2!
+[19446.406726] IPv6: MLD: clamping QRV from 1 to 2!
+[19452.347406] IPv6: MLD: clamping QRV from 1 to 2!
+[19452.347412] IPv6: MLD: clamping QRV from 1 to 2!
+[19458.285129] IPv6: MLD: clamping QRV from 1 to 2!
+[19458.285139] IPv6: MLD: clamping QRV from 1 to 2!
+[19464.428998] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=21652 DF PROTO=2 
+[19464.429078] IPv6: MLD: clamping QRV from 1 to 2!
+[19464.429082] IPv6: MLD: clamping QRV from 1 to 2!
+[19470.368880] IPv6: MLD: clamping QRV from 1 to 2!
+[19470.368885] IPv6: MLD: clamping QRV from 1 to 2!
+[19476.310924] IPv6: MLD: clamping QRV from 1 to 2!
+[19476.310930] IPv6: MLD: clamping QRV from 1 to 2!
+[19482.454288] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=22607 DF PROTO=2 
+[19482.454313] IPv6: MLD: clamping QRV from 1 to 2!
+[19482.454317] IPv6: MLD: clamping QRV from 1 to 2!
+[19488.390560] IPv6: MLD: clamping QRV from 1 to 2!
+[19488.390565] IPv6: MLD: clamping QRV from 1 to 2!
+[19494.329801] IPv6: MLD: clamping QRV from 1 to 2!
+[19494.329808] IPv6: MLD: clamping QRV from 1 to 2!
+[19500.473715] IPv6: MLD: clamping QRV from 1 to 2!
+[19500.473720] IPv6: MLD: clamping QRV from 1 to 2!
+[19506.413252] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=23396 DF PROTO=2 
+[19506.413255] IPv6: MLD: clamping QRV from 1 to 2!
+[19506.618162] IPv6: MLD: clamping QRV from 1 to 2!
+[19512.352090] IPv6: MLD: clamping QRV from 1 to 2!
+[19512.352108] IPv6: MLD: clamping QRV from 1 to 2!
+[19518.496717] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=24021 DF PROTO=2 
+[19518.496722] IPv6: MLD: clamping QRV from 1 to 2!
+[19518.496727] IPv6: MLD: clamping QRV from 1 to 2!
+[19524.435315] IPv6: MLD: clamping QRV from 1 to 2!
+[19524.435322] IPv6: MLD: clamping QRV from 1 to 2!
+[19530.375036] IPv6: MLD: clamping QRV from 1 to 2!
+[19530.375041] IPv6: MLD: clamping QRV from 1 to 2!
+[19536.316322] IPv6: MLD: clamping QRV from 1 to 2!
+[19536.316333] IPv6: MLD: clamping QRV from 1 to 2!
+[19542.457658] IPv6: MLD: clamping QRV from 1 to 2!
+[19542.457664] IPv6: MLD: clamping QRV from 1 to 2!
+[19548.396855] IPv6: MLD: clamping QRV from 1 to 2!
+[19548.396861] IPv6: MLD: clamping QRV from 1 to 2!
+[19554.335939] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=25771 DF PROTO=2 
+[19554.335992] IPv6: MLD: clamping QRV from 1 to 2!
+[19554.335995] IPv6: MLD: clamping QRV from 1 to 2!
+[19560.480202] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=25834 DF PROTO=2 
+[19560.480209] IPv6: MLD: clamping QRV from 1 to 2!
+[19560.480213] IPv6: MLD: clamping QRV from 1 to 2!
+[19566.419192] IPv6: MLD: clamping QRV from 1 to 2!
+[19566.419197] IPv6: MLD: clamping QRV from 1 to 2!
+[19572.360421] IPv6: MLD: clamping QRV from 1 to 2!
+[19572.360428] IPv6: MLD: clamping QRV from 1 to 2!
+[19578.502871] IPv6: MLD: clamping QRV from 1 to 2!
+[19578.502877] IPv6: MLD: clamping QRV from 1 to 2!
+[19584.441629] IPv6: MLD: clamping QRV from 1 to 2!
+[19584.441636] IPv6: MLD: clamping QRV from 1 to 2!
+[19590.380767] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=27495 DF PROTO=2 
+[19590.380813] IPv6: MLD: clamping QRV from 1 to 2!
+[19590.380817] IPv6: MLD: clamping QRV from 1 to 2!
+[19596.524641] IPv6: MLD: clamping QRV from 1 to 2!
+[19596.524646] IPv6: MLD: clamping QRV from 1 to 2!
+[19602.464010] IPv6: MLD: clamping QRV from 1 to 2!
+[19602.464016] IPv6: MLD: clamping QRV from 1 to 2!
+[19608.403121] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=28022 DF PROTO=2 
+[19608.403140] IPv6: MLD: clamping QRV from 1 to 2!
+[19608.403143] IPv6: MLD: clamping QRV from 1 to 2!
+[19614.344831] IPv6: MLD: clamping QRV from 1 to 2!
+[19614.344838] IPv6: MLD: clamping QRV from 1 to 2!
+[19620.486798] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=28926 DF PROTO=2 
+[19620.486806] IPv6: MLD: clamping QRV from 1 to 2!
+[19620.486810] IPv6: MLD: clamping QRV from 1 to 2!
+[19626.425927] IPv6: MLD: clamping QRV from 1 to 2!
+[19626.425932] IPv6: MLD: clamping QRV from 1 to 2!
+[19632.364476] IPv6: MLD: clamping QRV from 1 to 2!
+[19632.364482] IPv6: MLD: clamping QRV from 1 to 2!
+[19638.508760] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=29884 DF PROTO=2 
+[19638.510952] IPv6: MLD: clamping QRV from 1 to 2!
+[19638.510957] IPv6: MLD: clamping QRV from 1 to 2!
+[19644.447747] IPv6: MLD: clamping QRV from 1 to 2!
+[19644.447751] IPv6: MLD: clamping QRV from 1 to 2!
+[19650.489189] IPv6: MLD: clamping QRV from 1 to 2!
+[19650.693810] IPv6: MLD: clamping QRV from 1 to 2!
+[19656.428543] IPv6: MLD: clamping QRV from 1 to 2!
+[19656.430553] IPv6: MLD: clamping QRV from 1 to 2!
+[19662.367500] IPv6: MLD: clamping QRV from 1 to 2!
+[19662.572388] IPv6: MLD: clamping QRV from 1 to 2!
+[19668.409149] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=31008 DF PROTO=2 
+[19668.409192] IPv6: MLD: clamping QRV from 1 to 2!
+[19668.409196] IPv6: MLD: clamping QRV from 1 to 2!
+[19674.553358] IPv6: MLD: clamping QRV from 1 to 2!
+[19674.757854] IPv6: MLD: clamping QRV from 1 to 2!
+[19680.492615] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=31584 DF PROTO=2 
+[19680.492621] IPv6: MLD: clamping QRV from 1 to 2!
+[19680.492626] IPv6: MLD: clamping QRV from 1 to 2!
+[19686.431582] IPv6: MLD: clamping QRV from 1 to 2!
+[19686.431587] IPv6: MLD: clamping QRV from 1 to 2!
+[19692.370620] IPv6: MLD: clamping QRV from 1 to 2!
+[19692.575496] IPv6: MLD: clamping QRV from 1 to 2!
+[19698.514733] IPv6: MLD: clamping QRV from 1 to 2!
+[19698.514738] IPv6: MLD: clamping QRV from 1 to 2!
+[19704.454394] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=32430 DF PROTO=2 
+[19704.454399] IPv6: MLD: clamping QRV from 1 to 2!
+[19704.454404] IPv6: MLD: clamping QRV from 1 to 2!
+[19710.393365] IPv6: MLD: clamping QRV from 1 to 2!
+[19710.393371] IPv6: MLD: clamping QRV from 1 to 2!
+[19716.536972] IPv6: MLD: clamping QRV from 1 to 2!
+[19716.536979] IPv6: MLD: clamping QRV from 1 to 2!
+[19722.476172] IPv6: MLD: clamping QRV from 1 to 2!
+[19722.476177] IPv6: MLD: clamping QRV from 1 to 2!
+[19728.519783] IPv6: MLD: clamping QRV from 1 to 2!
+[19728.519790] IPv6: MLD: clamping QRV from 1 to 2!
+[19734.459575] IPv6: MLD: clamping QRV from 1 to 2!
+[19734.459580] IPv6: MLD: clamping QRV from 1 to 2!
+[19740.398115] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=34434 DF PROTO=2 
+[19740.398122] IPv6: MLD: clamping QRV from 1 to 2!
+[19740.398127] IPv6: MLD: clamping QRV from 1 to 2!
+[19746.540262] IPv6: MLD: clamping QRV from 1 to 2!
+[19746.540267] IPv6: MLD: clamping QRV from 1 to 2!
+[19752.479400] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=34798 DF PROTO=2 
+[19752.479404] IPv6: MLD: clamping QRV from 1 to 2!
+[19752.479409] IPv6: MLD: clamping QRV from 1 to 2!
+[19758.418534] IPv6: MLD: clamping QRV from 1 to 2!
+[19758.418540] IPv6: MLD: clamping QRV from 1 to 2!
+[19764.562649] IPv6: MLD: clamping QRV from 1 to 2!
+[19764.562655] IPv6: MLD: clamping QRV from 1 to 2!
+[19770.399785] IPv6: MLD: clamping QRV from 1 to 2!
+[19770.603856] IPv6: MLD: clamping QRV from 1 to 2!
+[19776.543907] IPv6: MLD: clamping QRV from 1 to 2!
+[19776.543912] IPv6: MLD: clamping QRV from 1 to 2!
+[19782.482404] IPv6: MLD: clamping QRV from 1 to 2!
+[19782.482410] IPv6: MLD: clamping QRV from 1 to 2!
+[19788.421562] IPv6: MLD: clamping QRV from 1 to 2!
+[19788.421569] IPv6: MLD: clamping QRV from 1 to 2!
+[19794.565420] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=36365 DF PROTO=2 
+[19794.565420] IPv6: MLD: clamping QRV from 1 to 2!
+[19794.770184] IPv6: MLD: clamping QRV from 1 to 2!
+[19800.504764] IPv6: MLD: clamping QRV from 1 to 2!
+[19800.504772] IPv6: MLD: clamping QRV from 1 to 2!
+[19806.446673] IPv6: MLD: clamping QRV from 1 to 2!
+[19806.446679] IPv6: MLD: clamping QRV from 1 to 2!
+[19812.587892] IPv6: MLD: clamping QRV from 1 to 2!
+[19812.587899] IPv6: MLD: clamping QRV from 1 to 2!
+[19818.425380] IPv6: MLD: clamping QRV from 1 to 2!
+[19818.425386] IPv6: MLD: clamping QRV from 1 to 2!
+[19824.568708] IPv6: MLD: clamping QRV from 1 to 2!
+[19824.568714] IPv6: MLD: clamping QRV from 1 to 2!
+[19830.508514] IPv6: MLD: clamping QRV from 1 to 2!
+[19830.508520] IPv6: MLD: clamping QRV from 1 to 2!
+[19836.450380] IPv6: MLD: clamping QRV from 1 to 2!
+[19836.450385] IPv6: MLD: clamping QRV from 1 to 2!
+[19842.593706] IPv6: MLD: clamping QRV from 1 to 2!
+[19842.593719] IPv6: MLD: clamping QRV from 1 to 2!
+[19848.531037] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=39325 DF PROTO=2 
+[19848.531042] IPv6: MLD: clamping QRV from 1 to 2!
+[19848.531047] IPv6: MLD: clamping QRV from 1 to 2!
+[19854.469435] IPv6: MLD: clamping QRV from 1 to 2!
+[19854.469441] IPv6: MLD: clamping QRV from 1 to 2!
+[19860.614344] IPv6: MLD: clamping QRV from 1 to 2!
+[19860.614348] IPv6: MLD: clamping QRV from 1 to 2!
+[19866.553156] IPv6: MLD: clamping QRV from 1 to 2!
+[19866.553161] IPv6: MLD: clamping QRV from 1 to 2!
+[19872.492538] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=41174 DF PROTO=2 
+[19872.492545] IPv6: MLD: clamping QRV from 1 to 2!
+[19872.492549] IPv6: MLD: clamping QRV from 1 to 2!
+[19878.635651] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=41544 DF PROTO=2 
+[19878.635739] IPv6: MLD: clamping QRV from 1 to 2!
+[19878.635742] IPv6: MLD: clamping QRV from 1 to 2!
+[19884.472464] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=42081 DF PROTO=2 
+[19884.472513] IPv6: MLD: clamping QRV from 1 to 2!
+[19884.472517] IPv6: MLD: clamping QRV from 1 to 2!
+[19890.616398] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=42336 DF PROTO=2 
+[19890.616475] IPv6: MLD: clamping QRV from 1 to 2!
+[19890.616478] IPv6: MLD: clamping QRV from 1 to 2!
+[19896.555693] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=42482 DF PROTO=2 
+[19896.558270] IPv6: MLD: clamping QRV from 1 to 2!
+[19896.558273] IPv6: MLD: clamping QRV from 1 to 2!
+[19901.065602] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:fb:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.251 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=11543 DF PROTO=2 
+[19901.065604] IPv6: MLD: clamping QRV from 1 to 2!
+[19901.278074] IPv6: MLD: clamping QRV from 1 to 2!
+[19902.494803] IPv6: MLD: clamping QRV from 1 to 2!
+[19902.494924] IPv6: MLD: clamping QRV from 1 to 2!
+[19908.639060] IPv6: MLD: clamping QRV from 1 to 2!
+[19908.639066] IPv6: MLD: clamping QRV from 1 to 2!
+[19911.720860] IPv6: MLD: clamping QRV from 1 to 2!
+[19912.122810] IPv6: MLD: clamping QRV from 1 to 2!
+[19912.122815] IPv6: MLD: clamping QRV from 1 to 2!
+[19912.122816] IPv6: MLD: clamping QRV from 1 to 2!
+[19912.122817] IPv6: MLD: clamping QRV from 1 to 2!
+[19914.578029] IPv6: MLD: clamping QRV from 1 to 2!
+[19914.578035] IPv6: MLD: clamping QRV from 1 to 2!
+[19920.517157] IPv6: MLD: clamping QRV from 1 to 2!
+[19920.517163] IPv6: MLD: clamping QRV from 1 to 2!
+[19926.456314] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=43517 DF PROTO=2 
+[19926.457320] IPv6: MLD: clamping QRV from 1 to 2!
+[19926.459508] IPv6: MLD: clamping QRV from 1 to 2!
+[19932.600382] IPv6: MLD: clamping QRV from 1 to 2!
+[19932.600387] IPv6: MLD: clamping QRV from 1 to 2!
+[19938.539614] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=44410 DF PROTO=2 
+[19938.539615] IPv6: MLD: clamping QRV from 1 to 2!
+[19938.539620] IPv6: MLD: clamping QRV from 1 to 2!
+[19944.485727] IPv6: MLD: clamping QRV from 1 to 2!
+[19944.485734] IPv6: MLD: clamping QRV from 1 to 2!
+[19950.623487] IPv6: MLD: clamping QRV from 1 to 2!
+[19950.623491] IPv6: MLD: clamping QRV from 1 to 2!
+[19956.562032] IPv6: MLD: clamping QRV from 1 to 2!
+[19956.562039] IPv6: MLD: clamping QRV from 1 to 2!
+[19962.500702] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=45511 DF PROTO=2 
+[19962.500953] IPv6: MLD: clamping QRV from 1 to 2!
+[19962.500957] IPv6: MLD: clamping QRV from 1 to 2!
+[19968.645147] IPv6: MLD: clamping QRV from 1 to 2!
+[19968.645152] IPv6: MLD: clamping QRV from 1 to 2!
+[19974.584388] IPv6: MLD: clamping QRV from 1 to 2!
+[19974.584395] IPv6: MLD: clamping QRV from 1 to 2!
+[19980.523425] IPv6: MLD: clamping QRV from 1 to 2!
+[19980.523430] IPv6: MLD: clamping QRV from 1 to 2!
+[19986.465308] IPv6: MLD: clamping QRV from 1 to 2!
+[19986.465314] IPv6: MLD: clamping QRV from 1 to 2!
+[19992.607173] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=46951 DF PROTO=2 
+[19992.607179] IPv6: MLD: clamping QRV from 1 to 2!
+[19992.607184] IPv6: MLD: clamping QRV from 1 to 2!
+[19998.545747] IPv6: MLD: clamping QRV from 1 to 2!
+[19998.545753] IPv6: MLD: clamping QRV from 1 to 2!
+[20004.484647] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=47972 DF PROTO=2 
+[20004.484915] IPv6: MLD: clamping QRV from 1 to 2!
+[20004.484919] IPv6: MLD: clamping QRV from 1 to 2!
+[20010.631667] IPv6: MLD: clamping QRV from 1 to 2!
+[20010.631673] IPv6: MLD: clamping QRV from 1 to 2!
+[20016.570969] IPv6: MLD: clamping QRV from 1 to 2!
+[20016.570996] IPv6: MLD: clamping QRV from 1 to 2!
+[20022.507261] IPv6: MLD: clamping QRV from 1 to 2!
+[20022.507266] IPv6: MLD: clamping QRV from 1 to 2!
+[20028.658929] IPv6: MLD: clamping QRV from 1 to 2!
+[20028.658933] IPv6: MLD: clamping QRV from 1 to 2!
+[20034.590222] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=49944 DF PROTO=2 
+[20034.592624] IPv6: MLD: clamping QRV from 1 to 2!
+[20040.532164] IPv6: MLD: clamping QRV from 1 to 2!
+[20040.532172] IPv6: MLD: clamping QRV from 1 to 2!
+[20046.673775] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=50749 DF PROTO=2 
+[20046.673777] IPv6: MLD: clamping QRV from 1 to 2!
+[20046.673780] IPv6: MLD: clamping QRV from 1 to 2!
+[20052.612847] IPv6: MLD: clamping QRV from 1 to 2!
+[20052.612854] IPv6: MLD: clamping QRV from 1 to 2!
+[20058.551556] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=51808 DF PROTO=2 
+[20058.551951] IPv6: MLD: clamping QRV from 1 to 2!
+[20058.551959] IPv6: MLD: clamping QRV from 1 to 2!
+[20064.695902] IPv6: MLD: clamping QRV from 1 to 2!
+[20064.695906] IPv6: MLD: clamping QRV from 1 to 2!
+[20070.635096] IPv6: MLD: clamping QRV from 1 to 2!
+[20076.576966] IPv6: MLD: clamping QRV from 1 to 2!
+[20076.576971] IPv6: MLD: clamping QRV from 1 to 2!
+[20082.513552] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=52951 DF PROTO=2 
+[20082.516279] IPv6: MLD: clamping QRV from 1 to 2!
+[20082.516284] IPv6: MLD: clamping QRV from 1 to 2!
+[20088.657485] IPv6: MLD: clamping QRV from 1 to 2!
+[20088.657491] IPv6: MLD: clamping QRV from 1 to 2!
+[20094.597196] IPv6: MLD: clamping QRV from 1 to 2!
+[20094.597201] IPv6: MLD: clamping QRV from 1 to 2!
+[20100.535752] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=53472 DF PROTO=2 
+[20100.538488] IPv6: MLD: clamping QRV from 1 to 2!
+[20100.538495] IPv6: MLD: clamping QRV from 1 to 2!
+[20106.679775] IPv6: MLD: clamping QRV from 1 to 2!
+[20106.884638] IPv6: MLD: clamping QRV from 1 to 2!
+[20112.619043] IPv6: MLD: clamping QRV from 1 to 2!
+[20112.619048] IPv6: MLD: clamping QRV from 1 to 2!
+[20118.558077] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=54597 DF PROTO=2 
+[20118.558133] IPv6: MLD: clamping QRV from 1 to 2!
+[20118.558136] IPv6: MLD: clamping QRV from 1 to 2!
+[20124.702006] IPv6: MLD: clamping QRV from 1 to 2!
+[20124.906957] IPv6: MLD: clamping QRV from 1 to 2!
+[20130.641882] IPv6: MLD: clamping QRV from 1 to 2!
+[20130.641888] IPv6: MLD: clamping QRV from 1 to 2!
+[20136.583785] IPv6: MLD: clamping QRV from 1 to 2!
+[20136.583791] IPv6: MLD: clamping QRV from 1 to 2!
+[20142.522815] IPv6: MLD: clamping QRV from 1 to 2!
+[20142.522832] IPv6: MLD: clamping QRV from 1 to 2!
+[20148.663463] IPv6: MLD: clamping QRV from 1 to 2!
+[20148.666888] IPv6: MLD: clamping QRV from 1 to 2!
+[20154.603171] IPv6: MLD: clamping QRV from 1 to 2!
+[20154.603177] IPv6: MLD: clamping QRV from 1 to 2!
+[20160.542072] IPv6: MLD: clamping QRV from 1 to 2!
+[20160.542078] IPv6: MLD: clamping QRV from 1 to 2!
+[20166.685637] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=57059 DF PROTO=2 
+[20166.686031] IPv6: MLD: clamping QRV from 1 to 2!
+[20166.686039] IPv6: MLD: clamping QRV from 1 to 2!
+[20172.625753] IPv6: MLD: clamping QRV from 1 to 2!
+[20172.625758] IPv6: MLD: clamping QRV from 1 to 2!
+[20178.564838] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=57489 DF PROTO=2 
+[20178.566967] IPv6: MLD: clamping QRV from 1 to 2!
+[20178.566969] IPv6: MLD: clamping QRV from 1 to 2!
+[20184.708418] IPv6: MLD: clamping QRV from 1 to 2!
+[20184.708423] IPv6: MLD: clamping QRV from 1 to 2!
+[20190.647406] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=58104 DF PROTO=2 
+[20190.647410] IPv6: MLD: clamping QRV from 1 to 2!
+[20190.647414] IPv6: MLD: clamping QRV from 1 to 2!
+[20196.597013] IPv6: MLD: clamping QRV from 1 to 2!
+[20196.597020] IPv6: MLD: clamping QRV from 1 to 2!
+[20202.733388] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=58729 DF PROTO=2 
+[20202.733394] IPv6: MLD: clamping QRV from 1 to 2!
+[20202.733399] IPv6: MLD: clamping QRV from 1 to 2!
+[20208.669833] IPv6: MLD: clamping QRV from 1 to 2!
+[20208.669839] IPv6: MLD: clamping QRV from 1 to 2!
+[20214.609280] IPv6: MLD: clamping QRV from 1 to 2!
+[20214.609286] IPv6: MLD: clamping QRV from 1 to 2!
+[20220.547895] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=59596 DF PROTO=2 
+[20220.547975] IPv6: MLD: clamping QRV from 1 to 2!
+[20220.752853] IPv6: MLD: clamping QRV from 1 to 2!
+[20226.692402] IPv6: MLD: clamping QRV from 1 to 2!
+[20226.692409] IPv6: MLD: clamping QRV from 1 to 2!
+[20232.631421] IPv6: MLD: clamping QRV from 1 to 2!
+[20232.631427] IPv6: MLD: clamping QRV from 1 to 2!
+[20238.570488] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=60308 DF PROTO=2 
+[20238.573232] IPv6: MLD: clamping QRV from 1 to 2!
+[20238.573235] IPv6: MLD: clamping QRV from 1 to 2!
+[20244.714433] IPv6: MLD: clamping QRV from 1 to 2!
+[20244.714438] IPv6: MLD: clamping QRV from 1 to 2!
+[20250.653771] IPv6: MLD: clamping QRV from 1 to 2!
+[20250.653777] IPv6: MLD: clamping QRV from 1 to 2!
+[20256.595528] IPv6: MLD: clamping QRV from 1 to 2!
+[20256.595533] IPv6: MLD: clamping QRV from 1 to 2!
+[20262.736904] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=61669 DF PROTO=2 
+[20262.736911] IPv6: MLD: clamping QRV from 1 to 2!
+[20262.736915] IPv6: MLD: clamping QRV from 1 to 2!
+[20268.676045] IPv6: MLD: clamping QRV from 1 to 2!
+[20268.676050] IPv6: MLD: clamping QRV from 1 to 2!
+[20274.615377] IPv6: MLD: clamping QRV from 1 to 2!
+[20274.615384] IPv6: MLD: clamping QRV from 1 to 2!
+[20280.759206] IPv6: MLD: clamping QRV from 1 to 2!
+[20280.759211] IPv6: MLD: clamping QRV from 1 to 2!
+[20286.701272] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=62868 DF PROTO=2 
+[20286.701279] IPv6: MLD: clamping QRV from 1 to 2!
+[20286.701284] IPv6: MLD: clamping QRV from 1 to 2!
+[20292.637531] IPv6: MLD: clamping QRV from 1 to 2!
+[20292.637536] IPv6: MLD: clamping QRV from 1 to 2!
+[20298.576814] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=63303 DF PROTO=2 
+[20298.576820] IPv6: MLD: clamping QRV from 1 to 2!
+[20298.576824] IPv6: MLD: clamping QRV from 1 to 2!
+[20304.720705] IPv6: MLD: clamping QRV from 1 to 2!
+[20304.720710] IPv6: MLD: clamping QRV from 1 to 2!
+[20310.659841] IPv6: MLD: clamping QRV from 1 to 2!
+[20310.659847] IPv6: MLD: clamping QRV from 1 to 2!
+[20316.601999] IPv6: MLD: clamping QRV from 1 to 2!
+[20316.602003] IPv6: MLD: clamping QRV from 1 to 2!
+[20322.742940] IPv6: MLD: clamping QRV from 1 to 2!
+[20322.742945] IPv6: MLD: clamping QRV from 1 to 2!
+[20328.693069] IPv6: MLD: clamping QRV from 1 to 2!
+[20328.693073] IPv6: MLD: clamping QRV from 1 to 2!
+[20334.623512] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=64745 DF PROTO=2 
+[20334.623519] IPv6: MLD: clamping QRV from 1 to 2!
+[20334.623523] IPv6: MLD: clamping QRV from 1 to 2!
+[20340.771468] IPv6: MLD: clamping QRV from 1 to 2!
+[20340.771475] IPv6: MLD: clamping QRV from 1 to 2!
+[20346.707079] IPv6: MLD: clamping QRV from 1 to 2!
+[20346.707085] IPv6: MLD: clamping QRV from 1 to 2!
+[20352.645087] IPv6: MLD: clamping QRV from 1 to 2!
+[20352.645105] IPv6: MLD: clamping QRV from 1 to 2!
+[20358.787954] IPv6: MLD: clamping QRV from 1 to 2!
+[20358.787961] IPv6: MLD: clamping QRV from 1 to 2!
+[20364.624462] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=1081 DF PROTO=2 
+[20364.624486] IPv6: MLD: clamping QRV from 1 to 2!
+[20364.624490] IPv6: MLD: clamping QRV from 1 to 2!
+[20370.768525] IPv6: MLD: clamping QRV from 1 to 2!
+[20370.768539] IPv6: MLD: clamping QRV from 1 to 2!
+[20376.710451] IPv6: MLD: clamping QRV from 1 to 2!
+[20376.710456] IPv6: MLD: clamping QRV from 1 to 2!
+[20382.646679] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=2167 DF PROTO=2 
+[20382.646725] IPv6: MLD: clamping QRV from 1 to 2!
+[20382.851441] IPv6: MLD: clamping QRV from 1 to 2!
+[20388.790642] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=2414 DF PROTO=2 
+[20388.801637] IPv6: MLD: clamping QRV from 1 to 2!
+[20388.801643] IPv6: MLD: clamping QRV from 1 to 2!
+[20392.288674] wlo1: deauthenticating from 16:32:51:6c:4c:c7 by local choice (Reason: 3=DEAUTH_LEAVING)
+[20392.905281] PM: suspend entry (s2idle)
+[20392.940289] Filesystems sync: 0.034 seconds
+[20392.943130] Freezing user space processes
+[20392.944432] Freezing user space processes completed (elapsed 0.001 seconds)
+[20392.944435] OOM killer disabled.
+[20392.944436] Freezing remaining freezable tasks
+[20392.945607] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+[20392.945609] printk: Suspending console(s) (use no_console_suspend to debug)
+[20393.334373] ACPI: EC: interrupt blocked
+[20953.160038] ACPI: EC: interrupt unblocked
+[20953.653788] i915 0000:00:02.0: vgaarb: VGA decodes changed: olddecodes=io,decodes=io:owns=io+mem
+[20953.861568] nvme nvme0: 8/0/0 default/read/poll queues
+[20954.082942] mei_hdcp 0000:00:16.0-b638ab7e-94e2-4ea2-a552-d1c54b627f04: bound 0000:00:02.0 (ops i915_hdcp_ops [i915])
+[20954.083912] OOM killer enabled.
+[20954.083933] Restarting tasks: Starting
+[20954.086796] Restarting tasks: Done
+[20954.086833] efivarfs: resyncing variable state
+[20954.086327] mei_pxp 0000:00:16.0-fbf6fcf1-96cf-4e2e-a6a6-1bab8cbe36b1: bound 0000:00:02.0 (ops i915_pxp_tee_component_ops [i915])
+[20954.143442] efivarfs: finished resyncing variable state
+[20954.143534] random: crng reseeded on system resumption
+[20954.159534] PM: suspend exit
+[20954.265334] Generic FE-GE Realtek PHY r8169-0-100:00: attached PHY driver (mii_bus:phy_addr=r8169-0-100:00, irq=MAC)
+[20954.422467] r8169 0000:01:00.0 enp1s0: Link is Down
+[20958.392232] wlo1: authenticate with 16:32:51:6c:4c:c7 (local address=84:7b:57:d5:c1:ea)
+[20958.393223] wlo1: send auth to 16:32:51:6c:4c:c7 (try 1/3)
+[20958.425172] wlo1: authenticated
+[20958.427161] wlo1: associate with 16:32:51:6c:4c:c7 (try 1/3)
+[20958.443333] wlo1: RX AssocResp from 16:32:51:6c:4c:c7 (capab=0x1511 status=0 aid=1)
+[20958.452775] wlo1: associated
+[20958.539870] wlo1: Limiting TX power to 30 (30 - 0) dBm as advertised by 16:32:51:6c:4c:c7
+[20958.951479] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=32621 DF PROTO=2 
+[20964.891116] IPv6: MLD: clamping QRV from 1 to 2!
+[20964.891161] IPv6: MLD: clamping QRV from 1 to 2!
+[20970.830268] IPv6: MLD: clamping QRV from 1 to 2!
+[20970.830312] IPv6: MLD: clamping QRV from 1 to 2!
+[20976.975418] IPv6: MLD: clamping QRV from 1 to 2!
+[20976.975449] IPv6: MLD: clamping QRV from 1 to 2!
+[20982.911108] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=33425 DF PROTO=2 
+[20982.912346] IPv6: MLD: clamping QRV from 1 to 2!
+[20982.912420] IPv6: MLD: clamping QRV from 1 to 2!
+[20988.851380] IPv6: MLD: clamping QRV from 1 to 2!
+[20988.851416] IPv6: MLD: clamping QRV from 1 to 2!
+[21000.934009] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=33773 DF PROTO=2 
+[21000.934069] IPv6: MLD: clamping QRV from 1 to 2!
+[21000.934107] IPv6: MLD: clamping QRV from 1 to 2!
+[21006.873303] IPv6: MLD: clamping QRV from 1 to 2!
+[21006.873343] IPv6: MLD: clamping QRV from 1 to 2!
+[21013.017082] IPv6: MLD: clamping QRV from 1 to 2!
+[21013.017113] IPv6: MLD: clamping QRV from 1 to 2!
+[21018.956241] IPv6: MLD: clamping QRV from 1 to 2!
+[21018.956271] IPv6: MLD: clamping QRV from 1 to 2!
+[21024.895367] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=34783 DF PROTO=2 
+[21024.895413] IPv6: MLD: clamping QRV from 1 to 2!
+[21024.895456] IPv6: MLD: clamping QRV from 1 to 2!
+[21030.834573] IPv6: MLD: clamping QRV from 1 to 2!
+[21030.834606] IPv6: MLD: clamping QRV from 1 to 2!
+[21036.978794] IPv6: MLD: clamping QRV from 1 to 2!
+[21036.978825] IPv6: MLD: clamping QRV from 1 to 2!
+[21042.917730] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=35762 DF PROTO=2 
+[21042.917807] IPv6: MLD: clamping QRV from 1 to 2!
+[21042.917840] IPv6: MLD: clamping QRV from 1 to 2!
+[21048.857607] IPv6: MLD: clamping QRV from 1 to 2!
+[21048.857639] IPv6: MLD: clamping QRV from 1 to 2!
+[21055.000909] IPv6: MLD: clamping QRV from 1 to 2!
+[21055.000913] IPv6: MLD: clamping QRV from 1 to 2!
+[21060.940308] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=36518 DF PROTO=2 
+[21060.940315] IPv6: MLD: clamping QRV from 1 to 2!
+[21060.940319] IPv6: MLD: clamping QRV from 1 to 2!
+[21066.879268] IPv6: MLD: clamping QRV from 1 to 2!
+[21066.879293] IPv6: MLD: clamping QRV from 1 to 2!
+[21073.023911] IPv6: MLD: clamping QRV from 1 to 2!
+[21073.023916] IPv6: MLD: clamping QRV from 1 to 2!
+[21078.962618] IPv6: MLD: clamping QRV from 1 to 2!
+[21078.962624] IPv6: MLD: clamping QRV from 1 to 2!
+[21084.901452] IPv6: MLD: clamping QRV from 1 to 2!
+[21084.901452] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=37690 DF PROTO=2 
+[21084.901457] IPv6: MLD: clamping QRV from 1 to 2!
+[21090.840610] IPv6: MLD: clamping QRV from 1 to 2!
+[21091.045581] IPv6: MLD: clamping QRV from 1 to 2!
+[21096.984811] IPv6: MLD: clamping QRV from 1 to 2!
+[21096.984818] IPv6: MLD: clamping QRV from 1 to 2!
+[21102.923906] IPv6: MLD: clamping QRV from 1 to 2!
+[21102.923912] IPv6: MLD: clamping QRV from 1 to 2!
+[21108.863360] IPv6: MLD: clamping QRV from 1 to 2!
+[21108.863364] IPv6: MLD: clamping QRV from 1 to 2!
+[21115.007073] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=39457 DF PROTO=2 
+[21115.007078] IPv6: MLD: clamping QRV from 1 to 2!
+[21115.007082] IPv6: MLD: clamping QRV from 1 to 2!
+[21120.946295] IPv6: MLD: clamping QRV from 1 to 2!
+[21120.946301] IPv6: MLD: clamping QRV from 1 to 2!
+[21126.886086] IPv6: MLD: clamping QRV from 1 to 2!
+[21126.886101] IPv6: MLD: clamping QRV from 1 to 2!
+[21133.029587] IPv6: MLD: clamping QRV from 1 to 2!
+[21138.968381] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=40973 DF PROTO=2 
+[21138.971328] IPv6: MLD: clamping QRV from 1 to 2!
+[21138.971331] IPv6: MLD: clamping QRV from 1 to 2!
+[21144.910450] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=41137 DF PROTO=2 
+[21144.910455] IPv6: MLD: clamping QRV from 1 to 2!
+[21144.910459] IPv6: MLD: clamping QRV from 1 to 2!
+[21150.949431] IPv6: MLD: clamping QRV from 1 to 2!
+[21150.949436] IPv6: MLD: clamping QRV from 1 to 2!
+[21156.888838] IPv6: MLD: clamping QRV from 1 to 2!
+[21157.093392] IPv6: MLD: clamping QRV from 1 to 2!
+[21163.032401] IPv6: MLD: clamping QRV from 1 to 2!
+[21163.237250] IPv6: MLD: clamping QRV from 1 to 2!
+[21168.971638] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=42662 DF PROTO=2 
+[21168.971640] IPv6: MLD: clamping QRV from 1 to 2!
+[21168.971644] IPv6: MLD: clamping QRV from 1 to 2!
+[21174.910882] IPv6: MLD: clamping QRV from 1 to 2!
+[21174.910888] IPv6: MLD: clamping QRV from 1 to 2!
+[21181.054569] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=43310 DF PROTO=2 
+[21181.055027] IPv6: MLD: clamping QRV from 1 to 2!
+[21181.055038] IPv6: MLD: clamping QRV from 1 to 2!
+[21186.994384] IPv6: MLD: clamping QRV from 1 to 2!
+[21186.994390] IPv6: MLD: clamping QRV from 1 to 2!
+[21192.935339] IPv6: MLD: clamping QRV from 1 to 2!
+[21192.935345] IPv6: MLD: clamping QRV from 1 to 2!
+[21198.872227] IPv6: MLD: clamping QRV from 1 to 2!
+[21199.076963] IPv6: MLD: clamping QRV from 1 to 2!
+[21205.017007] IPv6: MLD: clamping QRV from 1 to 2!
+[21205.017014] IPv6: MLD: clamping QRV from 1 to 2!
+[21210.955510] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=44880 DF PROTO=2 
+[21210.955565] IPv6: MLD: clamping QRV from 1 to 2!
+[21210.955568] IPv6: MLD: clamping QRV from 1 to 2!
+[21216.894717] IPv6: MLD: clamping QRV from 1 to 2!
+[21216.894722] IPv6: MLD: clamping QRV from 1 to 2!
+[21223.038688] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=45254 DF PROTO=2 
+[21223.038693] IPv6: MLD: clamping QRV from 1 to 2!
+[21223.038699] IPv6: MLD: clamping QRV from 1 to 2!
+[21228.978089] IPv6: MLD: clamping QRV from 1 to 2!
+[21228.978095] IPv6: MLD: clamping QRV from 1 to 2!
+[21234.917079] IPv6: MLD: clamping QRV from 1 to 2!
+[21234.917084] IPv6: MLD: clamping QRV from 1 to 2!
+[21241.060985] IPv6: MLD: clamping QRV from 1 to 2!
+[21241.060990] IPv6: MLD: clamping QRV from 1 to 2!
+[21247.000317] IPv6: MLD: clamping QRV from 1 to 2!
+[21247.000323] IPv6: MLD: clamping QRV from 1 to 2!
+[21252.939341] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=46749 DF PROTO=2 
+[21252.939348] IPv6: MLD: clamping QRV from 1 to 2!
+[21252.939356] IPv6: MLD: clamping QRV from 1 to 2!
+[21259.092215] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=47168 DF PROTO=2 
+[21259.092259] IPv6: MLD: clamping QRV from 1 to 2!
+[21259.092263] IPv6: MLD: clamping QRV from 1 to 2!
+[21265.024644] IPv6: MLD: clamping QRV from 1 to 2!
+[21265.024651] IPv6: MLD: clamping QRV from 1 to 2!
+[21270.963646] IPv6: MLD: clamping QRV from 1 to 2!
+[21270.963651] IPv6: MLD: clamping QRV from 1 to 2!
+[21276.902333] IPv6: MLD: clamping QRV from 1 to 2!
+[21276.902339] IPv6: MLD: clamping QRV from 1 to 2!
+[21283.044951] IPv6: MLD: clamping QRV from 1 to 2!
+[21283.044956] IPv6: MLD: clamping QRV from 1 to 2!
+[21288.984243] IPv6: MLD: clamping QRV from 1 to 2!
+[21288.984248] IPv6: MLD: clamping QRV from 1 to 2!
+[21294.923163] IPv6: MLD: clamping QRV from 1 to 2!
+[21294.923168] IPv6: MLD: clamping QRV from 1 to 2!
+[21301.067326] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=48155 DF PROTO=2 
+[21301.067332] IPv6: MLD: clamping QRV from 1 to 2!
+[21301.067346] IPv6: MLD: clamping QRV from 1 to 2!
+[21307.006122] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=48526 DF PROTO=2 
+[21307.009347] IPv6: MLD: clamping QRV from 1 to 2!
+[21307.009350] IPv6: MLD: clamping QRV from 1 to 2!
+[21312.945499] IPv6: MLD: clamping QRV from 1 to 2!
+[21312.945504] IPv6: MLD: clamping QRV from 1 to 2!
+[21318.987116] IPv6: MLD: clamping QRV from 1 to 2!
+[21318.987121] IPv6: MLD: clamping QRV from 1 to 2!
+[21324.926301] IPv6: MLD: clamping QRV from 1 to 2!
+[21324.926313] IPv6: MLD: clamping QRV from 1 to 2!
+[21331.070546] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=49140 DF PROTO=2 
+[21337.009729] IPv6: MLD: clamping QRV from 1 to 2!
+[21337.009734] IPv6: MLD: clamping QRV from 1 to 2!
+[21342.949326] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=49951 DF PROTO=2 
+[21342.949332] IPv6: MLD: clamping QRV from 1 to 2!
+[21342.949337] IPv6: MLD: clamping QRV from 1 to 2!
+[21349.093296] IPv6: MLD: clamping QRV from 1 to 2!
+[21349.093301] IPv6: MLD: clamping QRV from 1 to 2!
+[21355.031858] IPv6: MLD: clamping QRV from 1 to 2!
+[21355.031863] IPv6: MLD: clamping QRV from 1 to 2!
+[21360.971132] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=51093 DF PROTO=2 
+[21360.971139] IPv6: MLD: clamping QRV from 1 to 2!
+[21360.971143] IPv6: MLD: clamping QRV from 1 to 2!
+[21367.115168] IPv6: MLD: clamping QRV from 1 to 2!
+[21367.115173] IPv6: MLD: clamping QRV from 1 to 2!
+[21373.054214] IPv6: MLD: clamping QRV from 1 to 2!
+[21373.054219] IPv6: MLD: clamping QRV from 1 to 2!
+[21378.993263] IPv6: MLD: clamping QRV from 1 to 2!
+[21378.993272] IPv6: MLD: clamping QRV from 1 to 2!
+[21385.137306] IPv6: MLD: clamping QRV from 1 to 2!
+[21385.137314] IPv6: MLD: clamping QRV from 1 to 2!
+[21391.076615] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=52543 DF PROTO=2 
+[21391.076623] IPv6: MLD: clamping QRV from 1 to 2!
+[21391.076627] IPv6: MLD: clamping QRV from 1 to 2!
+[21397.015847] IPv6: MLD: clamping QRV from 1 to 2!
+[21397.015853] IPv6: MLD: clamping QRV from 1 to 2!
+[21403.161617] IPv6: MLD: clamping QRV from 1 to 2!
+[21403.364351] IPv6: MLD: clamping QRV from 1 to 2!
+[21409.098769] IPv6: MLD: clamping QRV from 1 to 2!
+[21409.098775] IPv6: MLD: clamping QRV from 1 to 2!
+[21415.037900] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=53352 DF PROTO=2 
+[21415.040621] IPv6: MLD: clamping QRV from 1 to 2!
+[21415.040624] IPv6: MLD: clamping QRV from 1 to 2!
+[21420.977172] IPv6: MLD: clamping QRV from 1 to 2!
+[21420.977177] IPv6: MLD: clamping QRV from 1 to 2!
+[21427.121286] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=53986 DF PROTO=2 
+[21427.121369] IPv6: MLD: clamping QRV from 1 to 2!
+[21427.121372] IPv6: MLD: clamping QRV from 1 to 2!
+[21433.060277] IPv6: MLD: clamping QRV from 1 to 2!
+[21433.060283] IPv6: MLD: clamping QRV from 1 to 2!
+[21438.999512] IPv6: MLD: clamping QRV from 1 to 2!
+[21438.999517] IPv6: MLD: clamping QRV from 1 to 2!
+[21445.143290] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=55350 DF PROTO=2 
+[21445.146236] IPv6: MLD: clamping QRV from 1 to 2!
+[21445.146241] IPv6: MLD: clamping QRV from 1 to 2!
+[21451.082711] IPv6: MLD: clamping QRV from 1 to 2!
+[21451.082720] IPv6: MLD: clamping QRV from 1 to 2!
+[21457.124465] IPv6: MLD: clamping QRV from 1 to 2!
+[21457.124470] IPv6: MLD: clamping QRV from 1 to 2!
+[21463.063889] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=56197 DF PROTO=2 
+[21463.066550] IPv6: MLD: clamping QRV from 1 to 2!
+[21463.066557] IPv6: MLD: clamping QRV from 1 to 2!
+[21469.002549] IPv6: MLD: clamping QRV from 1 to 2!
+[21469.002554] IPv6: MLD: clamping QRV from 1 to 2!
+[21475.146623] IPv6: MLD: clamping QRV from 1 to 2!
+[21475.146629] IPv6: MLD: clamping QRV from 1 to 2!
+[21481.085721] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=57295 DF PROTO=2 
+[21481.085748] IPv6: MLD: clamping QRV from 1 to 2!
+[21481.085752] IPv6: MLD: clamping QRV from 1 to 2!
+[21487.027517] IPv6: MLD: clamping QRV from 1 to 2!
+[21487.027524] IPv6: MLD: clamping QRV from 1 to 2!
+[21493.169225] IPv6: MLD: clamping QRV from 1 to 2!
+[21493.169229] IPv6: MLD: clamping QRV from 1 to 2!
+[21499.108254] IPv6: MLD: clamping QRV from 1 to 2!
+[21499.108260] IPv6: MLD: clamping QRV from 1 to 2!
+[21505.047196] IPv6: MLD: clamping QRV from 1 to 2!
+[21505.047202] IPv6: MLD: clamping QRV from 1 to 2!
+[21511.191177] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=59027 DF PROTO=2 
+[21511.191238] IPv6: MLD: clamping QRV from 1 to 2!
+[21511.191242] IPv6: MLD: clamping QRV from 1 to 2!
+[21517.130553] IPv6: MLD: clamping QRV from 1 to 2!
+[21517.130560] IPv6: MLD: clamping QRV from 1 to 2!
+[21523.069435] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=59757 DF PROTO=2 
+[21523.069504] IPv6: MLD: clamping QRV from 1 to 2!
+[21523.274916] IPv6: MLD: clamping QRV from 1 to 2!
+[21529.213703] IPv6: MLD: clamping QRV from 1 to 2!
+[21529.213710] IPv6: MLD: clamping QRV from 1 to 2!
+[21535.153397] IPv6: MLD: clamping QRV from 1 to 2!
+[21535.153403] IPv6: MLD: clamping QRV from 1 to 2!
+[21541.091984] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=60655 DF PROTO=2 
+[21541.091990] IPv6: MLD: clamping QRV from 1 to 2!
+[21541.091995] IPv6: MLD: clamping QRV from 1 to 2!
+[21547.235832] IPv6: MLD: clamping QRV from 1 to 2!
+[21547.238580] IPv6: MLD: clamping QRV from 1 to 2!
+[21553.174921] IPv6: MLD: clamping QRV from 1 to 2!
+[21553.379794] IPv6: MLD: clamping QRV from 1 to 2!
+[21559.114168] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=61086 DF PROTO=2 
+[21559.114198] IPv6: MLD: clamping QRV from 1 to 2!
+[21559.114202] IPv6: MLD: clamping QRV from 1 to 2!
+[21565.055382] IPv6: MLD: clamping QRV from 1 to 2!
+[21565.055390] IPv6: MLD: clamping QRV from 1 to 2!
+[21571.199494] IPv6: MLD: clamping QRV from 1 to 2!
+[21571.199500] IPv6: MLD: clamping QRV from 1 to 2!
+[21577.138810] IPv6: MLD: clamping QRV from 1 to 2!
+[21577.138815] IPv6: MLD: clamping QRV from 1 to 2!
+[21583.075867] IPv6: MLD: clamping QRV from 1 to 2!
+[21583.075873] IPv6: MLD: clamping QRV from 1 to 2!
+[21589.219685] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=62564 DF PROTO=2 
+[21589.219720] IPv6: MLD: clamping QRV from 1 to 2!
+[21589.219723] IPv6: MLD: clamping QRV from 1 to 2!
+[21595.158891] IPv6: MLD: clamping QRV from 1 to 2!
+[21595.158899] IPv6: MLD: clamping QRV from 1 to 2!
+[21601.099807] IPv6: MLD: clamping QRV from 1 to 2!
+[21601.099814] IPv6: MLD: clamping QRV from 1 to 2!
+[21607.242335] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=63741 DF PROTO=2 
+[21607.242339] IPv6: MLD: clamping QRV from 1 to 2!
+[21607.242343] IPv6: MLD: clamping QRV from 1 to 2!
+[21613.181190] IPv6: MLD: clamping QRV from 1 to 2!
+[21613.181196] IPv6: MLD: clamping QRV from 1 to 2!
+[21619.120473] IPv6: MLD: clamping QRV from 1 to 2!
+[21619.120478] IPv6: MLD: clamping QRV from 1 to 2!
+[21625.264275] IPv6: MLD: clamping QRV from 1 to 2!
+[21625.264426] IPv6: MLD: clamping QRV from 1 to 2!
+[21631.203412] IPv6: MLD: clamping QRV from 1 to 2!
+[21631.408772] IPv6: MLD: clamping QRV from 1 to 2!
+[21637.143069] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=65330 DF PROTO=2 
+[21637.143080] IPv6: MLD: clamping QRV from 1 to 2!
+[21637.143088] IPv6: MLD: clamping QRV from 1 to 2!
+[21643.287631] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=65430 DF PROTO=2 
+[21643.287733] IPv6: MLD: clamping QRV from 1 to 2!
+[21643.287737] IPv6: MLD: clamping QRV from 1 to 2!
+[21649.226000] IPv6: MLD: clamping QRV from 1 to 2!
+[21649.226005] IPv6: MLD: clamping QRV from 1 to 2!
+[21655.165152] IPv6: MLD: clamping QRV from 1 to 2!
+[21655.165156] IPv6: MLD: clamping QRV from 1 to 2!
+[21661.104029] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=607 DF PROTO=2 
+[21661.104147] IPv6: MLD: clamping QRV from 1 to 2!
+[21661.104151] IPv6: MLD: clamping QRV from 1 to 2!
+[21667.248181] IPv6: MLD: clamping QRV from 1 to 2!
+[21667.251095] IPv6: MLD: clamping QRV from 1 to 2!
+[21673.187389] IPv6: MLD: clamping QRV from 1 to 2!
+[21673.187394] IPv6: MLD: clamping QRV from 1 to 2!
+[21679.126640] IPv6: MLD: clamping QRV from 1 to 2!
+[21679.126654] IPv6: MLD: clamping QRV from 1 to 2!
+[21685.270543] IPv6: MLD: clamping QRV from 1 to 2!
+[21685.270547] IPv6: MLD: clamping QRV from 1 to 2!
+[21691.210131] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=1834 DF PROTO=2 
+[21691.210136] IPv6: MLD: clamping QRV from 1 to 2!
+[21691.210140] IPv6: MLD: clamping QRV from 1 to 2!
+[21697.151736] IPv6: MLD: clamping QRV from 1 to 2!
+[21697.151742] IPv6: MLD: clamping QRV from 1 to 2!
+[21703.293005] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=2358 DF PROTO=2 
+[21703.293009] IPv6: MLD: clamping QRV from 1 to 2!
+[21703.293012] IPv6: MLD: clamping QRV from 1 to 2!
+[21709.235080] IPv6: MLD: clamping QRV from 1 to 2!
+[21709.235087] IPv6: MLD: clamping QRV from 1 to 2!
+[21715.171820] IPv6: MLD: clamping QRV from 1 to 2!
+[21715.171824] IPv6: MLD: clamping QRV from 1 to 2!
+[21721.315334] IPv6: MLD: clamping QRV from 1 to 2!
+[21721.315339] IPv6: MLD: clamping QRV from 1 to 2!
+[21727.257298] IPv6: MLD: clamping QRV from 1 to 2!
+[21727.257304] IPv6: MLD: clamping QRV from 1 to 2!
+[21733.193682] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=4121 DF PROTO=2 
+[21733.193687] IPv6: MLD: clamping QRV from 1 to 2!
+[21733.193692] IPv6: MLD: clamping QRV from 1 to 2!
+[21739.132727] IPv6: MLD: clamping QRV from 1 to 2!
+[21739.132731] IPv6: MLD: clamping QRV from 1 to 2!
+[21745.379123] IPv6: MLD: clamping QRV from 1 to 2!
+[21745.379129] IPv6: MLD: clamping QRV from 1 to 2!
+[21751.318631] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=5120 DF PROTO=2 
+[21751.321190] IPv6: MLD: clamping QRV from 1 to 2!
+[21751.321193] IPv6: MLD: clamping QRV from 1 to 2!
+[21757.260621] IPv6: MLD: clamping QRV from 1 to 2!
+[21757.260628] IPv6: MLD: clamping QRV from 1 to 2!
+[21763.196394] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=5617 DF PROTO=2 
+[21763.196724] IPv6: MLD: clamping QRV from 1 to 2!
+[21763.196734] IPv6: MLD: clamping QRV from 1 to 2!
+[21769.341315] IPv6: MLD: clamping QRV from 1 to 2!
+[21769.341324] IPv6: MLD: clamping QRV from 1 to 2!
+[21775.279870] IPv6: MLD: clamping QRV from 1 to 2!
+[21775.279876] IPv6: MLD: clamping QRV from 1 to 2!
+[21781.219153] IPv6: MLD: clamping QRV from 1 to 2!
+[21781.219158] IPv6: MLD: clamping QRV from 1 to 2!
+[21787.158086] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=6833 DF PROTO=2 
+[21787.161020] IPv6: MLD: clamping QRV from 1 to 2!
+[21787.161026] IPv6: MLD: clamping QRV from 1 to 2!
+[21793.302199] IPv6: MLD: clamping QRV from 1 to 2!
+[21793.302204] IPv6: MLD: clamping QRV from 1 to 2!
+[21799.241447] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=7521 DF PROTO=2 
+[21799.241451] IPv6: MLD: clamping QRV from 1 to 2!
+[21799.241455] IPv6: MLD: clamping QRV from 1 to 2!
+[21805.180609] IPv6: MLD: clamping QRV from 1 to 2!
+[21805.180614] IPv6: MLD: clamping QRV from 1 to 2!
+[21811.324427] IPv6: MLD: clamping QRV from 1 to 2!
+[21811.529134] IPv6: MLD: clamping QRV from 1 to 2!
+[21817.267149] IPv6: MLD: clamping QRV from 1 to 2!
+[21817.267154] IPv6: MLD: clamping QRV from 1 to 2!
+[21823.202720] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=8422 DF PROTO=2 
+[21823.202780] IPv6: MLD: clamping QRV from 1 to 2!
+[21823.407648] IPv6: MLD: clamping QRV from 1 to 2!
+[21829.346865] IPv6: MLD: clamping QRV from 1 to 2!
+[21829.346871] IPv6: MLD: clamping QRV from 1 to 2!
+[21835.286037] IPv6: MLD: clamping QRV from 1 to 2!
+[21835.286043] IPv6: MLD: clamping QRV from 1 to 2!
+[21841.225269] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=10002 DF PROTO=2 
+[21841.225274] IPv6: MLD: clamping QRV from 1 to 2!
+[21841.225279] IPv6: MLD: clamping QRV from 1 to 2!
+[21847.369301] IPv6: MLD: clamping QRV from 1 to 2!
+[21847.369307] IPv6: MLD: clamping QRV from 1 to 2!
+[21853.308457] IPv6: MLD: clamping QRV from 1 to 2!
+[21853.308461] IPv6: MLD: clamping QRV from 1 to 2!
+[21859.247563] IPv6: MLD: clamping QRV from 1 to 2!
+[21859.247569] IPv6: MLD: clamping QRV from 1 to 2!
+[21865.430447] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=11279 DF PROTO=2 
+[21865.430466] IPv6: MLD: clamping QRV from 1 to 2!
+[21865.430469] IPv6: MLD: clamping QRV from 1 to 2!
+[21871.230243] IPv6: MLD: clamping QRV from 1 to 2!
+[21871.230249] IPv6: MLD: clamping QRV from 1 to 2!
+[21877.374920] IPv6: MLD: clamping QRV from 1 to 2!
+[21877.374925] IPv6: MLD: clamping QRV from 1 to 2!
+[21883.313380] IPv6: MLD: clamping QRV from 1 to 2!
+[21883.313387] IPv6: MLD: clamping QRV from 1 to 2!
+[21889.252546] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=12743 DF PROTO=2 
+[21889.252548] IPv6: MLD: clamping QRV from 1 to 2!
+[21889.252552] IPv6: MLD: clamping QRV from 1 to 2!
+[21895.396743] IPv6: MLD: clamping QRV from 1 to 2!
+[21895.396750] IPv6: MLD: clamping QRV from 1 to 2!
+[21901.335891] IPv6: MLD: clamping QRV from 1 to 2!
+[21901.335897] IPv6: MLD: clamping QRV from 1 to 2!
+[21907.272938] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=13747 DF PROTO=2 
+[21907.275729] IPv6: MLD: clamping QRV from 1 to 2!
+[21907.275734] IPv6: MLD: clamping QRV from 1 to 2!
+[21913.419348] IPv6: MLD: clamping QRV from 1 to 2!
+[21913.419355] IPv6: MLD: clamping QRV from 1 to 2!
+[21919.358117] IPv6: MLD: clamping QRV from 1 to 2!
+[21919.358122] IPv6: MLD: clamping QRV from 1 to 2!
+[21925.297278] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=15071 DF PROTO=2 
+[21925.297279] IPv6: MLD: clamping QRV from 1 to 2!
+[21925.297283] IPv6: MLD: clamping QRV from 1 to 2!
+[21931.236431] IPv6: MLD: clamping QRV from 1 to 2!
+[21931.236438] IPv6: MLD: clamping QRV from 1 to 2!
+[21937.380138] IPv6: MLD: clamping QRV from 1 to 2!
+[21937.380144] IPv6: MLD: clamping QRV from 1 to 2!
+[21943.319606] IPv6: MLD: clamping QRV from 1 to 2!
+[21943.319611] IPv6: MLD: clamping QRV from 1 to 2!
+[21949.256437] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=16269 DF PROTO=2 
+[21949.256888] IPv6: MLD: clamping QRV from 1 to 2!
+[21949.256891] IPv6: MLD: clamping QRV from 1 to 2!
+[21955.402880] IPv6: MLD: clamping QRV from 1 to 2!
+[21955.402886] IPv6: MLD: clamping QRV from 1 to 2!
+[21961.340190] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=16572 DF PROTO=2 
+[21961.340193] IPv6: MLD: clamping QRV from 1 to 2!
+[21961.340197] IPv6: MLD: clamping QRV from 1 to 2!
+[21967.279091] IPv6: MLD: clamping QRV from 1 to 2!
+[21967.281875] IPv6: MLD: clamping QRV from 1 to 2!
+[21973.423784] IPv6: MLD: clamping QRV from 1 to 2!
+[21973.423790] IPv6: MLD: clamping QRV from 1 to 2!
+[21979.362222] IPv6: MLD: clamping QRV from 1 to 2!
+[21979.362228] IPv6: MLD: clamping QRV from 1 to 2!
+[21985.301429] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=17891 DF PROTO=2 
+[21985.302511] IPv6: MLD: clamping QRV from 1 to 2!
+[21985.302515] IPv6: MLD: clamping QRV from 1 to 2!
+[21991.446087] IPv6: MLD: clamping QRV from 1 to 2!
+[21991.446094] IPv6: MLD: clamping QRV from 1 to 2!
+[21997.384851] IPv6: MLD: clamping QRV from 1 to 2!
+[21997.384857] IPv6: MLD: clamping QRV from 1 to 2!
+[22003.323806] IPv6: MLD: clamping QRV from 1 to 2!
+[22003.323813] IPv6: MLD: clamping QRV from 1 to 2!
+[22009.262928] IPv6: MLD: clamping QRV from 1 to 2!
+[22009.262934] IPv6: MLD: clamping QRV from 1 to 2!
+[22015.407569] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=19625 DF PROTO=2 
+[22015.407574] IPv6: MLD: clamping QRV from 1 to 2!
+[22015.407578] IPv6: MLD: clamping QRV from 1 to 2!
+[22021.346162] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=19819 DF PROTO=2 
+[22021.346165] IPv6: MLD: clamping QRV from 1 to 2!
+[22021.346169] IPv6: MLD: clamping QRV from 1 to 2!
+[22027.289173] IPv6: MLD: clamping QRV from 1 to 2!
+[22027.289182] IPv6: MLD: clamping QRV from 1 to 2!
+[22039.371480] IPv6: MLD: clamping QRV from 1 to 2!
+[22039.371488] IPv6: MLD: clamping QRV from 1 to 2!
+[22045.307674] IPv6: MLD: clamping QRV from 1 to 2!
+[22045.307682] IPv6: MLD: clamping QRV from 1 to 2!
+[22051.451586] IPv6: MLD: clamping QRV from 1 to 2!
+[22051.451595] IPv6: MLD: clamping QRV from 1 to 2!
+[22057.400797] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=21028 DF PROTO=2 
+[22057.400806] IPv6: MLD: clamping QRV from 1 to 2!
+[22057.400812] IPv6: MLD: clamping QRV from 1 to 2!
+[22063.331853] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=21398 DF PROTO=2 
+[22063.331920] IPv6: MLD: clamping QRV from 1 to 2!
+[22063.535188] IPv6: MLD: clamping QRV from 1 to 2!
+[22069.473893] IPv6: MLD: clamping QRV from 1 to 2!
+[22069.473898] IPv6: MLD: clamping QRV from 1 to 2!
+[22075.413321] IPv6: MLD: clamping QRV from 1 to 2!
+[22075.413326] IPv6: MLD: clamping QRV from 1 to 2!
+[22081.352348] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=22552 DF PROTO=2 
+[22081.352354] IPv6: MLD: clamping QRV from 1 to 2!
+[22087.294280] IPv6: MLD: clamping QRV from 1 to 2!
+[22087.294285] IPv6: MLD: clamping QRV from 1 to 2!
+[22093.435509] IPv6: MLD: clamping QRV from 1 to 2!
+[22093.435517] IPv6: MLD: clamping QRV from 1 to 2!
+[22099.374783] IPv6: MLD: clamping QRV from 1 to 2!
+[22099.374790] IPv6: MLD: clamping QRV from 1 to 2!
+[22105.417981] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=23488 DF PROTO=2 
+[22105.417984] IPv6: MLD: clamping QRV from 1 to 2!
+[22105.417988] IPv6: MLD: clamping QRV from 1 to 2!
+[22111.355443] IPv6: MLD: clamping QRV from 1 to 2!
+[22111.355450] IPv6: MLD: clamping QRV from 1 to 2!
+[22117.502246] IPv6: MLD: clamping QRV from 1 to 2!
+[22117.502251] IPv6: MLD: clamping QRV from 1 to 2!
+[22123.438674] IPv6: MLD: clamping QRV from 1 to 2!
+[22123.438681] IPv6: MLD: clamping QRV from 1 to 2!
+[22129.378107] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=24175 DF PROTO=2 
+[22129.378114] IPv6: MLD: clamping QRV from 1 to 2!
+[22129.378119] IPv6: MLD: clamping QRV from 1 to 2!
+[22135.317500] IPv6: MLD: clamping QRV from 1 to 2!
+[22135.317504] IPv6: MLD: clamping QRV from 1 to 2!
+[22141.460966] IPv6: MLD: clamping QRV from 1 to 2!
+[22141.460970] IPv6: MLD: clamping QRV from 1 to 2!
+[22147.400134] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=25458 DF PROTO=2 
+[22147.402810] IPv6: MLD: clamping QRV from 1 to 2!
+[22147.402815] IPv6: MLD: clamping QRV from 1 to 2!
+[22153.339835] IPv6: MLD: clamping QRV from 1 to 2!
+[22153.339842] IPv6: MLD: clamping QRV from 1 to 2!
+[22159.483181] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=25715 DF PROTO=2 
+[22159.483213] IPv6: MLD: clamping QRV from 1 to 2!
+[22159.483217] IPv6: MLD: clamping QRV from 1 to 2!
+[22165.422342] IPv6: MLD: clamping QRV from 1 to 2!
+[22165.626988] IPv6: MLD: clamping QRV from 1 to 2!
+[22171.363520] IPv6: MLD: clamping QRV from 1 to 2!
+[22171.566187] IPv6: MLD: clamping QRV from 1 to 2!
+[22177.505647] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=26824 DF PROTO=2 
+[22177.505742] IPv6: MLD: clamping QRV from 1 to 2!
+[22177.505746] IPv6: MLD: clamping QRV from 1 to 2!
+[22183.444742] IPv6: MLD: clamping QRV from 1 to 2!
+[22183.444747] IPv6: MLD: clamping QRV from 1 to 2!
+[22189.383883] IPv6: MLD: clamping QRV from 1 to 2!
+[22189.383891] IPv6: MLD: clamping QRV from 1 to 2!
+[22195.527904] IPv6: MLD: clamping QRV from 1 to 2!
+[22195.527911] IPv6: MLD: clamping QRV from 1 to 2!
+[22201.467052] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=27899 DF PROTO=2 
+[22201.467081] IPv6: MLD: clamping QRV from 1 to 2!
+[22201.467085] IPv6: MLD: clamping QRV from 1 to 2!
+[22207.406420] IPv6: MLD: clamping QRV from 1 to 2!
+[22207.406426] IPv6: MLD: clamping QRV from 1 to 2!
+[22213.345367] IPv6: MLD: clamping QRV from 1 to 2!
+[22213.345372] IPv6: MLD: clamping QRV from 1 to 2!
+[22219.489303] IPv6: MLD: clamping QRV from 1 to 2!
+[22219.489308] IPv6: MLD: clamping QRV from 1 to 2!
+[22225.531009] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=28609 DF PROTO=2 
+[22225.531014] IPv6: MLD: clamping QRV from 1 to 2!
+[22225.531019] IPv6: MLD: clamping QRV from 1 to 2!
+[22231.470320] IPv6: MLD: clamping QRV from 1 to 2!
+[22231.470325] IPv6: MLD: clamping QRV from 1 to 2!
+[22237.409231] IPv6: MLD: clamping QRV from 1 to 2!
+[22237.409450] IPv6: MLD: clamping QRV from 1 to 2!
+[22243.348231] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=29190 DF PROTO=2 
+[22243.552989] IPv6: MLD: clamping QRV from 1 to 2!
+[22243.553084] IPv6: MLD: clamping QRV from 1 to 2!
+[22249.492467] IPv6: MLD: clamping QRV from 1 to 2!
+[22249.492472] IPv6: MLD: clamping QRV from 1 to 2!
+[22255.431557] IPv6: MLD: clamping QRV from 1 to 2!
+[22255.431562] IPv6: MLD: clamping QRV from 1 to 2!
+[22261.473325] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=30171 DF PROTO=2 
+[22261.473328] IPv6: MLD: clamping QRV from 1 to 2!
+[22261.473332] IPv6: MLD: clamping QRV from 1 to 2!
+[22267.412363] IPv6: MLD: clamping QRV from 1 to 2!
+[22267.423225] IPv6: MLD: clamping QRV from 1 to 2!
+[22273.556826] IPv6: MLD: clamping QRV from 1 to 2!
+[22273.761011] IPv6: MLD: clamping QRV from 1 to 2!
+[22279.495635] IPv6: MLD: clamping QRV from 1 to 2!
+[22279.495641] IPv6: MLD: clamping QRV from 1 to 2!
+[22285.434681] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=31371 DF PROTO=2 
+[22285.434734] IPv6: MLD: clamping QRV from 1 to 2!
+[22285.434737] IPv6: MLD: clamping QRV from 1 to 2!
+[22291.375947] IPv6: MLD: clamping QRV from 1 to 2!
+[22291.375952] IPv6: MLD: clamping QRV from 1 to 2!
+[22297.518183] IPv6: MLD: clamping QRV from 1 to 2!
+[22297.518188] IPv6: MLD: clamping QRV from 1 to 2!
+[22303.456981] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=32382 DF PROTO=2 
+[22303.457038] IPv6: MLD: clamping QRV from 1 to 2!
+[22303.457042] IPv6: MLD: clamping QRV from 1 to 2!
+[22309.498624] IPv6: MLD: clamping QRV from 1 to 2!
+[22309.498631] IPv6: MLD: clamping QRV from 1 to 2!
+[22315.437854] IPv6: MLD: clamping QRV from 1 to 2!
+[22315.437859] IPv6: MLD: clamping QRV from 1 to 2!
+[22321.584030] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=33306 DF PROTO=2 
+[22321.584082] IPv6: MLD: clamping QRV from 1 to 2!
+[22321.584085] IPv6: MLD: clamping QRV from 1 to 2!
+[22327.521272] IPv6: MLD: clamping QRV from 1 to 2!
+[22327.521279] IPv6: MLD: clamping QRV from 1 to 2!
+[22333.462790] IPv6: MLD: clamping QRV from 1 to 2!
+[22333.462796] IPv6: MLD: clamping QRV from 1 to 2!
+[22339.400007] IPv6: MLD: clamping QRV from 1 to 2!
+[22339.400013] IPv6: MLD: clamping QRV from 1 to 2!
+[22345.543486] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=34849 DF PROTO=2 
+[22345.543490] IPv6: MLD: clamping QRV from 1 to 2!
+[22345.543493] IPv6: MLD: clamping QRV from 1 to 2!
+[22351.482545] IPv6: MLD: clamping QRV from 1 to 2!
+[22351.482550] IPv6: MLD: clamping QRV from 1 to 2!
+[22357.422336] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=35087 DF PROTO=2 
+[22357.422341] IPv6: MLD: clamping QRV from 1 to 2!
+[22357.422345] IPv6: MLD: clamping QRV from 1 to 2!
+[22363.565730] IPv6: MLD: clamping QRV from 1 to 2!
+[22363.565737] IPv6: MLD: clamping QRV from 1 to 2!
+[22369.505501] IPv6: MLD: clamping QRV from 1 to 2!
+[22369.505507] IPv6: MLD: clamping QRV from 1 to 2!
+[22375.443920] IPv6: MLD: clamping QRV from 1 to 2!
+[22375.648701] IPv6: MLD: clamping QRV from 1 to 2!
+[22381.588110] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=36281 DF PROTO=2 
+[22381.588114] IPv6: MLD: clamping QRV from 1 to 2!
+[22381.588118] IPv6: MLD: clamping QRV from 1 to 2!
+[22387.527417] IPv6: MLD: clamping QRV from 1 to 2!
+[22387.527424] IPv6: MLD: clamping QRV from 1 to 2!
+[22393.466339] IPv6: MLD: clamping QRV from 1 to 2!
+[22393.466344] IPv6: MLD: clamping QRV from 1 to 2!
+[22399.405564] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=36815 DF PROTO=2 
+[22399.405568] IPv6: MLD: clamping QRV from 1 to 2!
+[22399.610632] IPv6: MLD: clamping QRV from 1 to 2!
+[22405.550300] IPv6: MLD: clamping QRV from 1 to 2!
+[22405.550304] IPv6: MLD: clamping QRV from 1 to 2!
+[22411.488738] IPv6: MLD: clamping QRV from 1 to 2!
+[22411.488742] IPv6: MLD: clamping QRV from 1 to 2!
+[22417.427998] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=37594 DF PROTO=2 
+[22417.428003] IPv6: MLD: clamping QRV from 1 to 2!
+[22417.428008] IPv6: MLD: clamping QRV from 1 to 2!
+[22423.571898] IPv6: MLD: clamping QRV from 1 to 2!
+[22423.571902] IPv6: MLD: clamping QRV from 1 to 2!
+[22429.511392] IPv6: MLD: clamping QRV from 1 to 2!
+[22429.511397] IPv6: MLD: clamping QRV from 1 to 2!
+[22435.450280] IPv6: MLD: clamping QRV from 1 to 2!
+[22435.450286] IPv6: MLD: clamping QRV from 1 to 2!
+[22441.594206] IPv6: MLD: clamping QRV from 1 to 2!
+[22441.594212] IPv6: MLD: clamping QRV from 1 to 2!
+[22447.533574] IPv6: MLD: clamping QRV from 1 to 2!
+[22447.533578] IPv6: MLD: clamping QRV from 1 to 2!
+[22453.472575] IPv6: MLD: clamping QRV from 1 to 2!
+[22453.472581] IPv6: MLD: clamping QRV from 1 to 2!
+[22459.617154] IPv6: MLD: clamping QRV from 1 to 2!
+[22459.617159] IPv6: MLD: clamping QRV from 1 to 2!
+[22465.557693] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=40746 DF PROTO=2 
+[22465.557695] IPv6: MLD: clamping QRV from 1 to 2!
+[22465.557698] IPv6: MLD: clamping QRV from 1 to 2!
+[22471.495011] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=41184 DF PROTO=2 
+[22471.495049] IPv6: MLD: clamping QRV from 1 to 2!
+[22471.495052] IPv6: MLD: clamping QRV from 1 to 2!
+[22477.641077] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=41446 DF PROTO=2 
+[22477.641080] IPv6: MLD: clamping QRV from 1 to 2!
+[22477.641085] IPv6: MLD: clamping QRV from 1 to 2!
+[22483.580420] IPv6: MLD: clamping QRV from 1 to 2!
+[22483.580426] IPv6: MLD: clamping QRV from 1 to 2!
+[22489.622412] IPv6: MLD: clamping QRV from 1 to 2!
+[22489.622418] IPv6: MLD: clamping QRV from 1 to 2!
+[22495.560782] IPv6: MLD: clamping QRV from 1 to 2!
+[22495.560786] IPv6: MLD: clamping QRV from 1 to 2!
+[22501.499862] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=42621 DF PROTO=2 
+[22501.499937] IPv6: MLD: clamping QRV from 1 to 2!
+[22501.499942] IPv6: MLD: clamping QRV from 1 to 2!
+[22507.652196] IPv6: MLD: clamping QRV from 1 to 2!
+[22507.652201] IPv6: MLD: clamping QRV from 1 to 2!
+[22513.583775] IPv6: MLD: clamping QRV from 1 to 2!
+[22513.583781] IPv6: MLD: clamping QRV from 1 to 2!
+[22519.522240] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=43551 DF PROTO=2 
+[22519.522293] IPv6: MLD: clamping QRV from 1 to 2!
+[22519.522297] IPv6: MLD: clamping QRV from 1 to 2!
+[22525.461452] IPv6: MLD: clamping QRV from 1 to 2!
+[22525.461457] IPv6: MLD: clamping QRV from 1 to 2!
+[22531.605404] IPv6: MLD: clamping QRV from 1 to 2!
+[22531.605409] IPv6: MLD: clamping QRV from 1 to 2!
+[22537.544067] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=44302 DF PROTO=2 
+[22537.544148] IPv6: MLD: clamping QRV from 1 to 2!
+[22537.544152] IPv6: MLD: clamping QRV from 1 to 2!
+[22543.481766] IPv6: MLD: clamping QRV from 1 to 2!
+[22543.481772] IPv6: MLD: clamping QRV from 1 to 2!
+[22549.628655] IPv6: MLD: clamping QRV from 1 to 2!
+[22549.628663] IPv6: MLD: clamping QRV from 1 to 2!
+[22555.565091] IPv6: MLD: clamping QRV from 1 to 2!
+[22555.565096] IPv6: MLD: clamping QRV from 1 to 2!
+[22561.504324] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=45065 DF PROTO=2 
+[22561.504330] IPv6: MLD: clamping QRV from 1 to 2!
+[22561.504334] IPv6: MLD: clamping QRV from 1 to 2!
+[22567.648421] IPv6: MLD: clamping QRV from 1 to 2!
+[22567.648428] IPv6: MLD: clamping QRV from 1 to 2!
+[22573.484983] IPv6: MLD: clamping QRV from 1 to 2!
+[22573.484990] IPv6: MLD: clamping QRV from 1 to 2!
+[22579.629532] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=45684 DF PROTO=2 
+[22579.629536] IPv6: MLD: clamping QRV from 1 to 2!
+[22579.629541] IPv6: MLD: clamping QRV from 1 to 2!
+[22585.568595] IPv6: MLD: clamping QRV from 1 to 2!
+[22585.772661] IPv6: MLD: clamping QRV from 1 to 2!
+[22591.507273] IPv6: MLD: clamping QRV from 1 to 2!
+[22591.507279] IPv6: MLD: clamping QRV from 1 to 2!
+[22597.549402] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=46182 DF PROTO=2 
+[22597.549405] IPv6: MLD: clamping QRV from 1 to 2!
+[22597.549408] IPv6: MLD: clamping QRV from 1 to 2!
+[22603.693384] IPv6: MLD: clamping QRV from 1 to 2!
+[22603.693389] IPv6: MLD: clamping QRV from 1 to 2!
+[22609.634820] IPv6: MLD: clamping QRV from 1 to 2!
+[22609.634827] IPv6: MLD: clamping QRV from 1 to 2!
+[22621.510463] IPv6: MLD: clamping QRV from 1 to 2!
+[22621.510470] IPv6: MLD: clamping QRV from 1 to 2!
+[22627.552063] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=48167 DF PROTO=2 
+[22627.552063] IPv6: MLD: clamping QRV from 1 to 2!
+[22627.552070] IPv6: MLD: clamping QRV from 1 to 2!
+[22633.696122] IPv6: MLD: clamping QRV from 1 to 2!
+[22633.696127] IPv6: MLD: clamping QRV from 1 to 2!
+[22639.635084] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=48642 DF PROTO=2 
+[22639.635143] IPv6: MLD: clamping QRV from 1 to 2!
+[22639.635147] IPv6: MLD: clamping QRV from 1 to 2!
+[22645.574379] IPv6: MLD: clamping QRV from 1 to 2!
+[22645.574386] IPv6: MLD: clamping QRV from 1 to 2!
+[22651.616146] IPv6: MLD: clamping QRV from 1 to 2!
+[22651.616151] IPv6: MLD: clamping QRV from 1 to 2!
+[22657.555301] IPv6: MLD: clamping QRV from 1 to 2!
+[22657.555308] IPv6: MLD: clamping QRV from 1 to 2!
+[22663.699658] IPv6: MLD: clamping QRV from 1 to 2!
+[22663.699664] IPv6: MLD: clamping QRV from 1 to 2!
+[22669.638358] IPv6: MLD: clamping QRV from 1 to 2!
+[22669.638362] IPv6: MLD: clamping QRV from 1 to 2!
+[22675.577429] IPv6: MLD: clamping QRV from 1 to 2!
+[22675.577435] IPv6: MLD: clamping QRV from 1 to 2!
+[22681.721305] IPv6: MLD: clamping QRV from 1 to 2!
+[22681.721312] IPv6: MLD: clamping QRV from 1 to 2!
+[22687.661344] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=51237 DF PROTO=2 
+[22687.661349] IPv6: MLD: clamping QRV from 1 to 2!
+[22687.661352] IPv6: MLD: clamping QRV from 1 to 2!
+[22693.599668] IPv6: MLD: clamping QRV from 1 to 2!
+[22693.599675] IPv6: MLD: clamping QRV from 1 to 2!
+[22699.539090] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=51953 DF PROTO=2 
+[22699.539098] IPv6: MLD: clamping QRV from 1 to 2!
+[22699.539105] IPv6: MLD: clamping QRV from 1 to 2!
+[22705.580554] IPv6: MLD: clamping QRV from 1 to 2!
+[22705.580562] IPv6: MLD: clamping QRV from 1 to 2!
+[22711.724467] IPv6: MLD: clamping QRV from 1 to 2!
+[22711.724472] IPv6: MLD: clamping QRV from 1 to 2!
+[22717.663965] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=52833 DF PROTO=2 
+[22717.663967] IPv6: MLD: clamping QRV from 1 to 2!
+[22717.663971] IPv6: MLD: clamping QRV from 1 to 2!
+[22723.603235] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=52979 DF PROTO=2 
+[22723.603242] IPv6: MLD: clamping QRV from 1 to 2!
+[22723.603247] IPv6: MLD: clamping QRV from 1 to 2!
+[22729.747819] IPv6: MLD: clamping QRV from 1 to 2!
+[22729.747828] IPv6: MLD: clamping QRV from 1 to 2!
+[22733.637902] IPv6: MLD: clamping QRV from 1 to 2!
+[22733.638298] IPv6: MLD: clamping QRV from 1 to 2!
+[22741.625225] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=53781 DF PROTO=2 
+[22741.625230] IPv6: MLD: clamping QRV from 1 to 2!
+[22741.830441] IPv6: MLD: clamping QRV from 1 to 2!
+[22747.564879] IPv6: MLD: clamping QRV from 1 to 2!
+[22747.567631] IPv6: MLD: clamping QRV from 1 to 2!
+[22753.708318] IPv6: MLD: clamping QRV from 1 to 2!
+[22753.708323] IPv6: MLD: clamping QRV from 1 to 2!
+[22759.647887] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=54695 DF PROTO=2 
+[22759.647893] IPv6: MLD: clamping QRV from 1 to 2!
+[22759.647896] IPv6: MLD: clamping QRV from 1 to 2!
+[22765.586655] IPv6: MLD: clamping QRV from 1 to 2!
+[22765.586662] IPv6: MLD: clamping QRV from 1 to 2!
+[22771.842389] IPv6: MLD: clamping QRV from 1 to 2!
+[22771.842395] IPv6: MLD: clamping QRV from 1 to 2!
+[22777.672131] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=55378 DF PROTO=2 
+[22777.672138] IPv6: MLD: clamping QRV from 1 to 2!
+[22777.672143] IPv6: MLD: clamping QRV from 1 to 2!
+[22783.611468] IPv6: MLD: clamping QRV from 1 to 2!
+[22783.611473] IPv6: MLD: clamping QRV from 1 to 2!
+[22789.758680] IPv6: MLD: clamping QRV from 1 to 2!
+[22789.758686] IPv6: MLD: clamping QRV from 1 to 2!
+[22795.695078] IPv6: MLD: clamping QRV from 1 to 2!
+[22795.695084] IPv6: MLD: clamping QRV from 1 to 2!
+[22801.631506] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=56524 DF PROTO=2 
+[22801.631511] IPv6: MLD: clamping QRV from 1 to 2!
+[22801.631515] IPv6: MLD: clamping QRV from 1 to 2!
+[22807.775777] IPv6: MLD: clamping QRV from 1 to 2!
+[22807.775783] IPv6: MLD: clamping QRV from 1 to 2!
+[22813.714514] IPv6: MLD: clamping QRV from 1 to 2!
+[22813.714519] IPv6: MLD: clamping QRV from 1 to 2!
+[22819.653633] IPv6: MLD: clamping QRV from 1 to 2!
+[22819.653637] IPv6: MLD: clamping QRV from 1 to 2!
+[22825.593515] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=58447 DF PROTO=2 
+[22825.593521] IPv6: MLD: clamping QRV from 1 to 2!
+[22825.593525] IPv6: MLD: clamping QRV from 1 to 2!
+[22831.737491] IPv6: MLD: clamping QRV from 1 to 2!
+[22831.737496] IPv6: MLD: clamping QRV from 1 to 2!
+[22837.788856] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=58964 DF PROTO=2 
+[22837.788862] IPv6: MLD: clamping QRV from 1 to 2!
+[22837.788867] IPv6: MLD: clamping QRV from 1 to 2!
+[22843.717630] IPv6: MLD: clamping QRV from 1 to 2!
+[22843.717635] IPv6: MLD: clamping QRV from 1 to 2!
+[22849.656750] IPv6: MLD: clamping QRV from 1 to 2!
+[22849.656756] IPv6: MLD: clamping QRV from 1 to 2!
+[22855.595905] IPv6: MLD: clamping QRV from 1 to 2!
+[22855.801279] IPv6: MLD: clamping QRV from 1 to 2!
+[22861.739884] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=60289 DF PROTO=2 
+[22861.739884] IPv6: MLD: clamping QRV from 1 to 2!
+[22861.944756] IPv6: MLD: clamping QRV from 1 to 2!
+[22867.679476] IPv6: MLD: clamping QRV from 1 to 2!
+[22867.679491] IPv6: MLD: clamping QRV from 1 to 2!
+[22873.622366] IPv6: MLD: clamping QRV from 1 to 2!
+[22873.622371] IPv6: MLD: clamping QRV from 1 to 2!
+[22879.762294] IPv6: MLD: clamping QRV from 1 to 2!
+[22879.762300] IPv6: MLD: clamping QRV from 1 to 2!
+[22885.703635] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=61803 DF PROTO=2 
+[22885.703638] IPv6: MLD: clamping QRV from 1 to 2!
+[22885.703641] IPv6: MLD: clamping QRV from 1 to 2!
+[22891.640749] IPv6: MLD: clamping QRV from 1 to 2!
+[22891.640755] IPv6: MLD: clamping QRV from 1 to 2!
+[22897.784971] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=62378 DF PROTO=2 
+[22897.784976] IPv6: MLD: clamping QRV from 1 to 2!
+[22897.784981] IPv6: MLD: clamping QRV from 1 to 2!
+[22903.723844] IPv6: MLD: clamping QRV from 1 to 2!
+[22903.723851] IPv6: MLD: clamping QRV from 1 to 2!
+[22909.663010] IPv6: MLD: clamping QRV from 1 to 2!
+[22909.663015] IPv6: MLD: clamping QRV from 1 to 2!
+[22921.746130] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=63789 DF PROTO=2 
+[22921.746180] IPv6: MLD: clamping QRV from 1 to 2!
+[22921.746184] IPv6: MLD: clamping QRV from 1 to 2!
+[22927.685554] IPv6: MLD: clamping QRV from 1 to 2!
+[22927.687481] IPv6: MLD: clamping QRV from 1 to 2!
+[22933.829555] IPv6: MLD: clamping QRV from 1 to 2!
+[22933.829561] IPv6: MLD: clamping QRV from 1 to 2!
+[22939.768604] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=64830 DF PROTO=2 
+[22939.768609] IPv6: MLD: clamping QRV from 1 to 2!
+[22939.768614] IPv6: MLD: clamping QRV from 1 to 2!
+[22945.707652] IPv6: MLD: clamping QRV from 1 to 2!
+[22945.707657] IPv6: MLD: clamping QRV from 1 to 2!
+[22951.646903] IPv6: MLD: clamping QRV from 1 to 2!
+[22951.646907] IPv6: MLD: clamping QRV from 1 to 2!
+[22957.793614] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=65250 DF PROTO=2 
+[22957.793681] IPv6: MLD: clamping QRV from 1 to 2!
+[22957.793685] IPv6: MLD: clamping QRV from 1 to 2!
+[22963.732556] IPv6: MLD: clamping QRV from 1 to 2!
+[22963.732562] IPv6: MLD: clamping QRV from 1 to 2!
+[22969.669237] IPv6: MLD: clamping QRV from 1 to 2!
+[22969.669243] IPv6: MLD: clamping QRV from 1 to 2!
+[22975.813643] IPv6: MLD: clamping QRV from 1 to 2!
+[22981.752352] IPv6: MLD: clamping QRV from 1 to 2!
+[22981.752357] IPv6: MLD: clamping QRV from 1 to 2!
+[22987.691669] IPv6: MLD: clamping QRV from 1 to 2!
+[22987.691676] IPv6: MLD: clamping QRV from 1 to 2!
+[22993.835650] IPv6: MLD: clamping QRV from 1 to 2!
+[22993.835655] IPv6: MLD: clamping QRV from 1 to 2!
+[22999.775896] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=1287 DF PROTO=2 
+[22999.775974] IPv6: MLD: clamping QRV from 1 to 2!
+[22999.775977] IPv6: MLD: clamping QRV from 1 to 2!
+[23005.713530] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=1579 DF PROTO=2 
+[23005.715138] IPv6: MLD: clamping QRV from 1 to 2!
+[23005.715142] IPv6: MLD: clamping QRV from 1 to 2!
+[23011.857776] IPv6: MLD: clamping QRV from 1 to 2!
+[23012.062958] IPv6: MLD: clamping QRV from 1 to 2!
+[23017.799656] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=2232 DF PROTO=2 
+[23017.799657] IPv6: MLD: clamping QRV from 1 to 2!
+[23017.799662] IPv6: MLD: clamping QRV from 1 to 2!
+[23023.736243] IPv6: MLD: clamping QRV from 1 to 2!
+[23023.736250] IPv6: MLD: clamping QRV from 1 to 2!
+[23029.665182] IPv6: MLD: clamping QRV from 1 to 2!
+[23029.665188] IPv6: MLD: clamping QRV from 1 to 2!
+[23035.716977] IPv6: MLD: clamping QRV from 1 to 2!
+[23035.716984] IPv6: MLD: clamping QRV from 1 to 2!
+[23041.861332] IPv6: MLD: clamping QRV from 1 to 2!
+[23041.861338] IPv6: MLD: clamping QRV from 1 to 2!
+[23047.802690] IPv6: MLD: clamping QRV from 1 to 2!
+[23047.802696] IPv6: MLD: clamping QRV from 1 to 2!
+[23053.662489] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=3218 DF PROTO=2 
+[23053.665511] IPv6: MLD: clamping QRV from 1 to 2!
+[23053.668767] IPv6: MLD: clamping QRV from 1 to 2!
+[23059.689147] IPv6: MLD: clamping QRV from 1 to 2!
+[23059.689154] IPv6: MLD: clamping QRV from 1 to 2!
+[23065.824986] IPv6: MLD: clamping QRV from 1 to 2!
+[23065.824991] IPv6: MLD: clamping QRV from 1 to 2!
+[23071.762304] IPv6: MLD: clamping QRV from 1 to 2!
+[23071.762308] IPv6: MLD: clamping QRV from 1 to 2!
+[23077.700896] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=4240 DF PROTO=2 
+[23077.703547] IPv6: MLD: clamping QRV from 1 to 2!
+[23077.703554] IPv6: MLD: clamping QRV from 1 to 2!
+[23083.844580] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=4323 DF PROTO=2 
+[23083.849742] IPv6: MLD: clamping QRV from 1 to 2!
+[23083.849746] IPv6: MLD: clamping QRV from 1 to 2!
+[23089.786057] IPv6: MLD: clamping QRV from 1 to 2!
+[23089.786062] IPv6: MLD: clamping QRV from 1 to 2!
+[23095.723269] IPv6: MLD: clamping QRV from 1 to 2!
+[23095.723276] IPv6: MLD: clamping QRV from 1 to 2!
+[23101.867935] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=5184 DF PROTO=2 
+[23101.867939] IPv6: MLD: clamping QRV from 1 to 2!
+[23101.867943] IPv6: MLD: clamping QRV from 1 to 2!
+[23107.807304] IPv6: MLD: clamping QRV from 1 to 2!
+[23107.807308] IPv6: MLD: clamping QRV from 1 to 2!
+[23113.745524] IPv6: MLD: clamping QRV from 1 to 2!
+[23113.745529] IPv6: MLD: clamping QRV from 1 to 2!
+[23119.890117] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=6390 DF PROTO=2 
+[23119.890121] IPv6: MLD: clamping QRV from 1 to 2!
+[23125.828864] IPv6: MLD: clamping QRV from 1 to 2!
+[23125.828869] IPv6: MLD: clamping QRV from 1 to 2!
+[23131.767775] IPv6: MLD: clamping QRV from 1 to 2!
+[23131.767780] IPv6: MLD: clamping QRV from 1 to 2!
+[23137.718377] IPv6: MLD: clamping QRV from 1 to 2!
+[23137.718381] IPv6: MLD: clamping QRV from 1 to 2!
+[23143.851198] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=6900 DF PROTO=2 
+[23143.851209] IPv6: MLD: clamping QRV from 1 to 2!
+[23143.851213] IPv6: MLD: clamping QRV from 1 to 2!
+[23149.791319] IPv6: MLD: clamping QRV from 1 to 2!
+[23149.791325] IPv6: MLD: clamping QRV from 1 to 2!
+[23155.729415] IPv6: MLD: clamping QRV from 1 to 2!
+[23155.729420] IPv6: MLD: clamping QRV from 1 to 2!
+[23161.873849] IPv6: MLD: clamping QRV from 1 to 2!
+[23161.873857] IPv6: MLD: clamping QRV from 1 to 2!
+[23167.815395] IPv6: MLD: clamping QRV from 1 to 2!
+[23167.815402] IPv6: MLD: clamping QRV from 1 to 2!
+[23173.752059] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=8092 DF PROTO=2 
+[23173.752084] IPv6: MLD: clamping QRV from 1 to 2!
+[23173.752089] IPv6: MLD: clamping QRV from 1 to 2!
+[23179.901789] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=8463 DF PROTO=2 
+[23179.903122] IPv6: MLD: clamping QRV from 1 to 2!
+[23180.100282] IPv6: MLD: clamping QRV from 1 to 2!
+[23185.835485] IPv6: MLD: clamping QRV from 1 to 2!
+[23186.040144] IPv6: MLD: clamping QRV from 1 to 2!
+[23191.773995] IPv6: MLD: clamping QRV from 1 to 2!
+[23191.978721] IPv6: MLD: clamping QRV from 1 to 2!
+[23197.918403] IPv6: MLD: clamping QRV from 1 to 2!
+[23197.918410] IPv6: MLD: clamping QRV from 1 to 2!
+[23203.857330] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=9514 DF PROTO=2 
+[23203.857423] IPv6: MLD: clamping QRV from 1 to 2!
+[23203.857427] IPv6: MLD: clamping QRV from 1 to 2!
+[23209.796389] IPv6: MLD: clamping QRV from 1 to 2!
+[23209.796395] IPv6: MLD: clamping QRV from 1 to 2!
+[23215.735509] IPv6: MLD: clamping QRV from 1 to 2!
+[23215.735516] IPv6: MLD: clamping QRV from 1 to 2!
+[23221.879609] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=10041 DF PROTO=2 
+[23221.879611] IPv6: MLD: clamping QRV from 1 to 2!
+[23221.879615] IPv6: MLD: clamping QRV from 1 to 2!
+[23227.824150] IPv6: MLD: clamping QRV from 1 to 2!
+[23227.824155] IPv6: MLD: clamping QRV from 1 to 2!
+[23233.757940] IPv6: MLD: clamping QRV from 1 to 2!
+[23233.757946] IPv6: MLD: clamping QRV from 1 to 2!
+[23245.843331] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=10963 DF PROTO=2 
+[23245.843364] IPv6: MLD: clamping QRV from 1 to 2!
+[23245.843368] IPv6: MLD: clamping QRV from 1 to 2!
+[23251.780282] IPv6: MLD: clamping QRV from 1 to 2!
+[23251.780289] IPv6: MLD: clamping QRV from 1 to 2!
+[23257.923983] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=11880 DF PROTO=2 
+[23257.924413] IPv6: MLD: clamping QRV from 1 to 2!
+[23257.924417] IPv6: MLD: clamping QRV from 1 to 2!
+[23263.863361] IPv6: MLD: clamping QRV from 1 to 2!
+[23263.863368] IPv6: MLD: clamping QRV from 1 to 2!
+[23269.802558] IPv6: MLD: clamping QRV from 1 to 2!
+[23269.802566] IPv6: MLD: clamping QRV from 1 to 2!
+[23275.742360] IPv6: MLD: clamping QRV from 1 to 2!
+[23275.742369] IPv6: MLD: clamping QRV from 1 to 2!
+[23281.885822] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=13208 DF PROTO=2 
+[23281.885827] IPv6: MLD: clamping QRV from 1 to 2!
+[23281.885833] IPv6: MLD: clamping QRV from 1 to 2!
+[23287.825113] IPv6: MLD: clamping QRV from 1 to 2!
+[23287.825119] IPv6: MLD: clamping QRV from 1 to 2!
+[23293.764036] IPv6: MLD: clamping QRV from 1 to 2!
+[23293.764040] IPv6: MLD: clamping QRV from 1 to 2!
+[23299.908162] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=13620 DF PROTO=2 
+[23299.908252] IPv6: MLD: clamping QRV from 1 to 2!
+[23299.908255] IPv6: MLD: clamping QRV from 1 to 2!
+[23305.847187] IPv6: MLD: clamping QRV from 1 to 2!
+[23305.847192] IPv6: MLD: clamping QRV from 1 to 2!

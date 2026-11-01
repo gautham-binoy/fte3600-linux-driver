@@ -1,0 +1,48 @@
+UMDF Driver
+ACPI
+9338
+9536
+9348
+93A8
+7001
+6100
+3600
+4800
+FocalTech Electronics Co.,Ltd
+Focal Fingerprint Driver
+000-000-000
+\\.\RESOURCE_HUB
+%s\%0*I64x
+tWUDFx02000
+iZP-(
+kdZPF<2-(
+kdZPF<2-(
+b```
+PFxx
+iZP-(
+VS_VERSION_INFO
+StringFileInfo
+080404b0
+CompanyName
+FocalTech Electronics(ShenZhen) Co.,Ltd
+FileDescription
+FocalTech Fingerprint Reader Driver
+FileVersion
+1.0.0.2782
+InternalName
+ftWbioUmdfDriverV2.dll
+LegalCopyright
+Copyright (C) 2018
+OriginalFilename
+ftWbioUmdfDriverV2.dll
+ProductName
+FocalTech Fingerprint Driver Model
+ProductVersion
+1.0.0.2782
+VarFileInfo
+Translation
+RAny use of this Certificate constitutes acceptance of the DigiCert CP/CPS and the Relying Party Agreement which limit liability and are incorporated herein by reference
+SubC
+6Focaltech Systems Co., Ltd
+SubC
+Legal_Policy_Statement

@@ -1,0 +1,55 @@
+jjjjj
+         (((((                  H
+         h((((                  H
+                                 H
+%SYSDIR%
+%WINDIR%
+%PROGRAMS%
+%STARTUP%
+%STARTMENU%
+%DESKTOP%
+%PROGRAMFILES%
+%ALLPROGRAMS%
+%ALLSTARTUP%
+%ALLSTARTMENU%
+%ALLDESKTOP%
+%ALLPROGRAMFILES%
+&REV
+shlwapi
+CLASSES
+CONFIG
+CURRENT
+MACHINE
+USERS
+.DEFAULT%
+.DEFAULT
+%SOFTWARE%
+Software
+%SERVICES%
+System\CurrentControlSet\Services
+%ENUM%
+System\CurrentControlSet\Enum
+%I64u
+%02X
+VS_VERSION_INFO
+StringFileInfo
+040904b0
+CompanyName
+Dynabook
+FileDescription
+wbtos45i DLL
+FileVersion
+35, 9, 620, 19
+InternalName
+wbtos45i
+LegalCopyright
+Copyright (C) 2009 TAIS
+OriginalFilename
+wbtos45i.dll
+ProductName
+wbtos45i DLL
+ProductVersion
+35, 9, 620, 19
+VarFileInfo
+Translation
+wbtos45i DL

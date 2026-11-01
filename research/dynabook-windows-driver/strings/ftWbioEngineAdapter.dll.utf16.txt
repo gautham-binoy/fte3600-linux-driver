@@ -1,0 +1,693 @@
+f:\dd\vctools\crt\vcstartup\src\misc\thread_safe_statics.cpp
+to->_What == nullptr && to->_DoFree == false
+f:\dd\vctools\crt\vcruntime\src\eh\std_exception.cpp
+minkernel\crts\ucrt\src\appcrt\stdio\output.cpp
+format != nullptr
+common_vsprintf
+buffer_count == 0 || buffer != nullptr
+common_vsprintf_s
+buffer != nullptr && buffer_count > 0
+("Buffer too small", 0)
+common_vsnprintf_s
+_format_it != nullptr
+minkernel\crts\ucrt\inc\corecrt_internal_stdio_output.h
+("Incorrect format specifier", 0)
+__crt_stdio_output::output_processor<char,class __crt_stdio_output::string_output_adapter<char>,class __crt_stdio_output::standard_base<char,class __crt_stdio_output::string_output_adapter<char> > >::process
+("N length modifier not specifier", false)
+_length == length_modifier::none
+state_case_normal_common()
+_context != nullptr
+__crt_stdio_output::string_output_adapter<wchar_t>::validate
+__crt_stdio_output::output_processor<char,class __crt_stdio_output::string_output_adapter<char>,class __crt_stdio_output::standard_base<char,class __crt_stdio_output::string_output_adapter<char> > >::state_case_size
+__crt_stdio_output::output_processor<char,class __crt_stdio_output::string_output_adapter<char>,class __crt_stdio_output::standard_base<char,class __crt_stdio_output::string_output_adapter<char> > >::state_case_normal
+__crt_stdio_output::string_output_adapter<char>::validate
+_state == state::normal || _state == state::type
+__crt_stdio_output::format_validation_base<wchar_t,class __crt_stdio_output::string_output_adapter<wchar_t> >::validate_and_update_state_at_end_of_format_string
+("'n' format specifier disabled", 0)
+("Invalid integer length modifier", 0)
+__crt_stdio_output::format_validation_base<char,class __crt_stdio_output::string_output_adapter<char> >::validate_and_update_state_at_end_of_format_string
+__crt_stdio_output::output_processor<char,class __crt_stdio_output::string_output_adapter<char>,class __crt_stdio_output::standard_base<char,class __crt_stdio_output::string_output_adapter<char> > >::type_case_n
+(null)
+_format_char != '\0'
+__crt_stdio_output::output_processor<char,class __crt_stdio_output::string_output_adapter<char>,class __crt_stdio_output::standard_base<char,class __crt_stdio_output::string_output_adapter<char> > >::type_case_integer
+__crt_stdio_output::output_processor<char,class __crt_stdio_output::string_output_adapter<char>,class __crt_stdio_output::standard_base<char,class __crt_stdio_output::string_output_adapter<char> > >::state_case_normal_tchar
+__crt_stdio_output::output_processor<wchar_t,class __crt_stdio_output::string_output_adapter<wchar_t>,class __crt_stdio_output::format_validation_base<wchar_t,class __crt_stdio_output::string_output_adapter<wchar_t> > >::process
+__crt_stdio_output::output_processor<char,class __crt_stdio_output::string_output_adapter<char>,class __crt_stdio_output::format_validation_base<char,class __crt_stdio_output::string_output_adapter<char> > >::process
+__crt_stdio_output::output_processor<wchar_t,class __crt_stdio_output::string_output_adapter<wchar_t>,class __crt_stdio_output::format_validation_base<wchar_t,class __crt_stdio_output::string_output_adapter<wchar_t> > >::state_case_size
+__crt_stdio_output::output_processor<wchar_t,class __crt_stdio_output::string_output_adapter<wchar_t>,class __crt_stdio_output::format_validation_base<wchar_t,class __crt_stdio_output::string_output_adapter<wchar_t> > >::state_case_normal
+__crt_stdio_output::output_processor<char,class __crt_stdio_output::string_output_adapter<char>,class __crt_stdio_output::format_validation_base<char,class __crt_stdio_output::string_output_adapter<char> > >::state_case_size
+__crt_stdio_output::output_processor<char,class __crt_stdio_output::string_output_adapter<char>,class __crt_stdio_output::format_validation_base<char,class __crt_stdio_output::string_output_adapter<char> > >::state_case_normal
+__crt_stdio_output::output_processor<wchar_t,class __crt_stdio_output::string_output_adapter<wchar_t>,class __crt_stdio_output::format_validation_base<wchar_t,class __crt_stdio_output::string_output_adapter<wchar_t> > >::type_case_n
+__crt_stdio_output::output_processor<char,class __crt_stdio_output::string_output_adapter<char>,class __crt_stdio_output::format_validation_base<char,class __crt_stdio_output::string_output_adapter<char> > >::type_case_n
+__crt_stdio_output::output_processor<wchar_t,class __crt_stdio_output::string_output_adapter<wchar_t>,class __crt_stdio_output::format_validation_base<wchar_t,class __crt_stdio_output::string_output_adapter<wchar_t> > >::type_case_integer
+__crt_stdio_output::output_processor<char,class __crt_stdio_output::string_output_adapter<char>,class __crt_stdio_output::format_validation_base<char,class __crt_stdio_output::string_output_adapter<char> > >::type_case_integer
+__crt_stdio_output::output_processor<char,class __crt_stdio_output::string_output_adapter<char>,class __crt_stdio_output::format_validation_base<char,class __crt_stdio_output::string_output_adapter<char> > >::state_case_normal_tchar
+result != nullptr
+ts != nullptr
+minkernel\crts\ucrt\src\appcrt\time\time.cpp
+common_timespec_get
+((destination)) != NULL && ((size_in_elements)) > 0
+minkernel\crts\ucrt\inc\corecrt_internal_string_templates.h
+common_tcscpy_s
+(((source))) != NULL
+Buffer is too small
+(L"Buffer is too small" && 0)
+mscoree.dll
+mode == _crt_argv_expanded_arguments || mode == _crt_argv_unexpanded_arguments
+minkernel\crts\ucrt\src\appcrt\startup\argv_parsing.cpp
+common_configure_argv
+minkernel\crts\ucrt\src\desktopcrt\env\environment_initialization.cpp
+create_environment
+traits::tcscpy_s(variable.get(), required_count, source_it)
+Warning
+Error
+Assertion Failed
+For information on how your program can cause an assertion
+failure, see the Visual C++ documentation on asserts.
+Debug %ls!
+Program: %hs%ls%ls%hs%ls%hs%ls%hs%ls%ls%hs%ls
+(Press Retry to debug the application)
+Debug %ls!
+Program: %ls%ls%ls%ls%ls%ls%ls%ls%ls%ls%ls%ls
+(Press Retry to debug the application)
+<program name unknown>
+minkernel\crts\ucrt\src\appcrt\misc\dbgrpt.cpp
+common_message_window
+traits::tcscpy_s(program_name, (sizeof(*__countof_helper(program_name)) + 0), get_program_name_unknown_text(Character()))
+Expression: 
+Line: 
+File: 
+Module: 
+(*_errno())
+wcscpy_s(message_buffer, 4096, L"_CrtDbgReport: String too long or IO Error")
+_CrtDbgReport: String too long or IO Error
+Microsoft Visual C++ Runtime Library
+_CrtCheckMemory()
+minkernel\crts\ucrt\src\appcrt\heap\debug_heap.cpp
+_CrtIsValidHeapPointer(block)
+old_head->_line_number == line_number_for_ignore_blocks && old_head->_request_number == request_number_for_ignore_blocks
+reallocation_is_allowed || (!reallocation_is_allowed && new_head == old_head)
+__acrt_last_block == old_head
+__acrt_first_block == old_head
+block != nullptr
+is_block_type_valid(header->_block_use)
+header->_line_number == line_number_for_ignore_blocks && header->_request_number == request_number_for_ignore_blocks
+header->_block_use == block_use || header->_block_use == _CRT_BLOCK && block_use == _NORMAL_BLOCK
+__acrt_last_block == header
+__acrt_first_block == header
+_msize_dbg
+new_bits == _CRTDBG_REPORT_FLAG || new_bits_have_only_valid_flags
+_CrtSetDbgFlag
+state != nullptr
+_CrtMemCheckpoint
+print_block_data
+abort() has been called
+minkernel\crts\ucrt\inc\corecrt_internal_strtox.h
+base == 0 || (2 <= base && base <= 36)
+__crt_strtox::parse_integer
+c == '\0' || *_p == c
+__crt_strtox::c_string_character_source<wchar_t>::unget
+_p != nullptr
+__crt_strtox::c_string_character_source<wchar_t>::validate
+__crt_strtox::c_string_character_source<char>::unget
+__crt_strtox::c_string_character_source<char>::validate
+_loc_update.GetLocaleT()->locinfo->_public._locale_mb_cur_max == 1 || _loc_update.GetLocaleT()->locinfo->_public._locale_mb_cur_max == 2
+minkernel\crts\ucrt\src\appcrt\convert\mbtowc.cpp
+UTF-8 isn't supported in this _mbtowc_l function yet!!!
+_loc_update.GetLocaleT()->locinfo->_public._locale_lc_codepage != CP_UTF8 && L"UTF-8 isn't supported in this _mbtowc_l function yet!!!"
+_loc_update.GetLocaleT()->locinfo->_public._locale_mb_cur_max > 1
+destination_count <= INT_MAX
+minkernel\crts\ucrt\src\appcrt\convert\wctomb.cpp
+_wctomb_s_l
+destination_count > 0
+minkernel\crts\ucrt\src\appcrt\convert\cvt.cpp
+fp_format_nan_or_infinity
+strcpy_s( result_buffer, result_buffer_count, strings[row][column + !long_string_will_fit])
+result_buffer_count > static_cast<size_t>(3 + (precision > 0 ? precision : 0) + 5 + 1)
+fp_format_e_internal
+strcpy_s( p, result_buffer_count == static_cast<size_t>(-1) ? result_buffer_count : result_buffer_count - (p - result_buffer), "e+000")
+result_buffer_count > static_cast<size_t>(1 + 4 + precision + 6)
+fp_format_a
+result_buffer != nullptr
+__acrt_fp_format
+result_buffer_count > 0
+scratch_buffer != nullptr
+scratch_buffer_count > 0
+("Unsupported format specifier", 0)
+stream.valid()
+minkernel\crts\ucrt\src\appcrt\stdio\fileno.cpp
+_fileno
+public_stream != nullptr
+Sunday
+Monday
+Tuesday
+Wednesday
+Thursday
+Friday
+Saturday
+January
+February
+March
+April
+June
+July
+August
+September
+October
+November
+December
+MM/dd/yy
+dddd, MMMM dd, yyyy
+HH:mm:ss
+en-US
+api-ms-win-core-datetime-l1-1-1
+api-ms-win-core-fibers-l1-1-1
+api-ms-win-core-file-l1-2-2
+api-ms-win-core-localization-l1-2-1
+api-ms-win-core-localization-obsolete-l1-2-0
+api-ms-win-core-processthreads-l1-1-2
+api-ms-win-core-string-l1-1-0
+api-ms-win-core-synch-l1-2-0
+api-ms-win-core-sysinfo-l1-2-1
+api-ms-win-core-winrt-l1-1-0
+api-ms-win-core-xstate-l2-1-0
+api-ms-win-rtcore-ntuser-window-l1-1-0
+api-ms-win-security-systemfunctions-l1-1-0
+ext-ms-win-ntuser-dialogbox-l1-1-0
+ext-ms-win-ntuser-windowstation-l1-1-0
+advapi32
+kernel32
+ntdll
+api-ms-win-appmodel-runtime-l1-1-2
+user32
+api-ms-
+ext-ms-
+cached_handle == INVALID_HANDLE_VALUE
+minkernel\crts\ucrt\src\appcrt\internal\winapi_thunks.cpp
+cached_handle == new_handle
+cached_fp == invalid_function_sentinel()
+cached_fp == new_fp
+cached_state == static_cast<long>(policyValue)
+minkernel\crts\ucrt\src\appcrt\internal\win_policies.cpp
+minkernel\crts\ucrt\src\appcrt\startup\argv_wildcards.cpp
+common_expand_argv_wildcards
+traits::tcsncpy_s( character_it, character_count - (character_it - character_first), *it, count)
+copy_and_add_argument_to_buffer
+traits::tcsncpy_s(argument_buffer.get(), required_count, directory, directory_length)
+traits::tcsncpy_s( argument_buffer.get() + directory_length, required_count - directory_length, file_name, file_name_count)
+ja-JP
+zh-CN
+ko-KR
+zh-TW
+local_action != nullptr
+minkernel\crts\ucrt\src\appcrt\misc\signal.cpp
+raise
+("Invalid signal or error", 0)
+minkernel\crts\ucrt\src\appcrt\misc\dbgrptt.cpp
+_VCrtDbgReportA
+_itoa_s(nLine, szLineMessage, 4096, 10)
+strcpy_s(szUserMessage, 4096, "_CrtDbgReport: String too long or IO Error")
+strcpy_s(szLineMessage, 4096, szFormat ? "Assertion failed: " : "Assertion failed!")
+strcat_s(szLineMessage, 4096, szUserMessage)
+strcat_s(szLineMessage, 4096, "\r")
+strcat_s(szLineMessage, 4096, "\n")
+strcpy_s(szOutMessage, 4096, "_CrtDbgReport: String too long or IO Error")
+strcpy_s(szOutMessage, 4096, szLineMessage)
+e = mbstowcs_s(&ret, szOutMessage2, 4096, szOutMessage, ((size_t)-1))
+wcscpy_s(szOutMessage2, 4096, L"_CrtDbgReport: String too long or Invalid characters in String")
+_CrtDbgReport: String too long or Invalid characters in String
+_VCrtDbgReportW
+_itow_s(nLine, szLineMessage, 4096, 10)
+Second Chance Assertion Failed: File 
+<file unknown>
+, Line 
+wcscpy_s(szUserMessage, 4096, L"_CrtDbgReport: String too long or IO Error")
+wcscpy_s(szLineMessage, 4096, szFormat ? L"Assertion failed: " : L"Assertion failed!")
+Assertion failed: 
+Assertion failed!
+wcscat_s(szLineMessage, 4096, szUserMessage)
+wcscat_s(szLineMessage, 4096, L"\r")
+wcscat_s(szLineMessage, 4096, L"\n")
+%ls(%d) : %ls
+wcscpy_s(szOutMessage, 4096, L"_CrtDbgReport: String too long or IO Error")
+wcscpy_s(szOutMessage, 4096, szLineMessage)
+wcstombs_s(nullptr, szOutMessage2, 4096, szOutMessage, ((size_t)-1))
+strcpy_s(szOutMessage2, 4096, "_CrtDbgReport: String too long or Invalid characters in String")
+wcstombs_s(&ret, szaOutMessage, 4096, szOutMessage, ((size_t)-1))
+c >= -1 && c <= 255
+minkernel\crts\ucrt\src\appcrt\convert\isctype.cpp
+minkernel\crts\ucrt\src\appcrt\heap\expand.cpp
+_expand_base
+minkernel\crts\ucrt\src\appcrt\internal\report_runtime_error.cpp
+__acrt_report_runtime_error
+wcscpy_s(outmsg, (sizeof(*__countof_helper(outmsg)) + 0), L"Runtime Error!\n\nProgram: ")
+Runtime Error!
+Program: 
+wcscpy_s(progname, progname_size, L"<program name unknown>")
+wcsncpy_s(pch, progname_size - (pch - progname), L"...", 3)
+wcscat_s(outmsg, (sizeof(*__countof_helper(outmsg)) + 0), L"\n\n")
+wcscat_s(outmsg, (sizeof(*__countof_helper(outmsg)) + 0), message)
+("Corrupted pointer passed to _freea", 0)
+minkernel\crts\ucrt\devdiv\vcruntime\inc\internal_shared.h
+minkernel\crts\ucrt\src\appcrt\convert\mbrtowc.cpp
+retval != __crt_mbstring::INCOMPLETE
+1 <= trail_bytes && trail_bytes <= 3
+minkernel\crts\ucrt\src\appcrt\convert\c32rtomb.cpp
+c32 < (1u << (7 - trail_bytes))
+(ptloci->lc_category[category].locale != nullptr && ptloci->lc_category[category].refcount != nullptr) || (ptloci->lc_category[category].locale == nullptr && ptloci->lc_category[category].refcount == nullptr)
+minkernel\crts\ucrt\src\appcrt\locale\locale_refcounting.cpp
+buffer != nullptr
+minkernel\crts\ucrt\src\appcrt\convert\_fptostr.cpp
+__acrt_fp_strflt_to_string
+buffer_count > 0
+buffer_count > static_cast<size_t>((digits > 0 ? digits : 0) + 1)
+pflt != nullptr
+("Division by zero", false)
+minkernel\crts\ucrt\inc\corecrt_internal_big_integer.h
+minkernel\crts\ucrt\src\appcrt\convert\cfout.cpp
+__acrt_fltout
+strcpy_s(result, result_count, "0")
+strcpy_s(result, result_count, "1#INF" )
+strcpy_s(result, result_count, "1#QNAN")
+strcpy_s(result, result_count, "1#SNAN")
+strcpy_s(result, result_count, "1#IND" )
+mantissa_buffer_count > 0
+("unexpected input value; log10 failed", 0)
+quotient < digits_per_iteration_multiplier
+minkernel\crts\ucrt\src\appcrt\stdio\_freebuf.cpp
+(fh >= 0 && (unsigned)fh < (unsigned)_nhandle)
+minkernel\crts\ucrt\src\appcrt\lowio\isatty.cpp
+_isatty
+         (((((                  H
+         (((((                  H
+      (                          
+common_tcscat_s
+String is not null terminated
+(L"String is not null terminated" && 0)
+common_tcsncpy_s
+static_cast<unsigned>(fh) < _NHANDLE_
+minkernel\crts\ucrt\src\appcrt\lowio\osfinfo.cpp
+__acrt_lowio_ensure_fh_exists
+fh >= 0 && (unsigned)fh < (unsigned)_nhandle
+_get_osfhandle
+_osfile(fh) & FOPEN
+ur-pk
+uz-uz-cyrl
+uz-uz-latn
+vi-vn
+xh-za
+zh-chs
+zh-cht
+zh-cn
+zh-hk
+zh-mo
+zh-sg
+zh-tw
+zu-za
+zh-CHS
+ar-SA
+bg-BG
+ca-ES
+cs-CZ
+da-DK
+de-DE
+el-GR
+fi-FI
+fr-FR
+he-IL
+hu-HU
+is-IS
+it-IT
+nl-NL
+nb-NO
+pl-PL
+pt-BR
+ro-RO
+ru-RU
+hr-HR
+sk-SK
+sq-AL
+sv-SE
+th-TH
+tr-TR
+ur-PK
+id-ID
+uk-UA
+be-BY
+sl-SI
+et-EE
+lv-LV
+lt-LT
+fa-IR
+vi-VN
+hy-AM
+az-AZ-Latn
+eu-ES
+mk-MK
+tn-ZA
+xh-ZA
+zu-ZA
+af-ZA
+ka-GE
+fo-FO
+hi-IN
+mt-MT
+se-NO
+ms-MY
+kk-KZ
+ky-KG
+sw-KE
+uz-UZ-Latn
+tt-RU
+bn-IN
+pa-IN
+gu-IN
+ta-IN
+te-IN
+kn-IN
+ml-IN
+mr-IN
+sa-IN
+mn-MN
+cy-GB
+gl-ES
+kok-IN
+syr-SY
+div-MV
+quz-BO
+ns-ZA
+mi-NZ
+ar-IQ
+de-CH
+en-GB
+es-MX
+fr-BE
+it-CH
+nl-BE
+nn-NO
+pt-PT
+sr-SP-Latn
+sv-FI
+az-AZ-Cyrl
+se-SE
+ms-BN
+uz-UZ-Cyrl
+quz-EC
+ar-EG
+zh-HK
+de-AT
+en-AU
+es-ES
+fr-CA
+sr-SP-Cyrl
+se-FI
+quz-PE
+ar-LY
+zh-SG
+de-LU
+en-CA
+es-GT
+fr-CH
+hr-BA
+smj-NO
+ar-DZ
+zh-MO
+de-LI
+en-NZ
+es-CR
+fr-LU
+bs-BA-Latn
+smj-SE
+ar-MA
+en-IE
+es-PA
+fr-MC
+sr-BA-Latn
+sma-NO
+ar-TN
+en-ZA
+es-DO
+sr-BA-Cyrl
+sma-SE
+ar-OM
+en-JM
+es-VE
+sms-FI
+ar-YE
+en-CB
+es-CO
+smn-FI
+ar-SY
+en-BZ
+es-PE
+ar-JO
+en-TT
+es-AR
+ar-LB
+en-ZW
+es-EC
+ar-KW
+en-PH
+es-CL
+ar-AE
+es-UY
+ar-BH
+es-PY
+ar-QA
+es-BO
+es-SV
+es-HN
+es-NI
+es-PR
+zh-CHT
+af-za
+ar-ae
+ar-bh
+ar-dz
+ar-eg
+ar-iq
+ar-jo
+ar-kw
+ar-lb
+ar-ly
+ar-ma
+ar-om
+ar-qa
+ar-sa
+ar-sy
+ar-tn
+ar-ye
+az-az-cyrl
+az-az-latn
+be-by
+bg-bg
+bn-in
+bs-ba-latn
+ca-es
+cs-cz
+cy-gb
+da-dk
+de-at
+de-ch
+de-de
+de-li
+de-lu
+div-mv
+el-gr
+en-au
+en-bz
+en-ca
+en-cb
+en-gb
+en-ie
+en-jm
+en-nz
+en-ph
+en-tt
+en-us
+en-za
+en-zw
+es-ar
+es-bo
+es-cl
+es-co
+es-cr
+es-do
+es-ec
+es-es
+es-gt
+es-hn
+es-mx
+es-ni
+es-pa
+es-pe
+es-pr
+es-py
+es-sv
+es-uy
+es-ve
+et-ee
+eu-es
+fa-ir
+fi-fi
+fo-fo
+fr-be
+fr-ca
+fr-ch
+fr-fr
+fr-lu
+fr-mc
+gl-es
+gu-in
+he-il
+hi-in
+hr-ba
+hr-hr
+hu-hu
+hy-am
+id-id
+is-is
+it-ch
+it-it
+ja-jp
+ka-ge
+kk-kz
+kn-in
+kok-in
+ko-kr
+ky-kg
+lt-lt
+lv-lv
+mi-nz
+mk-mk
+ml-in
+mn-mn
+mr-in
+ms-bn
+ms-my
+mt-mt
+nb-no
+nl-be
+nl-nl
+nn-no
+ns-za
+pa-in
+pl-pl
+pt-br
+pt-pt
+quz-bo
+quz-ec
+quz-pe
+ro-ro
+ru-ru
+sa-in
+se-fi
+se-no
+se-se
+sk-sk
+sl-si
+sma-no
+sma-se
+smj-no
+smj-se
+smn-fi
+sms-fi
+sq-al
+sr-ba-cyrl
+sr-ba-latn
+sr-sp-cyrl
+sr-sp-latn
+sv-fi
+sv-se
+sw-ke
+syr-sy
+ta-in
+te-in
+th-th
+tn-za
+tr-tr
+tt-ru
+uk-ua
+base != nullptr || num == 0
+minkernel\crts\ucrt\src\appcrt\stdlib\qsort.cpp
+qsort
+width > 0
+comp != nullptr
+string != nullptr
+minkernel\crts\ucrt\src\desktopcrt\mbstring\mbsdec.cpp
+_mbsdec_l
+current != nullptr
+minkernel\crts\ucrt\src\appcrt\convert\xtoa.cpp
+common_xtox_s
+buffer_count > static_cast<size_t>(is_negative ? 2 : 1)
+2 <= radix && radix <= 36
+length < buffer_count
+common_xtox
+s != nullptr
+minkernel\crts\ucrt\src\appcrt\convert\mbstowcs.cpp
+_mbstowcs_l_helper
+(pwcs == nullptr && sizeInWords == 0) || (pwcs != nullptr && sizeInWords > 0)
+_mbstowcs_s_l
+bufferSize <= INT_MAX
+retsize <= sizeInWords
+pwcs != nullptr
+minkernel\crts\ucrt\src\appcrt\convert\wcstombs.cpp
+_wcstombs_l_helper
+(dst != nullptr && sizeInBytes > 0) || (dst == nullptr && sizeInBytes == 0)
+_wcstombs_s_l
+sizeInBytes > retsize
+("Invalid error_mode", 0)
+minkernel\crts\ucrt\src\appcrt\misc\set_error_mode.cpp
+_set_error_mode
+minkernel\crts\ucrt\src\appcrt\lowio\write.cpp
+_write
+(_osfile(fh) & FOPEN)
+("Invalid file descriptor. File possibly closed by a different thread",0)
+!_dbcsBufferUsed(fh)
+1 < mb_len && mb_buf_used < mb_len
+mb_buf_used + bytes_to_add < mb_buf_size
+available_bytes <= sizeof(_mbBuffer(fh))
+isleadbyte(_dbcsBuffer(fh))
+_write_nolock
+buffer_size % 2 == 0
+minkernel\crts\ucrt\src\appcrt\lowio\lseek.cpp
+("Invalid file descriptor",0)
+minkernel\crts\ucrt\src\appcrt\stdio\fclose.cpp
+fclose
+_fclose_nolock
+minkernel\crts\ucrt\src\appcrt\lowio\commit.cpp
+_commit
+minkernel\crts\ucrt\src\appcrt\lowio\close.cpp
+_close
+CONOUT$
+Microsoft Primitive Provider
+SHA256
+ObjectLength
+HashDigestLength
+!"#$%'
+VS_VERSION_INFO
+StringFileInfo
+000904b0
+CompanyName
+FocalTech Electronics(ShenZhen)co.,Ltd
+FileDescription
+WBF Engine Adapter
+FileVersion
+1.10.25.4317
+InternalName
+ftWbioEngineAdapter.dll
+LegalCopyright
+Copyright (C) 2018 FocalTech Electronics co.,Ltd
+OriginalFilename
+ftWbioEngineAdapter.dll
+ProductName
+Fingerprint Sensor Engine Adapter 
+ProductVersion
+1.10.25.4317
+VarFileInfo
+Translation
+RAny use of this Certificate constitutes acceptance of the DigiCert CP/CPS and the Relying Party Agreement which limit liability and are incorporated herein by reference
+SubC
+6Focaltech Systems Co., Ltd
+SubC
+Legal_Policy_Statement

@@ -1,0 +1,1186 @@
+jjjjh
+Ajjj
+jjjjj
+Ajjj
+jjjj
+jjjjj
+jjjjj
+Ajjj
+jjjj
+jjjj
+jjjj
+Ajjj
+jjjj
+jjjj
+KERNEL32.DLL
+mscoree.dll
+         (((((                  H
+         h((((                  H
+                                 H
+CONFIGDATA
+MYICON(
+9847
+Terminate	Ctrl+Break
+WinBatch Beta Warning
+Fatal Error
+Window Creation Error
+DLL(s) not found or created	not found
+Err num
+Batch DLL initialization errorSThis is an unlicensed evaluation copy
+of WinBatch
+Thank you for using our software.QThis is an unlicensed evaluation copy
+of WinBatch.
+Thank you for trying WinBatch.]This is an unlicensed evaluation copy
+of WinBatch for Windows.
+Thank you for trying WinBatch.
+Order online or check out our excellent Tech Support Database at
+http://www.winbatch.com
+WinBatch is US$99.95. Price includes a copy of WinBatch, WinBatch Studio,
+PopMenu, Dialog Editor, WIL Type Viewer, and FileMenu.
+Price: $99.95.`This is an unlicensed evaluation copy
+of the WinBatch Compiler
+Thank you for using our software.
+WinBatch licensing error
+This product not currently licensed
+for network server installation.
+Please call customer service at
+(206) 938-1740 if you need assistance.
+End Session
+OK to terminate batch file	Attention$Please wait.  WinBatch processing...	OLE ERROR
+OLE Init Failed
+Unlicensed
+Disk Space Lookup Error
+Compiler Runtime Error
+EXE file open failed
+Winbatch Runtime Error #9999
+EXE file damaged, is not usablenOlder version of DLL found on path.
+Update DLL from WinBatch Compiler disks,
+or other source of correct DLL's.hDLL File not found in path.
+Either incorrect compile option used,
+or system/file server setup incorrect.lRequired DLL File could not be created.
+Insufficient disk space exists on drive to
+write the DLL file above.
+Approx
+neededuDLL File could not be created.
+Probable cause of error is that you cannot
+write to the disk or directory shown above.
+DLL File could not be created.
+Probable cause of error is that the disk
+containing the Windows directory is write
+protected from this user.
+Low memory error(Could not allocate memory for batch code
+Memory error$Could not lock memory for batch code
+Encode Error
+Input filename not specified!Illegal/Missing encryption string
+Input file not found(Could not allocate (or lock) work buffer
+Error reading input file
+Input file too big
+Invalid Global Handle Passed
+Output filename not specified
+Output file open failed
+Could not lock work buffer (2)
+Attention:  This software is part of a
+public beta test.  Even though this software
+is considered safe for public use, reasonable
+caution, including a backed up system, is
+recommended.
+Due to the powerful nature of
+this new version of WinBatch we simply
+cannot be at all responsible for any problems
+this software may cause on your system.
+Now... be sure to have fun!
+Do you want this warning to continue to appear?
+WinBatch Shutdown NotificationfPlease close all other open windows and then select OK,
+or select Cancel to stop the shutdown process.
+3Unable to access or process specified #include file
+WinBatch Error
+Specified batch file not found'Error allocating memory to extract file
+Error extracting file
+Error uncompressing file
+Error uncompressing script(Error converting Unicode batch/menu file.#include files too deeply nested (> 16 levels)
+910102: WinBatch - Unrecognized ParentProcess request code010103: WinBatch Compiler - CallExt not available510104: WinBatch: EnvironSet Var and/or Value too long010105: WinBatch: EnvironSet - Failed.  No space?510106: WinBatch: EnvironGet - Failed.  Name too long?610107: WinBatch: EnvironGet - Failed.  Value too long?,10108: Box functions: Box command stack full$10109: Box functions: Invalid box ID'10110: BoxButtonDraw: Invalid button ID+10111: BoxButtonDraw: Invalid 'rect' string
+'10112: BoxButtonStat: Invalid button ID%10113: BoxColor: Invalid color string%10114: BoxColor: Invalid 'wash' color)10115: BoxDrawRect: Invalid 'rect' string)10116: BoxDrawLine: Invalid 'rect' string$10117: BoxNew: Invalid 'rect' string#10118: BoxNew: Invalid 'style' flag#10119: BoxNew: Unable to create box#10120: BoxPen: Invalid color string 10121: BoxPen: Invalid pen width)10122: BoxTextColor: Invalid color string%10123: BoxTextFont: Invalid font size&10124: BoxTextFont: Invalid font style'10125: BoxTextFont: Invalid font family(10126: BoxDrawText: Invalid 'erase' flag,10127: BoxDrawText: Invalid 'alignment' flag
+)10128: BoxDrawText: Invalid 'rect' string(10129: BoxUpdates: Invalid 'update' flag%10130: BoxesUp: Invalid 'rect' string#10131: BoxesUp: Invalid 'show' mode#10132: BoxMapMode: Invalid map mode!10133: BoxDrawRect: Invalid style+10134: BoxDrawCircle: Invalid 'rect' string#10135: BoxDrawCircle: Invalid style-10136: BoxButtonDraw: Unable to create button'10137: BoxButtonKill: Invalid button ID,10138: BoxDataClear: Specified tag not found'10139: IntControl: Unrecognized Request(10140: BoxBitmap: Invalid 'stretch' modeG10141: ExtractAttachedFile: Function supported only in compiled version>10142: ExtractAttachedFile: Target file name must be specifiedF10143: ExtractAttachedFile: Error finding or extracting specified file
++10144: ExtractAttachedFile: Invalid request910145: IntControl 1006: Unable to allocate or lock memory
+VS_VERSION_INFO
+StringFileInfo
+040904E4
+Comments
+Dynabook Inc. WB INSTALLER
+CompanyName
+Dynabook Inc.
+FileDescription
+Installer
+FileVersion
+55.13.0320.23
+InternalName
+tinstallwb.exe
+LegalCopyright
+(c) 2019 Dynabook Inc.
+LegalTrademarks
+OriginalFilename
+tinstallwb.exe
+ProductName
+dynabook Component Installer
+ProductVersion
+ToolsetBuildInfo
+Compiled with WinBatch Compiler 2016B by WinBatch+Compiler License (#888980)
+ToolsetCopyright
+Portions Copyright (c) 1990-2016 Wilson WindowWare, Inc.
+CompileTime
+2019:10:08:06:32:58
+VarFileInfo
+Translation
+jjjjj
+jjjjj
+jjjj
+jjjj
+jjjjj
+jjjj
+jjjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjjjjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjj
+jjjj
+Ijjj
+Ijjj
+jjjjj
+jjjj
+jjjj
+jjjjj
+Execute
+CommandBars
+ActiveMenuBar
+Controls
+Item
+CommandBar
+inplacenavigation
+threedborder
+flatscrollbars
+contextmenu
+scrollable
+appbase
+version
+.%u (0x%08lX)
+Exception scode
+#DECIMAL:
+#CURRENCY:
+lWbAppDomain_%lu
+emscorlib
+HappyActiveXcontrol
+WIL UI Window
+WIL Frame Window
+WilComWin
+WM_HOSTFREZEEVENTS
+WM_HOSTGETCONTROL
+WILWIN
+System.Array
+System.Object
+System.Decimal
+System.UInt64
+System.UInt32
+System.UInt16
+System.Byte
+System.String
+System.DateTime
+System.Boolean
+System.Double
+System.Single
+System.IntPtr
+System.Int64
+System.Int32
+System.Int16
+System.SByte
+MakeArrayType
+System.Type
+parameters
+count
+eventname
+identifier
+return
+item
+value
+#+3;CScs
+!1Aa
+KERNEL32.DLL
+mscoree.dll
+(null)
+         (((((                  H
+         h((((                  H
+                                 H
+!&"'
+**.*
+\*.*
+XXXX
+0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ
+WinOldAp
+*EOF*
+  (Unlicensed)
+#WIN$ID#
+\\?\
+\\?\UNC\
+BACKSPACE
+CLEAR
+DELETE
+DOWN
+ENTER
+ESCAPE
+HELP
+HOME
+INSERT
+LEFT
+PGDN
+PGUP
+PRTSC
+RIGHT
+SPACE
+NUMPAD0
+NUMPAD1
+NUMPAD2
+NUMPAD3
+NUMPAD4
+NUMPAD5
+NUMPAD6
+NUMPAD7
+NUMPAD8
+NUMPAD9
+NUMPAD*
+NUMPAD+
+NUMPAD-
+NUMPAD.
+NUMPAD/
+wb0wcdl3
+%04d:%02d:%02d:%02d:%02d:%02d
+%02d:%02d:%02d:%02d:%02d:%02d
+Static
+Edit
+Button
+Button
+Static
+xListBox
+Button
+xListBox
+Button
+Static
+ComboBox
+Edit
+Button
+SysMonthCal32
+2msctls_updown32
+WilComWin
+SysListView32
+TFiles
+Items
+Error:
+not defined.
+_Error:
+not defined.
+Details %d
+sError:
+not defined or
+not an array with elements.
+NOFILESELECTED
+[%s]
+[..]
+[-%c-]
+<array>
+:=?:
+\*.*
+\*.*
+%s*.*
+%s%s
+L%c:\NUL
+%.127s  %.127s
+%.127s  [%.127s]
+oolean
+olorref
+word
+wordlong
+word_ptr
+ouble
+loat
+andle
+bitmap
+brush
+menu
+cursor
+desk
+file
+font
+global
+icon
+instance
+module
+monitor
+result
+nt_ptr
+nt64
+ong_ptr
+param
+ong64
+pstr
+pcstr
+pwstr
+pcwstr
+pvoid
+hort
+char
+nsigned char
+nsigned short
+short
+long
+nsigned long
+nsigned int
+char
+param
+ndproc
+FILEWARN
+PATH
+:=?:
+NONE
+NONE
+#FileVersion
+%d,%d,%d,%d
+#ProductVersion
+%d,%d,%d,%d
+#FileFlagsMask
+#FileFlags
+#FileOS
+#FileType
+#FileSubtype
+\StringFileInfo\%s\%s
+\StringFileInfo\040904E4\%s
+\StringFileInfo\040904B0\%s
+\StringFileInfo\000004E4\%s
+\StringFileInfo\04090000\%s
+\StringFileInfo\00000000\%s
+\StringFileInfo\000004B0\%s
+\VarFileInfo\Translation
+%04x%04x
+BCOM
+....
+print
+open
+PATH
+PATH
+PATH
+PATH
+.LNK
+.LNK
+WLNK
+ does not have sufficient elevation to run 
+.  Use ShellExecute?
+    %s
+Path
+SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\
+SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\
+.EXE
+.EXE
+d\shell\open\command
+\shell\open\command
+twinsta0\default
+winsta0\default
+u%02X 
+.EXE
+SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\
+Path
+WOW6432NODE
+8-2147483648
+)S-%lu-
+0x%02hx%02hx%02hx%02hx%02hx%02hx
+-%lu
+ySOFTWARE\Microsoft\
+Windows NT\CurrentVersion\ProfileList\
+ProfileImagePath
+\ntuser.dat
+Upper 
+Lower 
+Digit 
+Space 
+Punct 
+Cntrl 
+Blank 
+HexDg 
+Alpha 
+Undef 
+MBOXITEMM
+BOXITEMME
+BOXITEM
+Error opening/finding file:
+PSWDASK
+LINEASK
+PASKTEXTBOX_NOWRAP
+ASKTEXTBOX_WRAP
+TDISPLAY
+....
+X%s%08lX
+STOPICON
+FILEWARN
+TDISPLAY
+LINEASK
+PSWDASK
+ASKTEXTBOX_WRAP
+ASKTEXTBOX_NOWRAP
+DEBUG
+BOXITEM
+BOXITEMM	BOXITEMME
+LNAME
+LNUM
+NEWABOUT
+ENGLISH
+ERRORMSG	ERRORMSGB	STACKINFO
+DUMMY
+BACKTEXTURE
+Confirm File Replace
+XOVA
+XOLD
+XOLDA
+Replacexxx
+File1Name
+File1Info
+withxxx
+File2name
+File2info
+Display Message
+Information Request
+Password
+Information Request
+Information Request
+DEBUG
+ItemSelect
+&XOK
+&XCancel
+ItemSelect
+&XOK
+&XCancel
+ItemSelect
+&XOK
+&XCancel
+XPlease enter the name of the licensee of this product:
+X&OK
+X&Cancel
+XPeylib
+XID:
+XCN:
+lOOK in mAN
+AppName
+CpyRite
+Copyright ID 10
+Version 0.00x
+All Rights Reserved.
+DAICON
+Wilson WindowWare, Inc.
+aaa1
+Text
+Software name ID 45
+Text Area 46
+We accept Checks, Amex, Visa, MasterCard and most purchase orders.
+Price Info ID 119
+Text
+Text
+Text
+Eval Status ID 121
+I understand that unlicensed copies of this software may only be used for evaluation and that any other use requires purchase of a license.
+XError:
+File Name
+Line 2
+STOPICON
+Error Message
+Line 2
+XLine Info
+XFile Info
+Error Line
+Line 2
+Line 3
+Line 4
+Line 5
+WIL Version Info
+XTech Support &Web Page
+X&Traceback
+X&More Error Info
+XError:
+File Name
+Line 2
+STOPICON
+Error Message
+Line 2
+XLine Info
+XFile Info
+Error Line
+Line 2
+Line 3
+Line 4
+Line 5
+WIL Version Info
+XTech Support &Web Page
+X&Continue
+X&Exit
+X&Traceback
+X&More Error Info
+&XOK
+VS_VERSION_INFO
+StringFileInfo
+040904E4
+CompanyName
+Wilson WindowWare, Inc.
+FileDescription
+WIL Script Processor DLL
+FileVersion
+6.16bpb
+InternalName
+WIL DLL
+LegalCopyright
+Copyright (c) 1988-2016 Wilson WindowWare, Inc. All rights reserved.
+ProductName
+WIL DLL
+ProductVersion
+6.16bpb
+VarFileInfo
+Translation
+Unlicensed Evaluation Copy
+Single User License
+Workgroup License
+Network Server License
+Complimentary Demo/Eval License
+	Eval Only
+I  Agree
+ Copy Authorized
+ Copies Authorized
+Unlimited Site Authorization
+Serial Number: 
+Licensed to 
+For Evaluation Use Only
+Unlicensed Evaluation Copy
+Professional Version
+Standard Version
+Lite Version
+Professional Version II
+7234
+http://commerce.winbatch.com/
+http://techsupt.winbatch.com/
+WILINTR
+WIL Interpreter
+9847
+WIL Interpreter 6.16bpb
+6.16bpb
+#Specified menu/batch file not found
+	&Quit Now
+Enter &License InfoCRefer to the WinBatch Hints Webpage for license entry instructions.
+You are on day
+of your
+-day evaluation period.
+&Buy Now
+Execution Error
+&Cancel
+Replace file:
+O&verwrite
+Overwrite &All
+&Skip
+&Next
+&Run
+	&Show Var2Please enter name of the licensee of this product:.Please enter your licensing information below:
+Registration ID:
+Control Number:
+Next Statement...
+Confirm File Replace
+with file:
+Use &Newer
+Use Ne&wer All
+Use O&lder
+Use Ol&der All
+ENGLISH
+Execution ended-Execution terminated by user request or error$Execution terminated by user request
+-Unable to allocate memory for menu/batch file)Unable to lock memory for menu/batch file
+Batch file >64K.  Too Large.!File I/O error reading batch file
+SunMonTueWedThuFriSat
+Runtime Error
+Encrypted/Encoded verification failed.  
+If you are CALL'ing a WBT from a compiled 
+program, you must encode the WBT using 
+the compiler's Encode option.
+Memory Error in verification
+Authorization Code?
+Line too long (>255 characters)(Error converting Unicode batch/menu file(Could not allocate (or lock) work buffer3Unable to access or process specified #include file.#include files too deeply nested (> 16 levels)
+Unknown WBC file format
+	Near line
+Routine
+Error:
+On line
+Tech Support &Web Page	&Continue
+&Exit
+Incorrect Licensing Data
+Thank you for your support.
+Software is already licensed&Software has been damaged. Do not use.
+&More Error Info
+More Error Information
+&Traceback	Traceback
+4Unexpected menu line.  Check for proper indentation.
+Undefined error code -> 5Menu file file open error. Maybe it does not exist???&Could not allocate menu build workarea"Could not lock menu build workarea File I/O error reading menu file
+(Need First level menu title.  Not found.
+Could not create menu bar6Need batch code or second level menu title. Not found.3Need batch code or top level menu title. Not found.'First level popup menu creation failed.(Second level popup menu creation failed.'Third level popup menu creation failed.5Need batch code or third level menu title. Not found.:Need batch code or 1st or 2nd level menu title. Not found.6Need batch code or fourth level menu title. Not found.
+Menu file re-open error7Could not allocate menu scan workarea -- Low on memory?!Could not lock menu scan workarea!File I/O error scanning menu file
+1Menu file ended unexpectedly, or menu is invalid.
+lWIL Processor menu(s) will be reloaded
+to reflect recent changes.
+Reselect menu option when reload complete.
+Menu/Batch file too big  >>64K
+Cannot run selected file: 
+$WIL Processor Initialization Failure
+Illegal passed parameter.
+Menu/Batch Terminated
+ Processing failed validity check
+;Need batch code, 1st, 2nd or 3rd level menutitle. Not found8Need batch code after fourth level menutitle.  Not foundBNeed batch code or 1st, 2nd, 3rd or 4th level menutitle. Not found
+4Too many menu items defined for current application.
+Resize window on screen
+Move window on screen
+Reduce window to an icon
+Zoom window to maximum size
+Switch to the next child window#Switch to the previous child window
+Close down application
+Scroll child windows vertically!Scroll child windows horizontally
+Arrange Windows Restore window to previous state
+Get Task Manager
+ popup menu
+ menu item
+NT DLLCall: Bad Parameter List
+Old SP
+New SP
+DLL: Bad Parameter List
+END OF JOB
+= ??? Unknown Variable
+*** Debug Initialized ***
+VALUE	==>TRUE=>
+==>FALSE=> (skipped)
+STATEMENT SKIPPED
+WHILE==>TRUE
+WHILE==>FALSE
+END OPERATOR	SWITCH==>
+BREAKING
+BREAK IGNORED
+CONTINUING
+CONTINUE IGNORED
+FOR TRUE==>
+FOR FALSE==>
+GOSUB
+RETURN VALUE
+IF DO==>TRUE
+IF DO==>FALSE
+ELSE DO==>TRUE
+ELSE DO==>FALSE
+CASE TRUE==>
+CASE FALSE==>
+TERMINAL EXTENDER ERROR=>
+EXTENDER ERROR SUPPRESSED =>
+TERMINAL WIL ERROR=>
+WIL ERROR SUPPRESSED =>
+WIL Script Processor DLL
+DLL Load Error
+DebugData:
+Internal Error Dialog not found in parent table
+(File not found)
+WIL Script Processor Demo
+Shareware evaluation copy
+Please call customer service at
+(206) 938-1740 for information
+on network licensing.
+Single-PC version not licensed
+for use on a network server.
+Use optional WinBatch compiler
+to use batch files from a server.
+INTERNAL DYNALLOC ERROR
+Tag Overwrite 1
+Tag Overwrite 2
+Valid but unrecognized EXE
+WIL Version:
+WIL Extender load error
+Extender DLL could not be loaded.  It requires one or more dependent DLL's, which are invalid or unavailable.  If you are loading a network extender, make sure you have the appropriate network client software installed.rExtender DLL is invalid.  You may be trying to load a DLL designed for Windows 95 from Windows NT (or vice versa).
+Extender DLL is invalid.  You may be trying to load a DLL designed for Windows 95 from Windows NT (or vice versa).  Or, you may not have the appropriate network client software installed.
+Extender DLL is invalid.&Unable to initialize the extender DLL.
+Extender DLL is invalid, or a DLL required by the extender is invalid (outdated NWCALLS.DLL?).  Or, the system is out of memory.qIncorrect Windows version or platform.  Or, you may be trying to load WWN3Z16I.DLL, which is not an extender DLL.`Incorrect operating system.  You may not have the appropriate network client software installed.IExtender DLL is compressed, and must be expanded (via the setup program).QExtender DLL is invalid, or a DLL required by the extender is missing or invalid.4Unable to load 32-bit DLL from a 16-bit application.
+Error code$Could not access Extender Entry 0x02$Could not access Extender Entry 0x03
+WIL Extender Error:(Extender Error: Undefined error occurred
+Invalid shortcut (.LNK) file
+WinExec Error:
+Normal termination
+*** Error Dump Initialized ***
+CALLING UDF
+RETURNING FROM UDF,TERMINAL UDF ERROR OCCURRED -- JOB EXITING=>
+UDF ERROR SUPPRESSED =>
+In UDF
+Leaving UDF
+TERMINAL USER-DEFINED ERROR=> USER-DEFINED ERROR SUPPRESSED =>
+User-Defined Error:
+-Uninitialized variable or undefined function:
+Windows API error code
+Cancel handler
+Error handler
+CALLING SCRIPT
+RETURNING FROM SCRIPT [ COM Event Callback Triggered ]
+[ Dialog Callback Triggered ]
+[ Common Callback Processing ]
+ELSEIF DO==>TRUE
+ELSEIF DO==>FALSE
+SendKey: Illegal Parameters
+File List Processing - No Match
+FileMove: Failed
+FileMove: FROM file open failed
+FileMove: TO file open failed
+FileMove: I/O error$FileMove: Could not delete FROM file
+FileCopy: Failed
+FileCopy: FROM file open failed
+FileCopy: TO file open failed
+FileCopy: I/O error!FileAppend: FROM file open failed
+FileAppend: TO file open failed
+FileAppend: I/O error
+FileRename: Failed
+FileDelete: File not found*TimeDiff: Time parameter error - bad value&TimeDiff: Out of Range (over 60 years)"TimeAdd: Cannot add supplied times0Time functions: Time parameter error - bad value3WaitLong: Could not properly compute time for delay+WaitUntil: Passed time not in proper format
+-BinaryData: Invalid Binary Data handle passed
+-BinaryData: Too many open Binary Data Handles
+LogDisk: Illegal disk drive$LogDisk: DOS reports no disks!!  ???
+)GoTo unable to lock memory for batch file
+GoTo label not found
+File Rename: Rename failed
+#LogDisk: Requested drive not online
+DirMake: Dir not created
+DirRemove: Dir not removed DirChange: Dir not found/changed
+-Clipboard owned by another app.  Cannot open.9Clipboard does not contain text in the appropriate format3Clipboard cannot hold that much text (>64000 bytes)4Unable to get memory for clipboard.  Close some apps
+WinClose: Window not found
+!WinCloseNot Function Syntax error
+WinHide: Window not found
+WinIconize: Window not found
+WinZoom: Window not found
+WinShow: Window not found
+WinPlace: Window not found
+WinActivate: Window not found
+)Internal Error 3046. Function not defined%Variable name over 30 chars. Too Long:Substitution %Variable% not followed by a % (Use %% for %)
+No variables exist??!!:No IF to relate to THEN, ELSEIF or ELSE is currently valid
+Undefined variable or function>Uninitialized variable, undefined function, or unquoted string)Character string too long (>2048 chars??)!Unrecognizable item found on line%Variable name over 30 chars. Too Long
+)Variable could not be converted to string1Variable could not be converted to a valid number
+5Closing multiline string constant delimiter not found
+Illegal Syntax
+Attempt to divide by zero-Binary operation not legal for type of number,Unary operation not legal for type of number
+Unbalanced Parenthesis%Wrong Number of Arguments in Function-Function Syntax. Opening parenthesis missing.)Function Syntax. Illegal delimiter found.8Assignment not legal here. (Use == for equality testing)1Internal error 3070.  Too many arguments defined.
+Missing or incomplete statement
+StrCat: Function syntax error
+AVERAGE function syntax error
+(THEN not found in IF or ELSEIF statement
+GoTo Label not specified'Expression continues past expected end.)Call: Parse of file/parameter line failed.FileOpen: READ or WRITE not properly specified
+$FileOpen: Too many (>128) files open
+FileClose: Invalid file handle"FileClose: File not currently open
+FileRead: Invalid file handle!FileRead: File not currently open
+FileWrite: Invalid file handle"FileWrite: File not currently open
+#FileRead: File not open for reading
+FileOpen: Open failed
+FileAttrGet: File not found
+2FileAttrSet: File not found, or cannot be accessed
+*FileRead: Attempt to read past end of file$FileWrite: File not open for writing
+Dialog Box: File open error%Dialog Box: Box too large (20x60 max),Dialog Box: Non-text control used w/filebox.
+&Dialog Box: Window Registration Failed)Compare: Not an integer or string compare5Memory allocation failure.  Out of memory for strings7Memory allocation failure.  Out of memory for variables2IntErr: NULL pointer passed to xstrxxx subroutines4CallExt function disabled.  Not currently available.
++Misuse of %substitution% (>2048 characters)
+Drop: Can only drop variables/IsDefined: Attempting to test non-variable item
+#Dialog Box: Bad Filespec, using *.*
+"Dialog Box: Window Creation Failed3CALL and CALLEXT not supported in compiled versions
+)Run: Filetype is not COM, EXE, PIF or BAT-FileItemize: Unable to lock file info segment/FileItemize: Unable to unlock file info segment.FileItemize: Unable to lock file index segment0FileItemize: Unable to unlock file index segment
+FileSize: Filelength I/O Error
+FileSize: Buffer Overrun Error FileDelete: Buffer Overrun Error FileRename: Buffer Overrun Error#FileCopy/Move: Buffer Overrun Error
+7SetDisplay: Type not NAME, DATE, SIZE, KIND or UNSORTED
+FileSize: File Not Found
+.FileCopy/Move: Destination file same as source
+*SetDisplay: Display type not SHORT or LONG
+'FileAppend: Target cannot be wildcarded
+WinPosition: Window not found
+WinTitle: Window not found
+FileTimeGet: File not found7BinaryAlloc: Could not allocate (or lock) binary buffer
+4FileTimeTouch: File not found, or cannot be accessed
+OleInitiate: Initiate Failed
+)OleExecute: Could not process OLE command!OleExecute: Function syntax error
+'WaitForKey: Invalid key codes specified
+WinMetrics: Invalid code
+,BinaryEODSet: Set value beyond end of buffer
+$OleTerminate: Not a valid OLE objectROleExecute: Not a valid OLE object. Period may have been used in place of a comma.COle: Ole has not been initialized (or string is missing its quotes)
+0OleExecute: Syntax Error - Needs more parameters
+DDEInitiate: Undefined Error%DDEInitiate: Nobody Around to talk to'DDEInitiate: Too many DDE conversations
+DDEInitiate: Bad Channel Number"DDEInitiate: Create String Failure
+$DDETerminate: Channel does not exist
+DDEExec: GlobalAlloc failed
+DDEExec: Global Lock failed
+DDEExec: Bad channel number-OleInitiate: Application does not support Ole
+DDEExec: Internal Error 3149
+DDEReq: Undefined Error
+4OleExecute: Not enough format ids for all parameters
+OleExecute: Format id problem
+DDETerminate: Channel not open
+DDEExec: DDE Post failed
+DDEReq: Bad channel number
+DDEReq: Null handle returned
+DDEReq: Create String Failed
+DDEReq: GlobalLock failed#OleInitiate: Too many open channels
+DDEPoke: GlobalAlloc failed
+DDEPoke: GlobalAddAtom failed
+DDEPoke: GlobalLock failed
+"DDE Recv Data: GlobalLock 1 failed
+DDEReq: DDE Post failed
+RegOpenKey: Function Failed
+RegCreateKey: Function Failed
+DDEPoke: DDE Post failed
+DDEPoke: DDE Timeout
+DDEReq: DDE Timeout
+DDEExec: DDE Timeout
+#DDE Recv Data: GlobalAlloc 2 failed"DDE Recv Data: GlobalLock 2 failed DDEInitiate: Internal Error 3170%IntControl: Invalid IntControl opcode
+WinExeName: Window not found
+Net: No network found
+Net: Security Violation
+Net: Function not supported
+Net: Out of Memory
+Net: Network Error
+Net: Windows function failed
+Net: Invalid type of request
+Net: Invalid Pointer
+Net: Cancelled at users request
+Net: Bad user / Not logged in&Net: Buffer too small - Internal Error
+Net: Invalid Network name
+Net: Invalid Local Name
+Net: Invalid Password#Net: Local Device already connected-Net: Not a valid local device or network name6Net: Not a redirected local device or current net name%Net: Files were open with FORCE=FALSE
+Net: Function busy
+Net: Unknown network error1Function not supported in this version of Windows
+PlaySounds: File not found
+PlayMedia: Unrecognized Error
+2PlayMedia: Do not use WAIT or NOTIFY in MCI string$WinResources: Invalid request number&WinParmGet/Set: Invalid request number+WinPlaceGet/Set: Invalid window-size number
+!WinPlaceGet/Set: Window not found WinPlaceGet/Set: Function failed
+SnapShot: Out of memory SnapShot: Palette Creation Error
+SnapShot: Cannot open clipboard
+"Cmd Extender: Minor error occurred
+0WinPlaceSet: Wrong number of window co-ordinates
+!MouseInfo: Invalid request number SnapShot: Invalid request number
+*Cmd Extender: Out of memory to save result!Call: More than 6 levels of Calls(PlayMedia: Notify Window creation failed
+#Cmd Extender: Severe error occurred
+Dir Rename: 'From' file illegal
+Dir Rename: 'To' file illegal
+%Cmd Extender: Moderate Error Occurred
+3RunWait Commands not supported in 3.0 Debug Windows%WinHelp: Invalid SubCommand Requested
+ DirExist: Invalid path specified(WinIsDos: Window not found or bad window
+RegDeleteKey: Function Failed
+RegCloseKey: Function Failed
+(Dialog: Dialog name too long (>19 chars)
+Dialog: Format variable missing$Dialog: Format version not supported+Dialog: x, y, width or height variables bad+Dialog: Control definition variable missing/Dialog: Bad Control type in definition variable6Dialog: Bad or missing Value for Radio/Checkbox button-Dialog: Too many items in definition variable<Dialog: Minimum size greater than dialog size or less than 0
+(Function not available in 32-bit version
+RegSetValue: Function Failed
+RegQueryValue: Function Failed
+*ExeTypeInfo/RunEnviron: Cannot Locate File"RunEnviron: Not a Windows EXE file.EnvironSet: Not enough environment space left.
+!RunExit: Not EXE, COM or BAT file$RunExit: EXE name too long (max 127)"RunExit: Params too long (max 126)%RunEnviron: Params too long (max 119)'RunEnviron: EXE file NOT a Windows file"RunExit: Cannot locate file to run
+ Ole Object: Object Name too long"Ole Object: Property name too long Ole Object: Method name too longDOle Object: Object does not exist, or period used instead of a comma8Ole Object: Method has more parameters then WIL supports
+0Ole: System Ole Dll's not found (not installed?)8Ole Object: Could not process value returned from object
+(Function not supported on this platform.
+COM: Unknown interface
+COM: Member not found
+COM: Param not found
+COM: Type mismatch
+COM: Unknown name
+COM: No named args
+COM: Bad variable type
+COM/CLR: Exception
+COM: Overflow
+COM: Bad index
+7Ole Object: Problem occurred when formatting parameters
+(RunExit: Not supported in 32-bit version
+COM: Unknown LCID
+COM: Array is locked
+COM: Bad param count
+COM: Param not optional
+COM: Bad callee
+COM: Not a collection
+COM: IO error
+COM: Compile error
+COM: Cannot create tempfile
+COM: Illegal index
+COM: Id not found
+COM: Buffer too small
+COM: Read only
+COM: Invalid data read
+COM: Unsupported format
+COM: Already contains name
+COM: No matching arity
+COM: Registry access problem
+COM: Lib not registered
+COM: Duplicate definition
+COM: Usage
+COM: Dest not known
+COM: Undefined type
+COM: Qualified name disallowed
+COM: Invalid state
+COM: Wrong type kind
+COM: Element not found
+COM: Ambiguous name
+COM: Invoke function mismatch
+COM: DLL function not found
+COM: Bad module kind
+COM: Wrong platform
+COM: Already being laidout
+COM: Cannot load library
+COM: Error code not recognized
+Dll: DLL file not found
+Dll: File not loadable
+DllCall: Bad Entrypoint name4DllCall: Bad Global Pointer returned from called DLL"Icon functions: EXE file not found"Icon functions: ICO file not found$Icon functions: ICO file open failed Icon functions: Invalid ICO file"Icon functions: Memory Alloc Error.Icon functions: EXE file open failed (in use?)%Icon functions: Unrecognized EXE file&Icon functions: Not a Windows EXE file(Icon functions: No resources in EXE file0Icon functions: New Icon is larger than old icon Icon functions: Invalid EXE file*Icon functions: No icons found in EXE file'SendMenusTo: Window menu not accessible$SendMenusTo: MenuItem name not found
+SendMenusTo: PostMessage Failed"COM: System initialization failure(OS2Sound: Could not communicate with OS2
+1FileFullName: Filename cannot be legally expanded6FileMapName: Filename cannot be legally mapped to mask
+(EvalDisk: Disk Drive specification error
+EvalDisk: Internal Error 14File Name Parsing: Function does not allow wildcards
+;BinaryPeek/Poke/Incr: Offset is beyond end of binary buffer8BinaryPoke: Value to poke is outside the allowable range4BinaryCopy: Offset(s) beyond end of binary buffer(s)
+4BinaryCopy: Data to be copied will not fit in buffer5BinaryCopy: Data to copy extends beyond end of buffer
+2BinaryIndex: Offset is beyond end of binary buffer
+7FP Math: Illegal floating point number.  Too many dots.6FP Math: Illegal floating point number.  Too many E's.:FP Math: Variable could not be converted to floating point
+4BinaryRead: File size larger than binary buffer size
++WinItemChild: Parent Window cannot be foundAIniPrivate functions: Illegal to access [386Enh] Device= keywords:Ask Multiple: Error retrieving selected items from listbox&AskFileName: Dialog Box creation error
+8FP Math: Argument to function outside domain of function.FP Math: Result is too large to be represented.FP Math: Partial loss of significance occurred
+?BinaryPeekStr: Data request extends beyond end of binary buffer8BinaryPokeStr: Data to store would overrun binary buffer
+8FP Math: Illegal value passed to function. (Singularity),FP Math: Total loss of significance occurred+FP Math: Result too small to be represented5FP Math: Undocumented library error passed to matherr<FP Math: Non-Integer Power of Negative Number is not defined)FP Math: Square Root of a Negative Number5FP Math: Cannot Take Log of Zero or a Negative Number7FP Math: Fact args must be positive whole numbers <=170
+/Internal Error: Command or Structop not defined2Struct Error: Nesting of structures is too complex END Error: No matching End found(STRUCT Error: 'Break' not in a Structure+STRUCT Error: 'Continue' not in a Structure
+End Error: No match  found*Else Error: No matching If or ElseIf found8Break/Continue: Not in a While, Switch, or For structure.For Error: Bad Syntax.  e.g. 'For x = 1 to 10'4For Error: For counters must be numbers, not strings$Misplaced 'TO' found without a DoForHUnidentified 'END': Must be followed by If, While, Switch, Select or For7SWITCH/CASE Error: Switch/Case can only accept integers$CASE Error: No matching Switch found-AskBox Error: Single/Multiple value incorrect-AskBox Error: Sorted/Unsorted value incorrect"ElseIf Error: No matching if found
++ActivateChild: Child windows does not exist"DllCall: Invalid DllName as Param1
+DllCall: Invalid DllEntryPoint
+DllCall: Bad punctuation found.DllCall: Too many parameters (max 2 + 20 args)(DllCall: Must have at least 2 parameters>DllCall: Number of DLL parameters and type string do not agree.DllCall: Parameter cannot be forced to 'SHORT'
+-DllCall: Parameter cannot be forced to 'LONG'?Return type invalid - WORD, LONG, DOUBLE, LPSTR, LPWSTR or VOIDhDllCall: Bad parm code.  Only WORD, LONG, DOUBLE, LPSTR, LPWSTR, LPBINARY, CALLBACK, LPSTRUCT, or LPNULLEDllCall: Bad type list caused stack problems.  Check types carefully.$DllCall: Missing ':' after type code6DllCall: Param cannot be converted to string for LPSTR
+6DiskExist: Invalid Disk Argument.  Try a single letter
+&Request Ignored: NT Security violation*FileCompare: FileOpen failure - First File+FileCompare: FileOpen failure - Second File
+7DllCall: Internal Error - cannot accept lpbinary return,Execute function error: 'Wait' parameter bad4Execute function error: 'Display type' parameter bad
+AIniItemize: Operation not supported; WIN.INI is a mapped INI file1ShellPrint: @WAIT not supported in 32-bit version
+DDllFree: Bad Dll handle passed.  Must use handle returned by DllLoad
+ DllLoad: Too many open DllLoads.
+%AddExtender: Too many extenders added#AddExtender: Extender DLL not found!AddExtender: Not a valid extender AddExtender: Extender table full
+,List Allocation: Could not itemize all items2AddExtender: Extender detects error, will not load
+Call: File not found
+#REG Functions: Bad Data Item [name]
+1FileCopy: Insufficient free space on target drive1FileMove: Insufficient free space on target drive3FileAppend: Insufficient free space on target drive*IntControl 29: Invalid delimiter character
+2List Itemization: Could not allocate global buffer
+@RunEnviron: @NOWAIT not supported in 16 bit versions. Use @WAIT.
+WinIdGet: Window not found8Shortcut functions require Windows 95 or Windows NT 4.0+CShortcut functions: Shortcut files must have an extension of '.LNK'+Shortcut functions: Shortcut file not found*ShortcutMake: Shortcut file already exists%Shortcut Make/Edit: Invalid show mode
+ShortcutExtra: Invalid hotkey'Shortcut functions: CoInitialize failed+Shortcut functions: CoCreateInstance failed)Shortcut functions: QueryInterface failed/Shortcut functions: Error loading shortcut file/Shortcut functions: Error reading shortcut file.Shortcut functions: Error saving shortcut file
+DirAttrGet: Directory not found6DirAttrSet: Directory not found, or cannot be accessed
+FileNameLong: File not found
+FileNameShort: File not found
+WIL Internal Error$IntControl 30: Source file not found(IntControl 30: Error parsing target spec4IntControl 30: Cannot move file to a different drive0RegApp: Function not supported in 16-bit version
+RegApp: File not found!RegApp: Error writing to registry5RegDelValue: Function not supported in 16-bit version
+5InstallFile: Source file not found (or not specified)3InstallFile: Target file name cannot contain a path:InstallFile: Target directory not found (or not specified)%AddExtender: Extender DLL load failed4WinSysInfo: Function not supported in 16-bit version#Mouse Functions: Invalid click-type
+<Mouse Functions: Unable to determine window containing mouse6Mouse Functions: Child window specified with no parent(Mouse Functions: Parent window not found'Mouse Functions: Child window not found
+MouseClickBtn: Button not found-Icon functions: Unable to create file mapping*Icon functions: Unable to map view of file1Icon functions: New icon is smaller than old icon IntControl 32: Invalid data type,ShellExecute: Error launching specified file6RegQueryItem: Function not supported in 16-bit version.REG Functions: Unable to open specified subkey:REG Functions: Unable to open (or create) specified subkeyBRegQueryValue: Registry value is binary.  Use RegQueryBin instead.)RegQueryBin: Registry value is not binary0REG Functions: Unable to allocate or lock memory
+,RegQueryDword: Registry value is not a DWORD&RegSetBin: Invalid binary value string9REG functions: Subkey string cannot contain 'WOW6432node' RegSetDword: Invalid DWORD value%REG functions: Subkey string too long!TimeJulToYmd: Invalid Julian date,TimeSubtract: Cannot subtract supplied times.TimeSubtract: Time parameter error - bad value
+IntControl: Window not found5IgnoreInput: Function not supported in 32-bit version"Icon functions: Invalid icon index
+DiskInfo: Invalid drive letter DiskInfo: Invalid request number
+DiskInfo: Function failed$IntControl 39/40: Invalid share mode
+FileWrite: Write failed
+&Function not available in this product>FileCopy/Move: Cannot specify warning=@TRUE in background mode
+$BinaryHash/Sort: Invalid record size#BinaryHash/Sort: Invalid key offset!BinaryHash/Sort: Invalid key sizeEBinaryHash/Sort: Specified key extends beyond end of specified recordCBinaryHash/Sort: Specified record size is larger than binary buffer4BinaryHash/Sort: Unable to allocate (or lock) memory'BinaryHash: Key value must be specifiedABinaryHash: Specified key value is larger than specified key size/BinaryHash: No available space in binary buffer4RegQueryExpSz: Registry value is not a REG_EXPAND_SZ3RegQueryMulSz: Registry value is not a REG_MULTI_SZ6RegQuery[..]: Function not supported in 16-bit version4RegSet[..]: Function not supported in 16-bit version,RegQueryMulSz/RegSetMulSz: Invalid delimiterMRegQueryValue: Registry value is a REG_EXPAND_SZ.  Use RegQueryExpSz instead.LRegQueryValue: Registry value is a REG_MULTI_SZ.  Use RegQueryMulSz instead.@RegQueryValue: Registry value could not be converted to a string(COM: Unable to allocate (or lock) memory
+RegQueryEx: Invalid 'type'
+RegSetEx: Invalid 'type'-RegEntryType: Unable to access registry value IntControl 41: Invalid parameter
+FileVerInfo: File not found:FileVerInfo: Unable to access version information for file0FileVerInfo: Unable to allocate (or lock) memory
+Undefined error IntControl 43: Invalid parameter1RegConnect: Remote registry service not installed!RegConnect: Invalid computer name
+RegConnect: Invalid handle
+RegConnect: Function failed4RegConnect: Function not supported in 16-bit version"FileCopyPort: Error accessing file"FileCopyPort: Error accessing port FileCopyPort: Error reading file#FileCopyPort: Error writing to port6FileCopyPort: Function not supported in 16-bit version2InstallFile: Buffer too small (WIL internal error)%COM: Out of memory / Buffer too small
+BinaryOleType: Invalid 'type'2BinaryOleType: 'type' does not include a data type2BinaryOleType: 'type' does not include a directionHOle Object: Must first use 'BinaryOleType' to identify the binary bufferLOle Object: Unsupported binary buffer type (specified using 'BinaryOleType')
+DiskVolInfo: Invalid root path#DiskVolInfo: Invalid request number5DiskVolInfo: Function not supported in 16-bit version
+DiskVolInfo: Function failed%RegLoadHive: Specified file not foundERegLoad/UnloadHive: Unable to set NT security privilege for operation&RegLoad/UnloadHive: Invalid key handle!RegLoad/UnloadHive: Access denied9RegLoadHive: Sharing violation (specified file is in use)
+RegUnloadHive: Invalid subkey#RegLoad/UnloadHive: Function failed<RegLoad/UnloadHive: Function not supported in 16-bit version/RegLoadHive: Specified file is not a valid hive)RegLoadHive: Bad key, or duplicate subkey RegUnloadHive: Bad key or subkey7RegExistValue: Function not supported in 16-bit version
+ClipGetEx: Invalid format
+:ClipGetEx: Format not supported in this version of Windows
+DLL structure member not found%WinItemizeEx: Invalid 'multiple' flag#WinItemizeEx: Invalid 'hidden' flag
+Ole Object: NULL object handle!ShortcutDir: 'Name' not specified5ShortcutDir: Function not supported in 16-bit version:Binary functions: Offset(s) beyond end of binary buffer(s)HBinary functions: Specified count extends beyond end of binary buffer(s)+Binary functions: Offset beyond end of file<Binary functions: Specified count extends beyond end of file1Binary functions: Error seeking to offset in file Binary functions: Invalid offset
+Binary functions: Invalid count*Binary functions: Offset beyond binary EOD;Binary functions: Specified count extends beyond binary EOD
+2BinaryWriteEx: Unable to allocate (or lock) memory
+BinaryConvert: Invalid type
+BinaryConvert: Invalid flags+BinaryConvert: Invalid combination of flags7BinaryConvert: Insufficient free space in binary buffer&BinaryConvert: Error converting buffer6BinaryConvert: Unicode not supported in 16-bit version$BinaryClip: Unable to open clipboard7BinaryClip: Specified clipboard format is not available+BinaryClip: Error retrieving clipboard dataEBinaryClip: Error accessing clipboard data (maybe unsupported format)/BinaryClip: Insufficient space in binary buffer/BinaryClip: Unable to allocate (or lock) memory/BinaryClip: Error storing data in the clipboard$RegDeleteKey: Subkey cannot be blank
+WinVersion: Invalid level;FileTimeGet/SetEx: Function not supported in 16-bit version%FileTimeGet/SetEx: Invalid time-field
+Ole: Invalid parameter(s)
+StrFix: Invalid 'length'
+Ole: Invalid YmdHms date string
+DirSize: Directory not found1DirSize: Function not supported in 16-bit version&IntControl: Invalid YmdHms date string=IntControl: Unable to set NT security privilege for operation,IntControl 60: Device name must be specifiedHAskDirectory: Function requires Windows 95 or Windows NT 4.0 (or higher)6AskDirectory: Function not supported in 16-bit version"BinaryTagInit: Blank tag specified+BinaryTag[..]: Invalid binary tag structure2BinaryTag[..]: Unable to allocate (or lock) memory!WinItemProcId: Invalid process ID
+7WinItemProcId: Function not supported in 16-bit version
+WinItemProcId: Invalid flags"WinItemProcId: Invalid return type
+MouseCoords: Function failed!Unable to allocate or lock memory%Ole: Method or property name too long%FileDelete: File could not be deleted
+FileRead: Line too long"BinaryComp: Error compressing data&BinaryUncomp: Error uncompressing data7ObjectEventAdd: First parameter must be a variable name IntControl 32: Invalid operation<IntControl 32: Unable to read from specified memory location;IntControl 32: Unable to write to specified memory location7IniItemizePvt: File not found; may be a mapped INI file>FP Math: Function returned invalid floating point number (NAN)
+MousePlay: Invalid time delay
+MousePlay: Function failed3MousePlay: Function not supported in 16-bit version"MousePlay: Invalid X Y coordinates
+File not found
+AskFileName: Invalid flag
+BinaryRead: Error reading file
+BinaryWrite: Error writing file8BinaryReplace: Data to store would overrun binary buffer!TerminateApp: Invalid 'name-type'
+4Invalid character found in multiline string constant
+#StrClean: Invalid 'match-case' flag
+StrClean: Invalid 'mode'
+6RegOpenKeyEx: Function not supported in 16-bit version
+RegOpenKeyEx: Invalid mode
+IntControl 77: Invalid request
+%ArrDimension: Invalid array dimension%ArrDimension: Dimension 1 cannot be 0AArrDimension: Cannot have 0 dimension followed by non-0 dimension/ArrDimension: Unable to allocate or lock memory
+CUnable to call Cancel Handler: Nesting of structures is too complexBUnable to call Error Handler: Nesting of structures is too complex
+"Cannot have nested #DefineFunction)Syntax error in #DefineFunction statement-#EndFunction with no matching #DefineFunction1Maximum number of user-defined functions exceeded&Error processing user-defined function
+&Array variable must include dimensions
+Array variable illegal syntax Array dimensions must be numeric2Array variable with incorrect number of dimensions
+Array subscript out of bounds
+Error accessing array data
+Array variable assignment error!Cannot reassign an array variable
+Uninitialized array element*Array functions: Parameter is not an array
+ArrInfo: Invalid request"Cmd Extender: Error creating array
+ArrDimension: Array too large<RegQueryStr: Registry value is not a REG_SZ or REG_EXPAND_SZ
+Arrayize: List is empty
+Cannot create embedded arrays
+Invalid currency format string
+Invalid decimal format string
+)AddExtender: Unsupported extender version,FileCreateTemp: Unable to get temporary path/FileCreateTemp: Unable to create temporary fileFAddExtender: Extender version is lower than specified required-version
+BinaryTag[..]: Invalid 'mode'
+BinaryXlate: Invalid 'mode'@BinaryXlate: Translation table for mode 0 must be 256 bytes long@BinaryXlate: Translation table for mode 1 must be 512 bytes longBBinaryXlate: Translation table for mode 2 must be 65536 bytes longCBinaryXlate: Translation table for mode 3 must be 131072 bytes longKBinaryXlate: Data buffer must contain an even number of bytes for modes 2-30BinaryXlate: Unable to allocate (or lock) memory5BinaryXlate: Insufficient free space in binary buffer
+Variable is not an array
+IAddExtender: Extender version is outdated; need newer version of extender<IntControl 78: Cannot use while a UDF is currently executing
+ErrorEvent: Invalid 'severity'
+ErrorEvent: Invalid error code
+Minor user-defined error
+&ArrInitialize: 'value' is invalid type3Unable to allocate memory for user-defined function
+9BinaryReadEx: Data to read cannot exceed 2147483647 bytes+Ole: Unable to access SAFEARRAY information$Ole: Unable to access SAFEARRAY data
+Ole: Error creating SAFEARRAY#Ole Object: Binary buffer too small
+DirWindows: Invalid request
+Moderate user-defined error
+Severe user-defined error
+/Unable to lock memory for user-defined function
+:Icon functions: Error accessing icon group resource in EXE?RunWithLogon: Function not supported in this version of Windows=SysParamInfo: Incorrect number of parameters (must be 1 or 3)$SysParamInfo: Invalid request number'SysParamInfo: Invalid 'ini-update' flag#SysParamInfo: 'Value' not specified0SysParamInfo: Invalid 'value' (must be a number)ASysParamInfo: Invalid 'value' (incorrect number of items in list)=SysParamInfo: Invalid 'value' (invalid integer value in list)#AskFileName: 'Filetypes' is invalid:Ole: Unable to perform enumeration of the specified object
+AskColor: Invalid default color
+AskColor: Function failed
+$Cannot have nested #DefineSubroutine+Syntax error in #DefineSubroutine statement1#EndSubroutine with no matching #DefineSubroutine
+AskFont: Invalid type
+AskFont: Invalid flags9AskFont: Unable to get device context for default printer
+AskFont: Function failed
+AskColor: Invalid format
+AskFont: Invalid format$ObjectType: Unsupported variant-type
+ObjectType: Invalid value
+BinaryChecksum: Invalid request.Invalid delimiter (must be a single character)
+ItemCountCsv: Invalid line
+ItemExtractCsv: Invalid line.Ole: Multi-dimension SAFEARRAY's not supported'Ole: Nesting of variants is too complex
+Array is empty
+FileTimeSet: Invalid datetime
+ItemCountCsv: Invalid delimiter!ItemExtractCsv: Invalid delimiter<BinaryIndexBin: 'item' must be a hex string or binary buffer0BinaryIndexBin: 'item' is not a valid hex string&WinPlaceChild: Parent window not found%WinPlaceChild: Child window not found)WinPositionChild: Parent window not found(WinPositionChild: Child window not found!BinaryPokeHex: Invalid hex string8BinaryPokeHex: Data to store would overrun binary buffer
+8Ole: Handle points to an object which has become invalid.GoTo cannot be used within ForEach...Next loop8COM: SAFEARRAY's of more than 5 dimensions not supported
+COM: Invalid class string
+ Line too long (>2048 characters)C#DefineFunction/Subroutine with no matching #EndFunction/Subroutine
+COM: Access denied
+)Array too large for this extender version0Unable to allocate or lock memory for array copy
+EUnable to allocate or lock memory for user-defined function structure
+StrCnt: Invalid 'start-pos'
+StrCnt: Invalid 'end-pos'
+SoundVolume: Invalid level'SoundVolume: Error opening mixer device*SoundVolume: Error getting mixer line info+SoundVolume: Error accessing mixer controls3SoundVolume: Error setting mixer control properties,RegQueryQword: Registry value is not a QWORDERegQueryValue: Registry value is a QWORD.  Use RegQueryQword instead.'RegSetQword: Invalid QWORD value string
+1ForEach Error: Bad Syntax, eg, 'ForEach x in y.z'
+,Variable could not be converted to a variant
+3SoundVolume: Error getting mixer control properties/DllCall: Parameter cannot be forced to 'DOUBLE'3BinaryAllocArray: Arrays element type not supported=BinaryAllocArray: Array elements must all be of the same typeAIntControl 83: This IntControl is obsolete. See BinaryAllocArray.,COM: Object does not provide constant values<Parameter must be an object returned by 'ObjectConstantsGet'*User defined function/subroutine not found#COM: Object does not support events
+COM: Event not found5COM: Object does not permit late bound event handlers7COM: Object does not support any more event connectionsHCOM: User defined function/subroutine has the wrong number of parameters$Icon functions: Unsupported EXE file%Icon functions: ICO file write failed Icon functions: Invalid filetype
+ Cannot return a value from GoSub
++RegDoQueryKeyLastWriteTime: Function failed)MyChrGetCodePage: Error getting code page
+AskLine: Invalid format0BinaryPeekStrW: 'maxsize' must be an even number?BinaryPeekStrW: String in buffer is not an even number of bytes1AskDirectory: Error getting function entry points,ComputerNameGet: Error getting computer name,ComputerNameSet: Error setting computer name
+SendMessage: Invalid 'window'#DebugTrace: File name not specified
+FileDigest: Invalid algorithm:FileDigest: Missing required parameters for this algorithmBFileDigestGetKey: Missing required parameters for this source type(FileDigestGetKey: Invalid hash algorithm
+ MakePointer: Not a variable name
+'FileDigestGetKey: Invalid key algorithm?Function or operation not supported by WIL Script Engine object
+Error opening file
+Error reading file
+Error writing file
+Invalid 'null-char'/Array dimension would be larger than 2147483647&Array has invalid number of dimensions
+File contains NULL character(s)
+Invalid delimiter
+!File contains invalid CSV line(s)
+Invalid request number
+Error converting Unicode data*Variant could not be converted to WIL type
+Invalid mode
+Invalid hex string
+Invalid flag(s)
+Invalid format
+Not a variable pointer
+Invalid variable pointer%Unable to access variable via pointer
+Error accessing variable table"Uninitialized variable via pointer
+Invalid use of '&' operator
+*Variable could not be converted to Unicode
+Pointer error
+Invalid value
+Function failed
+Invalid 'start'
+Invalid 'length'
+Invalid base
+Invalid type&ArraySort: Sort column is out of range'ArraySort: Invalid sort subscript range
+ArraySort: Invalid sort option8Array functions: Invalid or missing row-column parameter*ArraySearch: Search column is out of range+ArraySearch: Invalid search subscript range"ArraySearch: Invalid search option'Max number DllCallback handles exceededACount of parameter types does not match count of UDF/S parameters0Parameter cannot be converted to callback handle
+0Return type invalid - WORD, LONG, DOUBLE or VOIDBParameter type invalid - WORD, LONG, DOUBLE, LPSTR, LPWSTR, LPNULL(Cannot use while Callbacks are executing-Unable to read from specified memory location
+CLR: Runtime load failed
+CLR: Assembly load failed
+CLR: Type creation failed
+CLR: Type name not found
+CLR: Runtime already loaded
+CLR: Unknown runtime option
+CLR: Member signature not found
+CLR: Runtime exception3Array function: Specified dimension is out of range
+=Dialog: Bad font description assigned to dialog font variable
+DDialog: Bad color description assigned to dialog text color variable
+.Dialog: Unable to load dialog background imageBDialog: Unsupported Variable Name attribute in definition variable:Dialog: Unsupported Value attribute in definition variable9Dialog: Unsupported Font attribute in definition variable?Dialog: Unsupported Text Color attribute in definition variableEDialog: Unsupported Background Color attribute in definition variable8Dialog: Too few items in a control's definition variable1Dialog: Control's image file not found or corrupt9Dialog: Unsupported Text attribute in definition variable1Dialog: Bad Font attribute in definition variable7Dialog: Bad Text Color attribute in definition variable=Dialog: Bad Background Color attribute in definition variable;Dialog: Bad Variable attribute found in definition variable=Dialog: Bad or missing value attribute in definition variable3Dialog: x, y, width or height control attribute badGDialog: Control requires Windows 95 with Internet Explorer 3.0 or later8Dialog: Calendar variable contains an invalid time value4Dialog: Spinner variable contains non-numeric values8Dialog: Spinner pre-selected value must be numeric value;Dialog: Spinner variable specifies a range that is to largeDDialog: Found more than one Pushbutton with Value attribute set to 1DDialog: Found more than one Pushbutton with Value attribute set to 0JDialog: Found second FILELISTBOX control. You can have only one per dialog
+$Dialog: Dialog control count missingJDialog: Background variable can contain only one bitmap file and one colorDDialog: Bad color description assigned to dialog background variableADialog: Bad or missing Tab Order attribute in definition variable=Dialog: Bad or missing Style attribute in definition variable
+Dialog: Bad control number
+Dialog: Bad request number(Dialog: Request not supported by control5Dialog: Error retrieving control's system information0Dialog: Parameter contains an invalid time value.Dialog: Expecting a numeric value in parameter#Dialog: System refused to set timer
+Dialog: Bad color description
+Dialog: Bad bitmap file
+Dialog: Control name missing
+Dialog: Control name to long
+Dialog: Bad control name
+Dialog: Menu creation failed>Dialog: Found second MENUBAR. You can have only one per dialog
+Dialog: Menu parent not found%Dialog: Invalid menu parent specified&Dialog: Invalid menu accelerator found
+/Array element could not be converted to Unicode
+Invalid DLL structure handle
+Dialog: Column sort failed(Dialog: Control refused to accept values
+Dialog: Invalid Column number#Dialog: One or more items not found'Invalid DLL structure descriptor string7Parameter cannot be converted to a DLL structure handle,Max number of DLL structure handles exceeded
+$Invalid use of '++' or '--' operator
+Previously reported error
+QFunction may need more parameters, or a period was used when a comma was expected3Extra punctuation characters may be on command line not followed by open parenthesis)Argument number %d could not be converted
+or missing parenthesis
+Check for extra ) on end, subscript used with non-array variable, missing ; before a comment, or other extraneous characters after logical end of line%To compare two values, use == instead7PtrGlobalDefine may only be called from the main script<Persistent variable name cannot be longer than 25 characters
+Not a variable name!Unable to create pointer variable
+Variable not found
+Not a global variable%Invalid data found at or near line %d
+Unsupported data type:
+System error code %dFEach member must have a colon seperated data type and member name pairNCheck for colons (:) and number signs (#) in multiline strings (Use :: and ##)
+Check for subscripts enclosed in square brackets ([]) used with a non-array variable or as extraneous characters after logical end of line
+x0a <<  Windows Application by Wilson WindowWare, Inc.  >>
+ << Copyright (c) 1988-2016 Wilson WindowWare, Inc. All rights reserved. >>
+User requested CancelK
+<< Looking thru the load module, eh?  Have you paid for your copy? >>
+#WinExec 0: Out of Memory or Bad EXE
+WinExec 2: File Not Found
+WinExec 3: Path Not Found
+'WinExec 5: Attempt to dynlink to a task/WinExec 6: Lib requires data segs for each task
+9WinExec 8: Insufficient contiguous memory for application
+%WinExec 10: Incorrect Windows Version
+WinExec 11: Invalid EXE file+WinExec 12: Cannot run app for different OS)WinExec 13: Cannot run DOS4.0 application
+WinExec 14: Unknown EXE type2WinExec 15: Attempt to run old EXE in protect mode>WinExec 16: Attempted 2nd EXE with multiple writeable datasegs,WinExec 17: Nonshareable DLLs already in use.WinExec 18: App marked for protected mode only-WinExec 19: EXE is is compressed.  Cannot run
+"WinExec 20: DLL invalid or corrupt'WinExec 21: EXE requires 32-bit Windows
+WinExec: Function Failed-WinExec: No application defined for data file
+FFocalTech Fingerprint Reader Drive

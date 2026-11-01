@@ -1,0 +1,3 @@
+SecureBoot:    0
+SetupMode:    0
+VendorKeys:    1

@@ -1,0 +1,1 @@
+gpioinfo not installed (package: libgpiod)

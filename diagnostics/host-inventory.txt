@@ -1,0 +1,370 @@
+
+
+===== Timestamp and host =====
+2026-11-01T12:04:15Z
+hostname: titan
+
+
+===== Operating system =====
+NAME="Omarchy"
+PRETTY_NAME="Omarchy"
+ID=omarchy
+ID_LIKE=arch
+BUILD_ID="4.0.6"
+VERSION_ID="4.0.6"
+ANSI_COLOR="38;2;158;206;106"
+HOME_URL="https://omarchy.org/"
+DOCUMENTATION_URL="https://learn.omacom.io/2/the-omarchy-manual"
+SUPPORT_URL="https://discord.gg/tXFUdasqhY"
+BUG_REPORT_URL="https://github.com/basecamp/omarchy/issues"
+LOGO=omarchy
+kernel: 7.2.8-9-omarchy
+arch:   x86_64
+cmdline: cryptdevice=PARTUUID=36049d35-74c9-4a58-9a72-3789a709241c:root root=/dev/mapper/root zswap.enabled=0 rootflags=subvol=@ rw rootfstype=btrfs rtc_cmos.use_acpi_alarm=1 resume=/dev/mapper/root resume_offset=1948723 systemd.tty.term.console=dumb initramfs_async=0 quiet splash loglevel=0 systemd.show_status=false rd.udev.log_level=0 vt.global_cursor_default=0
+
+
+===== DMI / firmware =====
+sys_vendor                  : Dynabook Inc.
+product_name                : SATELLITE PRO C40-J
+product_version             : PYS46G-06J02D
+product_family              : SATELLITE PRO
+board_vendor                : Dynabook Inc.
+board_name                  : DBIIP306
+board_version               : V3.0
+bios_vendor                 : American Megatrends International, LLC.
+bios_version                : TN16SV1.16
+bios_date                   : 02/08/2023
+chassis_type                : 10
+
+
+===== CPU =====
+model name	: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz
+
+
+===== Secure Boot / EFI =====
+EFI firmware present: yes
+SecureBoot efivar (4 bytes after attributes):    0
+
+
+===== ACPI FTE3600 device =====
+device: FTE3600:00
+  hid                       : FTE3600
+  status                    : 15
+  path                      : \_SB_.PC00.SPI1.FP01
+  modalias                  : acpi:FTE3600:FTE3600:
+  physical_node            : /sys/devices/pci0000:00/0000:00:1e.3/pxa2xx-spi.2/spi_master/spi1/spi-FTE3600:00
+
+
+===== ACPI touchpad (for exclusion) =====
+device: SYNA3602:00
+  hid                       : SYNA3602
+  path                      : \_SB_.PC00.I2C0.TPD1
+  physical_node            : /sys/devices/pci0000:00/0000:00:15.0/i2c_designware.0/i2c-0/i2c-SYNA3602:00
+
+
+===== SPI devices =====
+--- spi-FTE3600:00
+modalias                    : acpi:FTE3600:FTE3600:
+uevent                      : MODALIAS=acpi:FTE3600:FTE3600:
+driver                     : /sys/devices/pci0000:00/0000:00:1e.3/pxa2xx-spi.2/spi_master/spi1/spi-FTE3600:00/driver
+stat bytes                 : 0
+stat bytes_rx              : 0
+stat bytes_tx              : 0
+stat errors                : 0
+stat messages              : 0
+stat spi_async             : 0
+stat spi_sync              : 0
+stat spi_sync_immediate    : 0
+stat timedout              : 0
+stat transfer_bytes_histo_0-1: 0
+stat transfer_bytes_histo_1024-2047: 0
+stat transfer_bytes_histo_128-255: 0
+stat transfer_bytes_histo_16-31: 0
+stat transfer_bytes_histo_16384-32767: 0
+stat transfer_bytes_histo_2-3: 0
+stat transfer_bytes_histo_2048-4095: 0
+stat transfer_bytes_histo_256-511: 0
+stat transfer_bytes_histo_32-63: 0
+stat transfer_bytes_histo_32768-65535: 0
+stat transfer_bytes_histo_4-7: 0
+stat transfer_bytes_histo_4096-8191: 0
+stat transfer_bytes_histo_512-1023: 0
+stat transfer_bytes_histo_64-127: 0
+stat transfer_bytes_histo_65536+: 0
+stat transfer_bytes_histo_8-15: 0
+stat transfer_bytes_histo_8192-16383: 0
+stat transfers             : 0
+stat transfers_split_maxsize: 0
+--- spi0.0
+modalias                    : spi:spi-nor
+uevent                      : DRIVER=spi-nor
+MODALIAS=spi:spi-nor
+driver                     : /sys/bus/spi/drivers/spi-nor
+stat bytes                 : 405
+stat bytes_rx              : 361
+stat bytes_tx              : 0
+stat errors                : 0
+stat messages              : 12
+stat spi_async             : 0
+stat spi_sync              : 0
+stat spi_sync_immediate    : 0
+stat timedout              : 0
+stat transfer_bytes_histo_0-1: 0
+stat transfer_bytes_histo_1024-2047: 0
+stat transfer_bytes_histo_128-255: 0
+stat transfer_bytes_histo_16-31: 2
+stat transfer_bytes_histo_16384-32767: 0
+stat transfer_bytes_histo_2-3: 3
+stat transfer_bytes_histo_2048-4095: 0
+stat transfer_bytes_histo_256-511: 0
+stat transfer_bytes_histo_32-63: 1
+stat transfer_bytes_histo_32768-65535: 0
+stat transfer_bytes_histo_4-7: 1
+stat transfer_bytes_histo_4096-8191: 0
+stat transfer_bytes_histo_512-1023: 0
+stat transfer_bytes_histo_64-127: 4
+stat transfer_bytes_histo_65536+: 0
+stat transfer_bytes_histo_8-15: 1
+stat transfer_bytes_histo_8192-16383: 0
+stat transfers             : 12
+stat transfers_split_maxsize: 0
+
+
+===== SPI masters =====
+--- spi0
+device                     : /sys/devices/pci0000:00/0000:00:1f.5
+firmware_node              : /sys/devices/pci0000:00/0000:00:1f.5/spi_master/spi0/firmware_node
+software_node              : /sys/devices/pci0000:00/0000:00:1f.5/spi_master/spi0/software_node
+--- spi1
+device                     : /sys/devices/pci0000:00/0000:00:1e.3/pxa2xx-spi.2
+firmware_node              : /sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/device:80
+software_node              : /sys/kernel/software_nodes/node3
+
+
+===== SPI controller PCI device 00:1e.3 =====
+DRIVER=intel-lpss
+PCI_CLASS=C8000
+PCI_ID=8086:A0AB
+PCI_SUBSYS_ID=3100:0003
+PCI_SLOT_NAME=0000:00:1e.3
+MODALIAS=pci:v00008086d0000A0ABsv00003100sd00000003bc0Csc80i00
+driver                      : cat: '/sys/bus/pci/devices/0000:00:1e.3/driver': Is a directory
+
+
+===== GPIO character devices =====
+crw------- 1 root root 254, 0 Nov  1 11:29 /dev/gpiochip0
+--- gpiochip0 -> /sys/devices/platform/INT34C5:00/gpiochip0
+dev                        : 254:0
+firmware_node              : /sys/devices/LNXSYSTM:00/LNXSYBUS:00/INT34C5:00
+
+
+===== Pinctrl platform devices =====
+--- INT34C5:00
+driver                     : /sys/bus/platform/drivers/tigerlake-pinctrl
+modalias                   : acpi:INT34C5:
+
+
+===== Interrupts (relevant) =====
+  14:          0          0     852498          0          0          0          0          0  IR-IO-APIC                 14-fasteoi   INT34C5:00
+  27:          0          0          0          0          0   22551857          0          0  IR-IO-APIC                 27-fasteoi   idma64.0, i2c_designware.0
+  37:          0          0          0          0          0          0          0          0  IR-IO-APIC                 37-fasteoi   idma64.2, pxa2xx-spi.2
+ 159:          0          0     852498          0          0          0          0          0  intel-gpio                264  SYNA3602:00
+
+
+===== Loaded modules =====
+spi_nor               217088  0
+mtd                   126976  3 spi_nor
+pinctrl_tigerlake      28672  1
+spi_pxa2xx_platform    12288  0
+spi_pxa2xx_core        36864  1 spi_pxa2xx_platform
+spi_intel_pci          12288  0
+spi_intel              40960  1 spi_intel_pci
+
+
+===== Kernel configuration =====
+CONFIG_SPI                         CONFIG_SPI=y
+CONFIG_SPI_MASTER                  CONFIG_SPI_MASTER=y
+CONFIG_SPI_PXA2XX                  CONFIG_SPI_PXA2XX=m
+CONFIG_SPI_PXA2XX_PCI              CONFIG_SPI_PXA2XX_PCI=m
+CONFIG_SPI_SPIDEV                  CONFIG_SPI_SPIDEV=m
+CONFIG_PINCTRL_TIGERLAKE           CONFIG_PINCTRL_TIGERLAKE=m
+CONFIG_GPIO_TIGERLAKE              <not found>
+CONFIG_UIO                         CONFIG_UIO=m
+CONFIG_ACPI                        CONFIG_ACPI=y
+CONFIG_GPIO_SYSFS                  <not found>
+CONFIG_DEBUG_FS                    CONFIG_DEBUG_FS=y
+
+
+===== spidev module =====
+filename:       /lib/modules/7.2.8-9-omarchy/kernel/drivers/spi/spidev.ko.zst
+alias:          spi:spidev
+license:        GPL
+description:    User mode SPI device interface
+author:         Andrea Paterniani, <a.paterniani@swapp-eng.it>
+srcversion:     8F48275598F57EB5AA396CC
+alias:          spi:si3210
+alias:          spi:em3581
+alias:          spi:sx1301
+alias:          spi:dh2228fv
+alias:          spi:bh2228fv
+alias:          spi:spi-authenta
+alias:          spi:m53cpld
+alias:          spi:bk4-spi
+alias:          spi:bk4
+alias:          spi:ltc2488
+alias:          spi:moduline-module-slot
+alias:          spi:jg10309-01
+alias:          spi:dhcom-board
+alias:          spi:spi-petra
+loaded bufsiz: <spidev not loaded>
+modprobe.d fte3600 files:
+
+
+===== Kernel headers / toolchain =====
+build dir                  : /usr/lib/modules/7.2.8-9-omarchy/build
+kernel version file        : 7.2.8-9-omarchy
+gcc                        : gcc (GCC) 16.2.1 20260810
+make                       : GNU Make 4.4.1
+dkms                       : missing
+meson                      : missing
+ninja                      : missing
+pkg-config                 : 3.0.10
+
+
+===== Relevant installed packages =====
+acpica 20251212-1
+archlinux-keyring 20260909-1
+at-spi2-core 2.62.1-1
+github-desktop-bin 3.4.13_linux1-1
+glib2 2.90.1-1
+libgudev 238-4
+linux 7.2.11.arch1-1
+linux-api-headers 7.3-1
+linux-firmware 20260916-1
+linux-firmware-amd 20260916-1
+linux-firmware-amdgpu 20260916-1
+linux-firmware-atheros 20260916-1
+linux-firmware-broadcom 20260916-1
+linux-firmware-cirrus 20260916-1
+linux-firmware-intel 20260916-1
+linux-firmware-mediatek 20260916-1
+linux-firmware-nvidia 20260916-1
+linux-firmware-other 20260916-1
+linux-firmware-radeon 20260916-1
+linux-firmware-realtek 20260916-1
+linux-firmware-ti 20260916-1
+linux-firmware-whence 20260916-1
+linux-omarchy 7.2.8-9
+linux-omarchy-headers 7.2.8-9
+python-proton-keyring-linux 0.2.3-1
+spirv-tools 1:1.4.363.0-1
+util-linux 2.42.4-1
+util-linux-libs 2.42.4-1
+
+
+===== libfprint / fprintd presence =====
+fprintd             : missing
+fprintd-enroll      : missing
+fprintd-verify      : missing
+fprintd-list        : missing
+fprintd-delete      : missing
+libfprint shared objects:
+  none in ldconfig cache
+fprintd units:
+
+
+===== Firmware files matching FocalTech/FTE =====
+(end of firmware search)
+
+
+===== Input devices (touchpad exclusion) =====
+input0: Lid Switch
+input1: Sleep Button
+input10: SYNA3602:00 093A:0255 Touchpad
+input11: HDA Intel PCH Mic
+input12: HDA Intel PCH Front Headphone
+input13: HDA Intel PCH HDMI/DP,pcm=3
+input14: HDA Intel PCH HDMI/DP,pcm=7
+input15: HDA Intel PCH HDMI/DP,pcm=8
+input16: HDA Intel PCH HDMI/DP,pcm=9
+input2: Power Button
+input3: AT Translated Set 2 keyboard
+input4: Video Bus
+input5: Intel HID events
+input6: PC Speaker
+input9: SYNA3602:00 093A:0255 Mouse
+
+
+===== USB devices =====
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 003 Device 003: ID 0bda:0129 Realtek Semiconductor Corp. RTS5129 Card Reader Controller
+Bus 003 Device 004: ID 8087:0026 Intel Corp. AX201 Bluetooth
+Bus 003 Device 013: ID 0c45:6366 Microdia Webcam Vitade AF
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+
+
+===== Block devices =====
+NAME          SIZE FSTYPE      LABEL MOUNTPOINTS
+zram0        15.3G swap        zram0 [SWAP]
+nvme0n1     476.9G                   
+|-nvme0n1p1     2G vfat              /boot
+`-nvme0n1p2 474.9G crypto_LUKS       
+  `-root    474.9G btrfs             /var/log
+                                     /home
+                                     /var/cache/pacman/pkg
+                                     /
+
+
+===== Relevant kernel log lines (current boot) =====
+Nov 01 11:29:28 titan kernel: pci 0000:00:1e.3: [8086:a0ab] type 00 class 0x0c8000 conventional PCI endpoint
+Nov 01 11:29:28 titan kernel: pci 0000:00:1e.3: BAR 0 [mem 0x00000000-0x00000fff 64bit]
+Nov 01 11:29:28 titan kernel: pci 0000:00:1e.3: BAR 0 [mem 0x4017002000-0x4017002fff 64bit]: assigned
+Nov 01 11:29:28 titan kernel: intel-lpss 0000:00:1e.3: enabling device (0004 -> 0006)
+
+
+===== ACPI table permissions =====
+total 0
+-r-------- 1 root root    300 Nov  1 17:29 APIC
+-r-------- 1 root root     56 Nov  1 17:29 BGRT
+-r-------- 1 root root     84 Nov  1 17:29 DBG2
+-r-------- 1 root root     52 Nov  1 17:29 DBGP
+-r-------- 1 root root    136 Nov  1 17:29 DMAR
+-r-------- 1 root root 342375 Nov  1 17:29 DSDT
+-r-------- 1 root root    276 Nov  1 17:29 FACP
+-r-------- 1 root root     64 Nov  1 17:29 FACS
+-r-------- 1 root root    156 Nov  1 17:29 FIDT
+-r-------- 1 root root     68 Nov  1 17:29 FPDT
+-r-------- 1 root root     56 Nov  1 17:29 HPET
+-r-------- 1 root root    204 Nov  1 17:29 LPIT
+-r-------- 1 root root     60 Nov  1 17:29 MCFG
+-r-------- 1 root root     85 Nov  1 17:29 MSDM
+-r-------- 1 root root     45 Nov  1 17:29 NHLT
+-r-------- 1 root root   3396 Nov  1 17:29 PTDT
+-r-------- 1 root root   9565 Nov  1 17:29 SSDT1
+-r-------- 1 root root   3339 Nov  1 17:29 SSDT10
+-r-------- 1 root root   3459 Nov  1 17:29 SSDT11
+-r-------- 1 root root    324 Nov  1 17:29 SSDT12
+-r-------- 1 root root  12911 Nov  1 17:29 SSDT2
+-r-------- 1 root root  11836 Nov  1 17:29 SSDT3
+-r-------- 1 root root  13176 Nov  1 17:29 SSDT4
+-r-------- 1 root root  45690 Nov  1 17:29 SSDT5
+-r-------- 1 root root  29088 Nov  1 17:29 SSDT6
+-r-------- 1 root root   2338 Nov  1 17:29 SSDT7
+-r-------- 1 root root  10016 Nov  1 17:29 SSDT8
+-r-------- 1 root root    298 Nov  1 17:29 SSDT9
+-r-------- 1 root root     76 Nov  1 17:29 TPM2
+-r-------- 1 root root     72 Nov  1 17:29 UEFI
+-r-------- 1 root root     40 Nov  1 17:29 WSMT
+drwxr-xr-x 2 root root      0 Nov  1 17:29 data
+drwxr-xr-x 2 root root      0 Nov  1 17:29 dynamic
+
+
+===== Debugfs / GPIO availability =====
+debugfs mounted            : yes
+debugfs gpio readable      : no (root required)
+debugfs pinctrl readable   : no (root required)
+
+
+===== End of inventory =====

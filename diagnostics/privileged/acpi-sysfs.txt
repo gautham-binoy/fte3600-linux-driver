@@ -1,0 +1,4 @@
+
+### /sys/bus/acpi/devices/FTE3600:00
+
+### /sys/bus/acpi/devices/INT34C5:00

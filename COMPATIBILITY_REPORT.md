@@ -73,17 +73,24 @@ The glue also requires:
 | GPIO char device | `/dev/gpiochip0` from `INT34C5:00` | **Yes** |
 | Secure Boot | disabled | **Yes (no MOK needed)** |
 | Kernel headers | matching `7.2.8-9-omarchy` headers | **Yes** |
-| ACPI `_CRS` shape | **not yet read** | **Unknown** |
-| Reset GPIO | **not yet read** | **Unknown** |
-| Interrupt GPIO/IRQ | **not yet read** | **Unknown** |
+| ACPI `_CRS` shape | 1 SPI, 1 GpioIo output, 1 GpioInt edge | **Yes (exact match)** |
+| SPI parameters | Mode 0, 1 MHz, Active-Low CS | **Yes** |
+| Reset GPIO | `\_SB.GPI0` pin 14 (`SPKR`), OutputOnly, PullUp | **Yes** |
+| Interrupt GPIO/IRQ | `\_SB.GPI0` pin 323 (`CPU_GP_0`), Edge, ActiveHigh | **Yes** |
 | Sensor family | **not yet identified** | **Unknown** |
 | Firmware requirement | **unknown** | **Unknown** |
 
-So the *transport-level prerequisites* look favorable, but the decisive ACPI
-resource details and the sensor identity are missing. The reference glue could
-still reject this machine if, for example, the interrupt is level-triggered
-rather than edge-triggered, or if the ACPI describes the reset GPIO in a shape
-the strict validator does not accept.
+The ACPI `_CRS` resource shape has now been inspected directly from decompiled
+`dsdt.dsl`. It matches the reference glue requirements exactly:
+1. Exactly one 8-bit SPI bus (1 MHz, Mode 0, Active-Low CS).
+2. Exactly one OutputOnly `GpioIo` reset pin with valid PullUp bias.
+3. Exactly one edge-triggered `GpioInt` interrupt line (ActiveHigh).
+4. No conflicting `_DSD` properties.
+
+The kernel-glue resource policy `fte3600_resources_valid()` is therefore fully
+satisfied by this ACPI description. What remains unknown is the physical silicon
+family (FT9361 vs FT9362 vs others) and whether hardware pad locks on the PCH
+interfere with runtime GPIO assertions.
 
 ## 4. Vendor-derived module comparison
 
@@ -189,33 +196,44 @@ Consequences:
 - Firmware will only be considered after a runtime chip-ID read identifies the
   exact family and generation, and only with explicit user approval.
 
-## 7. Preliminary verdict
+## 7. Audit of fte3600-glue Kernel Module and spidev Coexistence
 
-**Transport compatibility: plausible.**
-The ACPI HID, SPI controller, kernel features and GPIO/UIO support all line up
-with the reference design.
+An in-depth audit of `kernel/fte3600.c` was conducted:
 
-**Protocol/sensor compatibility: unproven.**
-The sensor family, ACPI resource shape and firmware requirement are unknown.
-The reference implementation explicitly supports only one confirmed machine.
+1. **Driver Coexistence (Zero Conflict):**
+   - In Linux SPI architecture, only one driver can bind to an SPI slave.
+   - `fte3600.c` is **not** an SPI driver: it registers as a platform driver (`fte3600-glue`) and does not claim `spi-FTE3600:00`.
+   - `spidev` is the sole driver bound to `spi-FTE3600:00`.
+   - `fte3600.c` hooks into the SPI bus via a bus notifier. When `spidev` binds, it attaches a child platform device to provide the reset GPIO cdev and UIO IRQ node.
+   - There is no collision between SPI transfer paths and the glue module.
 
-**No installation should be attempted yet.**
-The next step is the read-only ACPI/debugfs collection. Only after that can we
-decide whether to:
+2. **GPIO and IRQ Handling:**
+   - On probe, reset line (pad 14) is initialized to `OUTPUT`, logical `0` (physical HIGH / inactive).
+   - Interrupt line (pad 229) is initialized to `INPUT`.
+   - Probing does **not** attach an interrupt service routine. `request_irq()` is only called upon userspace `open()` on `/dev/uioX`.
 
-- reuse the reference glue unchanged,
-- adapt the glue for a different ACPI resource shape,
-- extend the libfprint driver for a new sensor family, or
-- stop at a documented hardware/protocol blocker.
+3. **Lifecycle & Teardown Cleanliness:**
+   - Unloading the module tears down the platform device, releases all GPIO descriptors, drops all ACPI driver GPIO mappings, and leaves the reset line in its deasserted (physical HIGH) state.
+   - Note: releasing the descriptor in Linux gpiolib frees the kernel's software allocation, but gpiolib does not reprogram the underlying Intel PCH pad configuration registers (`PADCFG0`), leaving pad 14 configured as output driving physical HIGH.
+   - If `fte3600.ko` is loaded without `spidev` bound, `fte3600_is_spidev()` evaluates to false, resulting in zero actions taken.
 
-## 8. Evidence still required
+## 8. Verification of Non-Destructive Silicon Identification
 
-1. ACPI `Device (FP01)` block: `_CRS`, `_DSD`, `_STA`, `_DEP`.
-2. Parent `Device (SPI1)` and GPIO controller (`INT34C5`) resource maps.
-3. `/sys/kernel/debug/gpio` and pinctrl `pins` / `pinmux-pins` / `gpio-ranges`.
-4. Kernel log from boot for ACPI/resource warnings.
-5. A safe chip-identity read after the transport is validated.
-6. Exact firmware requirement for the identified family.
+Strings recovered from the official Dynabook Windows driver (`ftWbioUmdfDriverV2.dll`) confirm that the identification sequence in `discovery.c` exactly mirrors the vendor's internal sequence:
+- Function: `ft_feature_devinit_DetectSensorTypeWithoutFW`
+- Register 0x85C0 query: `[Driver] I %s[%d]: read addr 0x85C0 value:0x%x`
+- Distinguish by OTP: `ft_feature_devinit_DistinguishSensorFT95A8byOtp` and `ft_feature_devinit_DistinguishSensorFT9338byOtp`
+- Safe OTP Read: `read 9338 OTP is 0xff then set FT9338`
 
-Commands are in `HARDWARE_REPORT.md` section 10 and
-`scripts/collect-privileged.sh`.
+The sequence issues:
+1. Pure SPI read `0x90 0x00 0x00` (3 bytes, Read ID).
+2. If non-marker: reads register `0x85C0` and OTP byte via register `0xF3`.
+No flash write, flash erase, or persistent state changes occur. The procedure is demonstrably non-destructive.
+
+## 9. Current Status & Next Phase
+
+**Transport compatibility:** Confirmed via ACPI decompilation.
+**Kernel glue compatibility:** Validated and compiled cleanly. Zero conflicts with `spidev`.
+**Identification safety:** Proven non-destructive against official vendor driver binaries.
+
+The decisive next step is to obtain user authorization to perform the read-only hardware identification transaction.

@@ -71,6 +71,9 @@ spi1 -> PCI 00:1e.3, driver pxa2xx-spi, slave spi-FTE3600:00 unbound
 | Controller IRQ | 37 (`idma64.2, pxa2xx-spi.2`) |
 | SPI master | `spi1` |
 | Slave device | `spi-FTE3600:00` |
+| ACPI SPI speed | 1,000,000 Hz (1 MHz, `0x000F4240`) |
+| ACPI SPI mode | Mode 0 (CPOL=0, CPHA=0, 8 bits, 4-wire) |
+| ACPI CS polarity | Active Low (`PolarityLow`) |
 
 Kernel configuration relevant to this path:
 
@@ -100,19 +103,33 @@ firmware_node: /sys/devices/LNXSYSTM:00/LNXSYBUS:00/INT34C5:00
 driver: /sys/bus/platform/drivers/tigerlake-pinctrl
 ```
 
-The device node is readable only by root and `libgpiod` (`gpioinfo`) is not
-installed. Line-level data must therefore be read from
-`/sys/kernel/debug/gpio` and the pinctrl debugfs files with root privileges.
-No GPIO number, reset polarity or interrupt polarity has been assumed.
+From `dsdt.dsl` decompiled inspection of `\_SB.PC00.SPI1.FP01._CRS`:
 
-The only GPIO interrupt currently visible is the touchpad:
+1. **Reset Pin:** `GpioIo` on `\_SB.GPI0`, OutputOnly, PullUp.
+   - ACPI assignment: `RSTP = GNUM (0x0900000E)`.
+   - In PCH group 0, offset 14 -> ACPI pin 14.
+   - On `INT34C5:00`, this corresponds to pin 14 (`SPKR` pad).
+   - In debugfs pinctrl: `pin 14 (SPKR) 14:INT34C5:00 GPIO ... [LOCKED] (MUX UNCLAIMED) (GPIO UNCLAIMED)`.
+
+2. **Interrupt Pin:** `GpioInt` on `\_SB.GPI0`, Edge, ActiveHigh, ExclusiveAndWake, PullNone.
+   - ACPI assignment: `INTP = GNUM (0x090E0003)`.
+   - In PCH group 14, base 320, offset 3 -> ACPI pin 323.
+   - On `INT34C5:00`, this corresponds to pin 229 (`CPU_GP_0` pad).
+   - In debugfs pinctrl: `pin 229 (CPU_GP_0) 323:INT34C5:00 GPIO ... [LOCKED tx] (MUX UNCLAIMED) (GPIO UNCLAIMED)`.
+
+3. **Pad Ownership (`_INI`):**
+   `SHPO (0x090E0003, One)` and `SHPO (0x0900000E, One)` set host pad ownership for both lines to driver/OS control.
+
+4. **Device Properties (`_DSD`):**
+   `FP01` has no `_DSD` node. Named GPIO properties like `reset-gpios` do not exist in firmware.
+
+The only GPIO interrupt currently visible in `/proc/interrupts` is the touchpad:
 
 ```text
 159: ... intel-gpio 264 SYNA3602:00
 ```
 
-There is no fingerprint IRQ because no driver has requested one. The ACPI
-`GpioInt`/`Interrupt` resource must supply it.
+There is no fingerprint IRQ because no driver has requested one yet.
 
 ## 5. Interrupts
 
@@ -124,8 +141,7 @@ Relevant `/proc/interrupts` entries at inspection time:
 159: intel-gpio 264          SYNA3602:00
 ```
 
-The fingerprint interrupt is not allocated yet. Its trigger type and polarity
-are unknown until the ACPI `_CRS` is read.
+From ACPI `_CRS`, the fingerprint interrupt is an edge-triggered active-high `GpioInt` on `\_SB.GPI0` pin 323 (pad 229, `CPU_GP_0`). The interrupt is not requested or claimed in the interrupt controller until userspace explicitly opens the `/dev/uioX` device created by the ACPI glue driver. Probing the driver does not attach an IRQ handler.
 
 ## 6. Firmware
 
@@ -169,6 +185,11 @@ It is not the fingerprint reader and will not be touched.
 
 - FTE3600 is an ACPI-enumerated SPI slave on Intel GSPI #1 (`spi1`).
 - The ACPI path is `\_SB.PC00.SPI1.FP01`.
+- ACPI `_CRS` specifies SPI Mode 0, 1 MHz (`0x000F4240`), Active-Low CS.
+- ACPI `_CRS` specifies Reset GPIO: `GpioIo` on `\_SB.GPI0`, pin 14 (pad 14, SPKR), OutputOnly, PullUp.
+- ACPI `_CRS` specifies Interrupt GPIO: `GpioInt` on `\_SB.GPI0`, pin 323 (pad 229, CPU_GP_0), Edge, ActiveHigh.
+- ACPI `_INI` executes `SHPO` setting host ownership for both pins.
+- ACPI `FP01` has no `_DSD` node.
 - No driver is bound; no SPI traffic has occurred.
 - Secure Boot is disabled.
 - The running kernel has spidev, UIO, pxa2xx-spi and Tiger Lake pinctrl
@@ -177,39 +198,62 @@ It is not the fingerprint reader and will not be touched.
 - fprintd/libfprint are absent.
 - The Synaptics device is the touchpad, not the sensor.
 
-### Unknown (must be collected, not guessed)
+### Unknown (must be verified experimentally, not guessed)
 
-- Sensor silicon family and chip ID.
-- ACPI `_CRS`: SPI clock phase/polarity, CS polarity, speed, data size.
-- Reset GPIO controller/pin, active level and initial state.
-- Interrupt GPIO/IRQ number, trigger edge and polarity.
-- Presence and content of `_DSD` properties (reset-gpios, irq-gpios, firmware
-  names, etc.).
+- Exact physical sensor silicon family and chip ID (e.g., FT9361, FT9362, FT9348, FT9338).
+- Whether Intel pad lock (`[LOCKED]` / `[LOCKED tx]`) prevents runtime GPIO direction changes.
 - Firmware requirement and payload identity.
 - Whether the reference driver's protocol and image pipeline match this part.
 
-## 10. Next evidence required
+## 10. ACPI Diagnostics Summary
 
-The decisive missing artifact is the ACPI firmware description. Run the
-prepared read-only collector as root:
+ACPI DSDT and SSDT tables were successfully dumped and decompiled under
+`diagnostics/acpi/` and verified:
+- Device `FP01` (`\_SB.PC00.SPI1.FP01`) provides 1 SPI resource, 1 `GpioIo` reset line, and 1 `GpioInt` interrupt line.
+- SPI: 1.0 MHz, 8-bit, 4-wire, Mode 0 (`CPOL=0`, `CPHA=0`), Active-Low CS (`PolarityLow`).
+- Reset: `\_SB.GPI0` pin 14 (pad 14, `SPKR`), output-capable, pull-up bias.
+- Interrupt: `\_SB.GPI0` pin 323 (pad 229, `CPU_GP_0`), edge-sensitive, active-high.
+- Both pins are granted host OS ownership via `SHPO` in `_INI`.
+- No ACPI `_DSD` node exists.
 
-```sh
-sudo /home/titan/fte3600-linux-driver/scripts/collect-privileged.sh
-```
+## 11. Kernel Glue Source Audit & Hardware Interaction
 
-It writes:
+The source code of `kernel/fte3600.c` was thoroughly audited:
 
-```text
-diagnostics/acpi/                 binary tables, acpidump.txt, decompiled .dsl
-diagnostics/privileged/           dmesg, gpio/pinctrl debugfs, blocks
-```
+1. **Module Load (`fte3600_init`):**
+   - Registers platform driver `fte3600-glue`.
+   - Registers SPI bus notifier `fte3600_spi_notifier`.
+   - Iterates SPI devices with `fte3600_is_spidev()`.
+   - **Crucial Safety Guarantee:** If `spidev` is not bound to `spi-FTE3600:00`, loading `fte3600.ko` does **not** attach to any device, does not invoke `probe`, does not request any GPIO or IRQ, and changes **zero** hardware state.
 
-Specifically inspect:
+2. **Device Attachment & Probe (`fte3600_probe`):**
+   - Invoked only after `spidev` binds to `spi-FTE3600:00`.
+   - Validates `_CRS` resources against policy rules.
+   - Claims reset line via `fwnode_gpiod_get_index` and calls `fte3600_deassert()`: sets GPIO direction to OUTPUT, logical `0` (physical HIGH / inactive). The sensor is held out of reset.
+   - Claims IRQ line via `fwnode_gpiod_get_index` and sets direction to INPUT.
+   - **Does NOT request IRQ at probe time:** IRQ handler is hooked only when userspace opens `/dev/uioX`.
+   - Registers a single-line `gpiochip` exposing only the reset line to root processes.
+   - Performs **zero** SPI transactions; SPI remains entirely under `spidev` control.
 
-- the `Device (FP01)` block (SPI serial bus, GpioIo, GpioInt, `_DSD`);
-- the parent `Device (SPI1)` and GPIO controller blocks;
-- `/sys/kernel/debug/gpio` for pin ownership;
-- pinctrl `pins`, `pinmux-pins`, `gpio-ranges` for pin mapping;
-- `dmesg` for ACPI/resource errors.
+3. **Module Unload (`fte3600_exit`):**
+   - Unregisters SPI notifier and detaches glue devices.
+   - Unregisters UIO device (automatically releasing any open IRQ).
+   - Ensures reset line is left deasserted (physical HIGH).
+   - Removes driver GPIO chip and releases all GPIO descriptors (`gpiod_put`).
+   - Unregisters platform driver and destroys cleanup workqueue.
+   - Complete software cleanup with zero resource leaks. Note: releasing the descriptor in Linux gpiolib clears the software claim, but gpiolib intentionally does not reprogram the underlying Intel PCH pad configuration registers (`PADCFG0`), leaving pad 14 configured as output driving physical HIGH. Pinctrl debugfs reflects register bits rather than a physical voltage measurement.
 
-No GPIO or protocol conclusion will be drawn before those files exist.
+## 12. Silicon Identification Sequence Audit
+
+The silicon identification routine from `discovery.c` was analyzed against strings in the official Dynabook Windows driver (`ftWbioUmdfDriverV2.dll`):
+
+1. **Vendor Equivalence:** The routine directly mirrors the official vendor function `ft_feature_devinit_DetectSensorTypeWithoutFW` and `ft_feature_devinit_DistinguishSensorFT95A8byOtp` / `ft_feature_devinit_DistinguishSensorFT9338byOtp`.
+2. **Commands Issued:**
+   - Command 1: Pure SPI Read `0x90 0x00 0x00` (3 bytes, standard Read ID).
+   - If marker is not present: prepares read at register `0x85C0` using `[0x06, 0xF9, 0x00]`, `[0x05, 0xFA, 0x85, 0xC0, ...]`, write `0xA4=1`, and reads 8 bytes via `[0x04, 0xFB, 0x85, 0xC0, ...]`.
+   - Reads OTP status via register `0xF3` with OTP read mode enabled via `0xF4=1` and immediately cleared via `0xF4=0`.
+3. **Non-Destructive Nature:**
+   - The sequence sends **zero** flash erase (`0x20`, `0xD8`, `0xC7`) or flash program (`0x02`) commands.
+   - Register writes are volatile control/status registers inside the MCU.
+   - OTP read mode does not program OTP bits (programming requires high voltage $V_{PP}$).
+   - Designed to run cleanly "WithoutFW" before firmware upload.

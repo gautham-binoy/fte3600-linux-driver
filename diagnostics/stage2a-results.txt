@@ -1,0 +1,98 @@
+========================================================
+ FTE3600 Stage 2A Supervised Sensor Identification (Pure spidev)
+ Host: SATELLITE PRO C40-J
+ Kernel: 7.2.8-9-omarchy (x86_64)
+ Date: 2026-11-02T16:04:13+05:30
+ Architecture: Pure spidev (No fte3600.ko, No UIO, No GPIO manipulation)
+========================================================
+
+--- 1. Pre-Execution Safety Audits (Read-Only) ---
+[PASS] Running kernel matches expectation: 7.2.8-9-omarchy
+[PASS] Identification binary verified: /home/titan/fte3600-linux-driver/bin/stage2a-identify
+[PASS] SPI device spi-FTE3600:00 exists.
+[PASS] driver_override on spi-FTE3600:00 is clean ('').
+[PASS] spi-FTE3600:00 is confirmed UNBOUND.
+[PASS] spidev is confirmed ABSENT.
+[PASS] No pre-existing /dev/spidev* device nodes.
+[PASS] fte3600 is confirmed ABSENT (pure spidev architecture).
+[INFO] PCH Pad 14 pinctrl state: pin 14 (SPKR) 14:INT34C5:00 GPIO 0x84000201 0x0003c026 0x00000000 [LOCKED]
+[PASS] Pad 14 matches verified firmware output-high state (0x84000201).
+[INFO] PCH Pad 229 pinctrl state: pin 229 (CPU_GP_0) 323:INT34C5:00 GPIO 0x82000100 0x00000029 0x00000000 [LOCKED tx]
+
+--- 2a. Loading spidev module ---
+[PASS] spidev loaded successfully.
+
+--- 2b. Setting driver_override and Binding spidev ---
+[PASS] driver_override set to spidev.
+[PASS] spi-FTE3600:00 confirmed bound to spidev driver.
+[PASS] Target spidev character device identified: /dev/spidev1.0
+
+========================================================
+ Executing Stage 2A Minimal Sensor Identification Sequence
+ Target: /dev/spidev1.0
+========================================================
+
+>> Stage 2A FocalTech Identification Tool
+>> Target device: /dev/spidev1.0
+>> SPI configuration verified: Mode 0 (CPOL=0, CPHA=0), 8 bits/word, 1000000 Hz
+
+--- Operation 1: Writing volatile register 0xC6 = 0x01 ---
+MOSI: [ 0x09 0xF6 0xC6 0x01 ]
+>> Operation 1 completed (CS deasserted high).
+
+--- Operation 2: Delaying 4 ms (transceiver stabilization) ---
+>> Delay complete.
+
+--- Operation 3: Reading register 0xC6 for verification ---
+MOSI: [ 0x08 0xF7 0xC6 0x00 0x00 ]
+MISO: [ 0x00 0x00 0x00 0x00 0x01 ]
+>> Register 0xC6 readback value: 0x01
+>> Register 0xC6 verified: SPI transceiver clock active.
+
+--- Operation 4: Interrogating Chip ID register 0x1A8B ---
+MOSI: [ 0x04 0xFB 0x9A 0x8B 0x00 0x00 0x00 0x00 0x00 0x00 ]
+MISO: [ 0x00 0x00 0x00 0x00 0x00 0x00 0x93 0x62 0x1C 0x53 ]
+>> Raw Chip ID word (buffer[6..7]): 0x9362
+>> Received CRC-CCITT (buffer[8..9]): 0x1C53 (Calculated: 0x1C53)
+>> CRC validation: VERIFIED (CRC matches)
+>> Preliminary Identification: Chip ID 0x9362 -> FT9362 / FW9369
+
+===================================================================
+STAGE 2A IDENTIFICATION RESULT: SUCCESS
+Identified Chip ID: 0x9362
+Silicon Classification: FT9362 / FW9369
+CRC Verification: PASS (Exact match)
+===================================================================
+
+>> [STAGE 2A RESULT: SUCCESS] Sensor identification completed successfully.
+
+--- 4. Initiating Controlled Rollback ---
+
+========================================================
+ Stage 2A Rollback Harness (Pure spidev)
+ Timestamp: 2026-11-02T16:04:14+05:30
+========================================================
+>> Rollback step 1: Unbinding spidev from spi-FTE3600:00...
+   [OK] spi-FTE3600:00 unbind succeeded. Confirmed UNBOUND.
+>> Rollback step 2: Restoring driver_override on spi-FTE3600:00...
+   [OK] driver_override restored to ''.
+>> Rollback step 3: Unloading spidev module...
+   [OK] modprobe -r spidev succeeded. Module ABSENT.
+
+--- Post-Rollback State Verification ---
+>> Checking spidev module state post-rollback: ABSENT
+>> Checking SPI device driver link: UNBOUND
+>> Checking /dev device nodes:
+ls: cannot access '/dev/spidev*': No such file or directory
+
+>> Sensor Internal State Notice:
+   Host-side resources are fully released, bus clock is halted, and CS is deasserted high.
+   PCH Pad 14 (reset) and Pad 229 (IRQ) were never claimed or altered.
+   The internal state of register 0xC6 cannot be confirmed as restored by host cleanup.
+   Whether 0xC6 retains 0x01, autonomously decays, or resets via an undocumented internal
+   watchdog timer is unknown. Host cleanup guarantees host isolation only.
+
+========================================================
+ ROLLBACK COMPLETED CLEANLY (0 ERRORS)
+ Verified: spidev ABSENT, spi-FTE3600:00 UNBOUND, /dev/spidev* ABSENT
+========================================================

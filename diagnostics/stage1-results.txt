@@ -1,0 +1,129 @@
+========================================================
+ FTE3600 STAGE 1 VERIFICATION & ROLLBACK
+ Timestamp: 2026-11-02T14:03:39+05:30
+ Kernel: 7.2.8-9-omarchy
+ Device: spi-FTE3600:00
+========================================================
+
+--- 1. Baseline Pre-Execution Safety Checks ---
+>> Concurrency Advisory: This script does not take an atomic system-wide kernel lock.
+   Ensure exclusive execution: no concurrent udev rules, modprobe actions, or
+   external processes should alter SPI or GPIO resources while this script runs.
+[PASS] Stage 1 pre-load validation: SPI drivers subsystem (/sys/bus/spi/drivers) is accessible.
+[PASS] driver_override on spi-FTE3600:00 is readable and clean ('').
+[PASS] spi-FTE3600:00 is unbound (no active or dangling driver link).
+[PASS] spidev is confirmed not loaded.
+[PASS] fte3600 is confirmed not loaded.
+[PASS] uio is confirmed not loaded; will be loaded on demand and tracked for rollback.
+
+--- 2a. Loading prerequisite uio module ---
+[PASS] uio loaded successfully.
+
+--- 2b. Loading spidev (Default 4096-byte bufsiz) ---
+[PASS] spidev loaded successfully.
+[PASS] Stage 2 post-load validation: spidev driver directory verified: /sys/bus/spi/drivers/spidev
+
+--- 3. Setting driver_override and Binding spidev ---
+[PASS] driver_override set to spidev.
+[PASS] spi-FTE3600:00 confirmed bound to spidev driver (/sys/bus/spi/drivers/spidev).
+
+--- 4. Loading fte3600.ko ---
+[PASS] fte3600.ko inserted successfully.
+
+--- 5. Diagnostics and State Inspection ---
+>> Checking /dev character devices:
+crw------- 1 root root 254, 0 Nov  1 11:29 /dev/gpiochip0
+crw------- 1 root root 254, 1 Nov  2 14:03 /dev/gpiochip1
+crw------- 1 root root 153, 0 Nov  2 14:03 /dev/spidev1.0
+crw------- 1 root root 511, 0 Nov  2 14:03 /dev/uio0
+
+>> Checking sysfs platform device attributes:
+Glue platform device detected: /sys/bus/spi/devices/spi-FTE3600:00/fte3600-glue.3.auto
+  fte3600_glue_abi         : 2
+  fte3600_status           : ready
+  fte3600_ngpio            : 1
+  fte3600_generation       : 0
+  fte3600_acpi_mode        : 0
+  fte3600_acpi_speed_hz    : 1000000
+  fte3600_cs_control       : 1
+  fte3600_irq_active_low   : 0
+  fte3600_irq_source       : gpio
+
+>> Checking UIO device enumeration:
+  /sys/class/uio/uio0 -> name: fte3600-irq, version: 2
+
+>> Checking debugfs GPIO state:
+gpiochip0: 360 GPIOs, parent: platform/INT34C5:00, INT34C5:00:
+ gpio-14  (                    |fte3600-glue.3.auto ) out hi ACTIVE LOW
+ gpio-264 (                    |TPD1 GpioInt(0)     ) in  hi IRQ ACTIVE LOW
+ gpio-323 (                    |fte3600-glue.3.auto ) in  lo 
+
+gpiochip1: 1 GPIOs, parent: platform/fte3600-glue.3.auto, fte3600-glue.3.auto, can sleep:
+ gpio-0   (reset               )
+gpiochip0: 360 GPIOs, parent: platform/INT34C5:00, INT34C5:00:
+ gpio-14  (                    |fte3600-glue.3.auto ) out hi ACTIVE LOW
+ gpio-323 (                    |fte3600-glue.3.auto ) in  lo 
+
+>> Checking PCH pinctrl pins 14 and 229:
+pin 14 (SPKR) 14:INT34C5:00 GPIO 0x84000201 0x0003c026 0x00000000 [LOCKED]
+pin 229 (CPU_GP_0) 323:INT34C5:00 GPIO 0x82000100 0x00000029 0x00000000 [LOCKED tx]
+
+>> Kernel log entries generated during Stage 1:
+
+--- 6. Initiating Controlled Rollback ---
+
+========================================================
+ CLEANUP / ROLLBACK INITIATED
+ Timestamp: 2026-11-02T14:03:39+05:30
+========================================================
+>> Rollback step 1: Unloading fte3600...
+   [OK] rmmod fte3600 command succeeded.
+   [OK] Postcondition verified: fte3600 is confirmed ABSENT.
+>> Rollback step 2: Unbinding spidev from spi-FTE3600:00...
+   [OK] spi-FTE3600:00 unbind write command succeeded.
+   [OK] Postcondition verified: spi-FTE3600:00 is confirmed unbound.
+>> Rollback step 3: Restoring driver_override on spi-FTE3600:00...
+   [OK] driver_override restore write succeeded.
+   [OK] Postcondition verified: driver_override restored to original value ('').
+>> Rollback step 4: Unloading spidev module...
+   [OK] modprobe -r spidev command succeeded.
+   [OK] Postcondition verified: spidev is confirmed ABSENT.
+>> Rollback step 5: Unloading uio module...
+   [OK] modprobe -r uio command succeeded.
+   [OK] Postcondition verified: uio is confirmed ABSENT.
+
+--- Post-Rollback State Verification ---
+>> Checking loaded module states post-rollback:
+   fte3600: ABSENT (unloaded)
+   spidev : ABSENT (unloaded)
+   uio    : ABSENT (unloaded)
+   [OK] fte3600, spidev, and uio are confirmed ABSENT.
+>> Checking SPI device driver link:
+   [OK] spi-FTE3600:00 is confirmed UNBOUND (no driver link present).
+>> Checking /dev device nodes:
+ls: cannot access '/dev/spidev*': No such file or directory
+ls: cannot access '/dev/uio*': No such file or directory
+>> Checking PCH pinctrl pins 14 and 229 post-rollback:
+   Pinctrl pin 14 : pin 14 (SPKR) 14:INT34C5:00 GPIO 0x84000201 0x0003c026 0x00000000 [LOCKED]
+   Pinctrl pin 229: pin 229 (CPU_GP_0) 323:INT34C5:00 GPIO 0x82000102 0x00000029 0x00000000 [LOCKED tx]
+>> Checking debugfs GPIO post-rollback:
+   [OK] No lines claimed by fte3600 in debugfs gpio.
+
+>> Hardware Pad State & GPIO Configuration Advisory:
+   1. Software GPIO Ownership: Released on module exit (marked unclaimed in gpiolib).
+   2. Driver Configuration: fte3600 reported ready and configured reset GPIO
+   3. Observed Post-Rollback Pinctrl Configuration: pin 14 (SPKR) 14:INT34C5:00 GPIO 0x84000201 0x0003c026 0x00000000 [LOCKED]
+      Notice: Releasing a GPIO descriptor in Linux gpiolib releases the kernel's software
+      claim, but does not necessarily reprogram Intel PCH pad configuration registers (PADCFG0)
+      back to firmware defaults. The register values above reflect PCH controller configuration
+      only; physical electrical voltage and line levels are not established by this diagnostic.
+
+========================================================
+ ROLLBACK COMPLETED CLEANLY (0 ERRORS)
+ Verified: fte3600 ABSENT, spidev ABSENT, uio ABSENT, spi-FTE3600:00 UNBOUND
+========================================================
+
+========================================================
+ STAGE 1 VERIFICATION & ROLLBACK COMPLETED SUCCESSFULLY
+ Output recorded in: /home/titan/fte3600-linux-driver/diagnostics/stage1-results.txt
+========================================================

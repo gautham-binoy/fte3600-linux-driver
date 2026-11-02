@@ -30,6 +30,11 @@ SPI fingerprint reader in a **Dynabook Satellite Pro C40-J** running
   `FTE3600`, modalias `acpi:FTE3600:FTE3600:`.
 - It sits on the Intel Tiger Lake GSPI #1 controller (`8086:a0ab`) driven by
   `pxa2xx-spi`, not on the SPI NOR flash controller (`spi0`).
+- ACPI `_CRS` specifies SPI Mode 0, 1 MHz (`0x000F4240`), Active-Low CS.
+- ACPI `_CRS` specifies Reset GPIO: `GpioIo` on `\_SB.GPI0`, pin 14 (pad 14, SPKR), OutputOnly, PullUp.
+- ACPI `_CRS` specifies Interrupt GPIO: `GpioInt` on `\_SB.GPI0`, pin 323 (pad 229, CPU_GP_0), Edge, ActiveHigh.
+- ACPI `_INI` executes `SHPO` setting host pad ownership for both GPIOs.
+- ACPI `FP01` contains no `_DSD` node.
 - No kernel driver is bound to it; all SPI transfer counters are zero.
 - The Synaptics SYNA3602 is a separate I2C touchpad and is not the fingerprint
   sensor.
@@ -38,12 +43,12 @@ SPI fingerprint reader in a **Dynabook Satellite Pro C40-J** running
 
 ## What is not yet known
 
-- The exact sensor family/silicon variant (FT9338, FT9348, FT9361, FT9536,
-  FT9365, FT9368, FW9369, FT9769, or another part).
-- The exact ACPI `_CRS` resources: SPI mode, speed, CS polarity, reset GPIO,
-  interrupt GPIO/polarity.
+- The exact sensor family/silicon variant (FT9338, FT9348, FT9361, FT9362,
+  FT9368, FT9536, FW9369, FT9769, or another part).
+- Whether PCH pad locks (`[LOCKED]`) restrict runtime reset GPIO assertions.
 - Whether firmware download is required, and which firmware payload.
-- Whether the existing open-source implementation's SPI protocol applies.
+- Whether the existing open-source implementation's SPI protocol applies to this
+  specific silicon.
 
 These are being resolved from the ACPI tables and the reference projects, not
 from guesses. See `COMPATIBILITY_REPORT.md`.

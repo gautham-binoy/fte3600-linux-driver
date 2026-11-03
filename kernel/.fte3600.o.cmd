@@ -3,9 +3,7 @@ savedcmd_fte3600.o := gcc -Wp,-MMD,./.fte3600.o.d -nostdinc -I/usr/lib/modules/7
 source_fte3600.o := fte3600.c
 
 deps_fte3600.o := \
-    $(wildcard include/config/ACPI) \
-    $(wildcard include/config/GPIO_CDEV) \
-    $(wildcard include/config/UIO) \
+    $(wildcard include/config/COMPAT) \
   /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/compiler-version.h \
     $(wildcard include/config/CC_VERSION_TEXT) \
   /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/kconfig.h \
@@ -46,6 +44,7 @@ deps_fte3600.o := \
     $(wildcard include/config/USE_X86_SEG_SUPPORT) \
   /usr/lib/modules/7.2.8-9-omarchy/build/include/asm-generic/percpu_types.h \
   /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/acpi.h \
+    $(wildcard include/config/ACPI) \
     $(wildcard include/config/ACPI_TABLE_LIB) \
     $(wildcard include/config/ACPI_DEBUGGER) \
     $(wildcard include/config/X86) \
@@ -486,7 +485,6 @@ deps_fte3600.o := \
   /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/current.h \
   /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/thread_info.h \
     $(wildcard include/config/X86_FRED) \
-    $(wildcard include/config/COMPAT) \
     $(wildcard include/config/IA32_EMULATION) \
   /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/page.h \
   /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/page_64.h \
@@ -1262,6 +1260,7 @@ deps_fte3600.o := \
   /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/xen/interface_64.h \
   /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/pvclock-abi.h \
   /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/emulate_prefix.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/cdev.h \
   /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/delay.h \
   /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/delay.h \
   /usr/lib/modules/7.2.8-9-omarchy/build/include/asm-generic/delay.h \
@@ -1269,85 +1268,11 @@ deps_fte3600.o := \
     $(wildcard include/config/HTE) \
     $(wildcard include/config/GPIO_SYSFS) \
   /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/gpio/defs.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/gpio/driver.h \
-    $(wildcard include/config/IRQ_DOMAIN_HIERARCHY) \
-    $(wildcard include/config/GPIOLIB_IRQCHIP) \
-    $(wildcard include/config/OF_GPIO) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/irqchip/chained_irq.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/irq.h \
-    $(wildcard include/config/GENERIC_IRQ_EFFECTIVE_AFF_MASK) \
-    $(wildcard include/config/GENERIC_IRQ_IPI) \
-    $(wildcard include/config/DEPRECATED_IRQ_CPU_ONOFFLINE) \
-    $(wildcard include/config/GENERIC_IRQ_MIGRATION) \
-    $(wildcard include/config/GENERIC_PENDING_IRQ) \
-    $(wildcard include/config/HARDIRQS_SW_RESEND) \
-    $(wildcard include/config/GENERIC_IRQ_CHIP) \
-    $(wildcard include/config/GENERIC_IRQ_MULTI_HANDLER) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/irqhandler.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/irqreturn.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/irq.h \
-    $(wildcard include/config/KVM) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/generated/asm/irq_regs.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/asm-generic/irq_regs.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/irqdesc.h \
-    $(wildcard include/config/GENERIC_IRQ_STAT_SNAPSHOT) \
-    $(wildcard include/config/GENERIC_IRQ_DEBUGFS) \
-    $(wildcard include/config/SPARSE_IRQ) \
-    $(wildcard include/config/IRQ_DOMAIN) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/irq_work.h \
-    $(wildcard include/config/IRQ_WORK) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/irq_work.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/hw_irq.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/profile.h \
-    $(wildcard include/config/PROFILING) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/sections.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/asm-generic/sections.h \
-    $(wildcard include/config/HAVE_FUNCTION_DESCRIPTORS) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/irqdomain.h \
-    $(wildcard include/config/IRQ_DOMAIN_NOMAP) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/irqdomain_defs.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/of.h \
-    $(wildcard include/config/OF_DYNAMIC) \
-    $(wildcard include/config/SPARC) \
-    $(wildcard include/config/OF_PROMTREE) \
-    $(wildcard include/config/OF_KOBJ) \
-    $(wildcard include/config/OF_NUMA) \
-    $(wildcard include/config/OF_OVERLAY) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/pinctrl/pinconf-generic.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/pinctrl/machine.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/pinctrl/pinctrl-state.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/pinctrl/pinctrl.h \
-    $(wildcard include/config/GENERIC_PINCONF) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/msi.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/irqdomain.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/interrupt.h \
-    $(wildcard include/config/IRQ_FORCED_THREADING) \
-    $(wildcard include/config/GENERIC_IRQ_PROBE) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/hardirq.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/context_tracking_state.h \
-    $(wildcard include/config/CONTEXT_TRACKING_USER) \
-    $(wildcard include/config/CONTEXT_TRACKING) \
-    $(wildcard include/config/RCU_DYNTICKS_TORTURE) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/ftrace_irq.h \
-    $(wildcard include/config/HWLAT_TRACER) \
-    $(wildcard include/config/OSNOISE_TRACER) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/vtime.h \
-    $(wildcard include/config/VIRT_CPU_ACCOUNTING) \
-    $(wildcard include/config/HAVE_VIRT_CPU_ACCOUNTING_IDLE) \
-    $(wildcard include/config/IRQ_TIME_ACCOUNTING) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/hardirq.h \
-    $(wildcard include/config/X86_THERMAL_VECTOR) \
-    $(wildcard include/config/X86_MCE_THRESHOLD) \
-    $(wildcard include/config/X86_MCE_AMD) \
-    $(wildcard include/config/X86_HV_CALLBACK_VECTOR) \
-    $(wildcard include/config/GUEST_PERF_EVENTS) \
-    $(wildcard include/config/X86_POSTED_MSI) \
-    $(wildcard include/config/CPU_MITIGATIONS) \
-    $(wildcard include/config/KVM_INTEL) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/platform_device.h \
-    $(wildcard include/config/HIBERNATE_CALLBACKS) \
-    $(wildcard include/config/SUPERH) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/device-id/platform.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/poll.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/uapi/linux/poll.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/generated/uapi/asm/poll.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/uapi/asm-generic/poll.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/uapi/linux/eventpoll.h \
   /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/spi/spi.h \
     $(wildcard include/config/SPI_SLAVE) \
     $(wildcard include/config/SPI_MASTER) \
@@ -1428,94 +1353,7 @@ deps_fte3600.o := \
   /usr/lib/modules/7.2.8-9-omarchy/build/include/asm-generic/local64.h \
   /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/local.h \
   /usr/lib/modules/7.2.8-9-omarchy/build/include/uapi/linux/spi/spi.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/suspend.h \
-    $(wildcard include/config/VT) \
-    $(wildcard include/config/HIBERNATION_SNAPSHOT_DEV) \
-    $(wildcard include/config/PM_SLEEP_DEBUG) \
-    $(wildcard include/config/PM_AUTOSLEEP) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/swap.h \
-    $(wildcard include/config/THP_SWAP) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/memcontrol.h \
-    $(wildcard include/config/MEMCG_NMI_SAFETY_REQUIRES_ATOMIC) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/cgroup.h \
-    $(wildcard include/config/DEBUG_CGROUP_REF) \
-    $(wildcard include/config/CGROUP_CPUACCT) \
-    $(wildcard include/config/SOCK_CGROUP_DATA) \
-    $(wildcard include/config/CGROUP_DATA) \
-    $(wildcard include/config/CGROUP_BPF) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/uapi/linux/cgroupstats.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/uapi/linux/taskstats.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/seq_file.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/string_helpers.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/string_choices.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/ns_common.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/ns/ns_common_types.h \
-    $(wildcard include/config/IPC_NS) \
-    $(wildcard include/config/NET_NS) \
-    $(wildcard include/config/PID_NS) \
-    $(wildcard include/config/TIME_NS) \
-    $(wildcard include/config/UTS_NS) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/ns/nstree_types.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/uapi/linux/nsfs.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/nsproxy.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/user_namespace.h \
-    $(wildcard include/config/INOTIFY_USER) \
-    $(wildcard include/config/FANOTIFY) \
-    $(wildcard include/config/BINFMT_MISC) \
-    $(wildcard include/config/PERSISTENT_KEYRINGS) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/rculist_nulls.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/kernel_stat.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/cgroup-defs.h \
-    $(wildcard include/config/EXT_SUB_SCHED) \
-    $(wildcard include/config/CGROUP_NET_CLASSID) \
-    $(wildcard include/config/CGROUP_NET_PRIO) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/bpf-cgroup-defs.h \
-    $(wildcard include/config/BPF_LSM) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/psi_types.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/cgroup_subsys.h \
-    $(wildcard include/config/CGROUP_DEVICE) \
-    $(wildcard include/config/CGROUP_FREEZER) \
-    $(wildcard include/config/CGROUP_PERF) \
-    $(wildcard include/config/CGROUP_HUGETLB) \
-    $(wildcard include/config/CGROUP_PIDS) \
-    $(wildcard include/config/CGROUP_RDMA) \
-    $(wildcard include/config/CGROUP_MISC) \
-    $(wildcard include/config/CGROUP_DMEM) \
-    $(wildcard include/config/CGROUP_DEBUG) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/cgroup_namespace.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/cgroup_refcnt.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/page_counter.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/vmpressure.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/eventfd.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/uapi/linux/eventfd.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/writeback.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/flex_proportions.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/backing-dev-defs.h \
-    $(wildcard include/config/DEBUG_FS) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/blk_types.h \
-    $(wildcard include/config/FAIL_MAKE_REQUEST) \
-    $(wildcard include/config/BLK_CGROUP_IOCOST) \
-    $(wildcard include/config/BLK_INLINE_ENCRYPTION) \
-    $(wildcard include/config/BLK_DEV_INTEGRITY) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/bvec.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/highmem.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/cacheflush.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/cacheflush.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/asm-generic/cacheflush.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/kmsan.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/dma-direction.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/highmem-internal.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/folio_batch.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/bio.h \
-    $(wildcard include/config/BLK_DEV_ZONED) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/mempool.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/pagemap.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/hugetlb_inline.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/uapi/linux/mempolicy.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/freezer.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/uio_driver.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/generated/uapi/linux/version.h \
-  fte3600-policy.h \
+  fte3600.h \
 
 fte3600.o: $(deps_fte3600.o)
 

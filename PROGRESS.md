@@ -1533,6 +1533,505 @@ Awaiting user review of `diagnostics/STAGE1_EXECUTION_REPORT.md`. Do not start S
 - **Zero Hardware Execution:** Observed 100% static analysis, source code inspection, and offline unit testing. Zero physical hardware transactions executed.
 - **Authoritative Verdict:** `FINAL STATIC AUDIT PASSED WITH BLOCKING LIMITATIONS`.
 
+### Stage 2D — Hardware Readiness and Recovery Audit Complete (Zero Hardware Execution)
+
+- Conducted a comprehensive static-only readiness, recovery, and risk audit before any further physical sensor interaction:
+  - **Hardware History & Silicon State Characterization:**
+    - Reconciled historical reality: physical transactions occurred during Stage 2A (`0xC6=0x01` write, `0xC6` readback `0x01`, Chip ID `0x9362` readback with CRC `0x1C53`). Host rollback completed with zero errors.
+    - Clarified that host rollback releases kernel drivers and device nodes but does NOT restore peripheral silicon registers. Because motherboard standby power ($V_{DDIO}$) remained active and no reset pulse occurred, sensor internal silicon state is officially classified as **PHYSICALLY UNKNOWN**.
+    - Verified that register `0xC6 = 0x01` is volatile (does not write OTP/EFUSE) and that writing `0xC6 = 0x01` to an already-awake transceiver is safe and idempotent.
+  - **Reset Invariants & Pin Control Audit:**
+    - Proved that under pure-spidev, software reset is **COMPLETELY UNAVAILABLE**. Hardware reset pin (PCH Pad 14 / `SPKR`) is held HIGH by BIOS firmware (`0x84000201 [LOCKED]`), and ACPI `Exclusive` reservation blocks userspace GPIO access (`/dev/gpiochip*` returns `-EBUSY`).
+    - Verified that no ACPI `_RST`, `_PR0`, or `_PS3` methods exist, and FT9362 has no SPI soft-reset opcode.
+    - Proved that an **ACPI S5 cold reboot** (full power-off) is the sole verified physical recovery mechanism.
+    - Confirmed that Pad 229 configuration delta (`0x82000100 [LOCKED tx]`) from Stage 1 is non-hazardous and preserves high-impedance input mode.
+  - **Complete 5-Phase Initialization Pipeline Audit:**
+    - Audited all 19 operations across the 5 phases (Wakeup, MCU Idle, FDT Calibration, Baseline Capture, Arming).
+    - Identified a critical protocol error path defect in `fw9369_state.c`: if `read_byte(0x80)` fails during Phase 2, code jumps to `fail:` without transmitting closing delimiter `[ 0xA5, 0x5A, 0x00 ]`, abandoning the MCU command dialog.
+    - Evaluated high-risk operations: `0x9A` trim unlock, `0x5A/0xA5` MCU dialog, and `0xC2/0x3D` autonomous arming (which is irreversible in software).
+  - **SPI Transport Readiness & Architectural Blocker:**
+    - Audited the 7 transport layers: identified kernel parameter hazard (`spidev.bufsiz` defaults to 4096 B; 10,246 B FIFO read will fail with `-EMSGSIZE` unless `bufsiz=65536` is configured).
+    - Identified an **absolute software blocker** in `fw9369_transport_hw.c`: freshly created context initializes `ctx->lock_state` to `UNKNOWN`. In `hw_transfer()`, `UNKNOWN` strictly rejects `0x9A = 0x5A` unlock with `-EPERM`. In production, the driver cannot execute Phase 3 on physical hardware.
+  - **First Hardware Test Prerequisites Formulated:**
+    - Established 6 strict prerequisites: scoping the first test strictly to Phase 1 & Phase 2 (no `0x9A` unlock, no FIFO read, no arming), patching `abort_cleanup()` to send `0xA5 0x5A`, enforcing `spidev bufsiz=65536`, pre-flight host baseline verification, pre-authorized S5 cold reboot fallback plan, and explicit operator sign-off.
+- **Deliverable Authored:**
+  - `STAGE2D_HARDWARE_READINESS_AUDIT.md` (and `diagnostics/STAGE2D_HARDWARE_READINESS_AUDIT.md`)
+- **Zero Hardware Execution:** Observed 100% static analysis and source inspection. Zero physical hardware transactions executed. Hardware execution gate in `bin/fw9369-hw-tool` remains CLOSED.
+- **Authoritative Verdict:** `NOT READY — SPECIFIC BLOCKERS REMAIN`.
+
+### Stage 2D.1 — Blocker Verification and Protocol Safety Review Complete (Zero Hardware Execution)
+
+- Conducted an independent, adversarial verification of all six hardware readiness blockers from Stage 2D:
+  - **Task 1 — Verification of the `0x9A` Lock-State Blocker:**
+    - Proved that register `0x9A` is physically **write-only**; the FT9362 silicon provides no readable lock status bit.
+    - Proved that successful SPI transfers clocking bytes onto MOSI do not prove physical silicon state latching.
+    - Documented that the reference driver relies on prior hardware GPIO reset and open-loop writes without verifying lock state.
+    - Verified that a fresh transport context cannot safely start in `ASSUMED_LOCKED` without evidence.
+    - Confirmed that under current fail-closed rules in `fw9369_transport_hw.c`, both lock and unlock commands are rejected from `UNKNOWN` with `-EPERM`, trapping the driver in software deadlock.
+    - Classified Blocker 1 as a **`FUNDAMENTAL ARCHITECTURAL LIMITATION`**.
+  - **Task 2 — Verification of the Phase 2 Error Cleanup Proposal:**
+    - Produced an 8-state failure-point matrix (FP-1 through FP-8) mapping every command in Phase 2.
+    - Proved that the Stage 2D proposal to unconditionally transmit `[ 0xA5, 0x5A, 0x00 ]` on error is **UNSAFE**: if the opening `0x5A 0xA5` transfer failed, transmitting `0xA5` injects an unsolicited closing delimiter into an idle or desynchronized MCU parser.
+    - Documented that the reference driver does not attempt in-band error delimiter cleanup (it resets via GPIO).
+    - Demonstrated that cleanup is valid **only conditionally** when the dialog was confirmed opened and subsequent status polling timed out, and must be preceded by a $\ge 10$ ms CS# bus quiescence delay.
+    - Classified Blocker 2 as **`RESOLVABLE THROUGH SOFTWARE`**.
+  - **Task 3 — Verification of Recovery Strategy (ACPI S5 vs Kernel Reset):**
+    - Separated verified facts from assumptions: pure-spidev has zero software reset capability (Pad 14 is BIOS-locked `0x84000201` and ACPI `Exclusive`). No ACPI `_RST`, `_PR0`, or `_PS3` methods exist on `FP01`.
+    - Proved that the assumption that ACPI S5 completely drops FT9362 auxiliary standby power ($V_{DDIO}$) is **UNVERIFIED**: modern Tiger Lake laptops with non-removable batteries often maintain standby peripheral rails in S5.
+    - Classified Blocker 5 as a **`FUNDAMENTAL ARCHITECTURAL LIMITATION`** (Reset) and **`STILL UNKNOWN`** (S5 Rail Power).
+  - **Task 4 — Verification of Phase 1 and Phase 2 Scoped Test Scope:**
+    - Verified that the scoped test completely avoids the `0x9A` trim lock bank, avoids Phase 4 FIFO read, and avoids Phase 5 autonomous arming.
+    - Established that the test is **NOT read-only**: it modifies volatile registers `0xC6 = 0x01`, `0x1A84 = 0xFFFF`, enters the MCU command dialog, and strobes foundry registers `0xF1`, `0xF4`, `0x1A83`.
+    - Authored an exhaustive 11-operation technical matrix specifying exact bytes, state mutations, side effects, failure modes, and recovery rules.
+    - Classified Blocker 4 as **`RESOLVABLE THROUGH SOFTWARE`**.
+  - **Task 5 — Verification of the FIFO Transfer Prerequisite:**
+    - Confirmed that `spidev.bufsiz >= 65536` is required by the Linux kernel syscall boundary for Phase 4 (10,246 bytes), but is **completely unnecessary for Phase 1 & Phase 2** (max 12 bytes).
+    - Confirmed Intel LPSS SPI2 controller (`pxa2xx-spi.2`) and DMA controller (`idma64.2`) support single-block transfers up to 64 KB with continuous CS# assertion.
+    - Classified Blocker 3 as **`RESOLVABLE THROUGH SOFTWARE`**.
+  - **Task 6 — Final Blocker Classification Table:**
+    - Systematically classified all six blockers: Blocker 1 (`FUNDAMENTAL ARCHITECTURAL LIMITATION`), Blocker 2 (`RESOLVABLE THROUGH SOFTWARE`), Blocker 3 (`RESOLVABLE THROUGH SOFTWARE`), Blocker 4 (`RESOLVABLE THROUGH SOFTWARE`), Blocker 5 (`FUNDAMENTAL ARCHITECTURAL LIMITATION` / `STILL UNKNOWN`), Blocker 6 (`RESOLVABLE THROUGH SOFTWARE`).
+- **Deliverables Authored:**
+  - `STAGE2D1_BLOCKER_VERIFICATION.md` (and `diagnostics/STAGE2D1_BLOCKER_VERIFICATION.md`)
+- **Zero Hardware Execution:** Observed 100% static analysis, source code inspection, and offline review. Zero physical hardware transactions executed. Hardware execution gate in `bin/fw9369-hw-tool` remains CLOSED.
+- **Authoritative Verdict:** `NOT READY — BLOCKERS REMAIN`.
+
+### Stage 2D.2 — Minimal Initialization Command Safety Audit Complete (Zero Hardware Execution)
+
+- Conducted an exhaustive static-only safety audit to determine the exact minimum command sequence for future hardware testing:
+  - **Task 1 — Complete Command Inventory (Phases 1 and 2):**
+    - Built a comprehensive 15-entry inventory of all commands across `fw9369_startup.c` and `fw9369_state.c`.
+    - Documented exact transmitted bytes, register addresses, purposes, classifications (read/write/strobe/delimiter), state mutation characteristics, persistent side effects, expected responses, failure behaviors, and source citations.
+  - **Task 2 — Reconciliation of Previously Prohibited Operations:**
+    - Discovered that registers `0xF1` and `0xF4` in the reference driver (`ft93xx.c:596-612`) form the **on-chip EFUSE / OTP access engine** (address, strobe control, and data read). Their inclusion in Stage 2C Phase 2 under "foundry strobes" contradicted earlier Stage 2 prohibitions. Re-affirmed strict prohibition on `0xF1` and `0xF4`.
+    - Reconciled `0x1A84` (interrupt latch clear): volatile and non-destructive, but completely unnecessary if interrupts are not being tested. Excluded from minimal sequence.
+    - Re-affirmed that `0x9A` is write-only and trapped in `UNKNOWN`; completely barred from the minimal test.
+    - Re-affirmed `0xC6 = 0x01` as the sole authorized volatile state-changing wake operation (starts PLL clock).
+    - Barred isolated `0x5A` execution and rejected the MCU command dialog without verified reset recovery.
+  - **Task 3 — Audit of the MCU Dialog Failure Model:**
+    - Constructed a 6-stage failure-point matrix (FP-1 through FP-6) covering before, during, and after opening/closing delimiters.
+    - Proved that host ioctl completion (`SPI_IOC_MESSAGE = 0`) does NOT establish verified silicon latching.
+    - Verified that all timing delays must have identifiable sources: 4 ms PLL lock (`fw9369_startup.c:331`), 1 ms MCU vector (`fw9369_startup.c:107`), 1 ms exception strobe (`fw9369_startup.c:111`), 10 ms retry backoff (`fw9369_startup.c:56`). Rejected invented delays.
+  - **Task 4 — Reset Architecture Alternatives Investigation:**
+    - Proved that while `PADCFGLOCK` is set on Pad 14 (locking pad mode and direction), **`PADCFGLOCKTX` is NOT set** in Intel Tiger Lake PCH hardware. The TX output latch (`GPIOTXSTATE`, bit 0) is physically writable and capable of driving reset LOW and HIGH.
+    - Proved that the reset limitation is an architectural consequence of userspace pure-spidev and ACPI exclusivity (`-EBUSY`).
+    - Demonstrated that in Stage 1, `kernel/fte3600.c` successfully acquired Pad 14 (`gpio-14 out hi ACTIVE LOW`) and could legitimately manage reset in kernel space.
+  - **Task 5 — Minimal Initialization Command Sequence Proposal:**
+    - Formulated a 5-operation, fully safe, volatile sequence:
+      1. `write_byte(0xC6, 0x01)`: Clock un-gate.
+      2. Host delay 4 ms (`nanosleep(4ms)`): PLL lock latency.
+      3. `read_byte(0xC6)`: Confirm clock active (`0x01`).
+      4. `read_word(0x1A8B)`: Interrogate Chip ID (`0x9362`) and wire CRC (`0x1C53`).
+      5. `write_byte(0xC6, 0x00)`: Active clock re-gate teardown (restores low-power sleep).
+    - Formally excluded Phase 2 (MCU dialog), Phase 3 (AFE trims), Phase 4 (FIFO read), Phase 5 (autonomous arming), and all EFUSE/OTP registers.
+- **Deliverables Authored:**
+  - `STAGE2D2_MINIMAL_INITIALIZATION_SAFETY_AUDIT.md` (and `diagnostics/STAGE2D2_MINIMAL_INITIALIZATION_SAFETY_AUDIT.md`)
+- **Zero Hardware Execution:** Observed 100% static analysis, source code inspection, and offline review. Zero physical hardware transactions executed. Hardware execution gate in `bin/fw9369-hw-tool` remains CLOSED.
+- **Authoritative Verdict:** `MINIMAL SEQUENCE IDENTIFIED — READY FOR SEPARATE TEST DESIGN REVIEW`.
+
+### Stage 2D.3 — Wake/Teardown Verification and Kernel Reset Design Review Complete (Zero Hardware Execution)
+
+- Conducted an independent, adversarial static investigation into the proposed 5-operation minimal sequence and evaluated kernel-side reset architecture alternatives:
+  - **Task 1 — Register `0xC6` Teardown Semantics Audit:**
+    - Performed an exhaustive audit across reference drivers, vendor trees, and diagnostics: confirmed **zero instances of writing `0xC6 = 0x00`**.
+    - Proved that `0xC6 = 0x00` is an **unverified inference**; physical silicon response to clock re-gating via software write is completely undocumented and unverified.
+    - Confirmed that the reference driver relies entirely on hardware GPIO reset (Pad 14 low for 20 ms) rather than software teardown.
+  - **Task 2 — Complete Failure Matrix for the 5-Operation Sequence:**
+    - Constructed an 8-scenario failure matrix covering wake write failure, short transfers, readback failure, Chip ID read failure, CRC error, teardown failure, host process termination, and kernel ioctl hangs.
+    - Proved that if an error occurs, pure-spidev has **zero capability to reset the sensor**.
+  - **Task 3 — Review of the Kernel-Side Reset Architecture:**
+    - Re-inspected `kernel/fte3600.c` and Intel Tiger Lake-LP PCH telemetry (`PADCFG0 = 0x84000201 [LOCKED]`).
+    - Proved that while `PADCFGLOCK` is asserted, **`PADCFGLOCKTX` is NOT set**. The TX output data latch (`GPIOTXSTATE`, bit 0) is physically writable in hardware.
+    - Proved that a kernel driver binding to the ACPI platform companion node `FTE3600` can legitimately acquire Pad 14 as an ACPI consumer (verified in Stage 1: `gpio-14 out hi ACTIVE LOW`) and execute a standard 20 ms reset pulse (`recovery.c:9-21`).
+    - Demonstrated that unifying reset and SPI transport in a kernel driver eliminates userspace race conditions and serializes operations under `struct mutex lock`.
+  - **Task 4 — Architecture Comparison: Pure-spidev vs. Kernel-Managed Reset:**
+    - Compared Architecture A (pure-spidev) and Architecture B (kernel-managed reset) across Safety, Recovery, Complexity, Resource Ownership, Concurrency, Linux `libfprint` Compatibility, and Maintainability.
+    - Concluded that while pure-spidev was adequate for Stage 2A identification, **Architecture B is essential for full sensor operation and recovery**.
+  - **Task 5 — Assessment of the Five-Operation Sequence & Proposed Alternative:**
+    - Categorized Ops 1–4 (`write_byte(0xC6, 0x01)`, 4 ms wait, `read_byte(0xC6)`, `read_word(0x1A8B)`) as `DOCUMENTED AND VERIFIED`.
+    - Categorized Op 5 (`write_byte(0xC6, 0x00)`) as `INFERRED` and **formally rejected it**.
+    - Formulated the evidence-supported **4-Operation Sequence** (Ops 1–4) with host rollback teardown as the sole verified candidate for pure-SPI read-only identification.
+- **Deliverables Authored:**
+  - `STAGE2D3_TEARDOWN_AND_KERNEL_RESET_REVIEW.md` (and `diagnostics/STAGE2D3_TEARDOWN_AND_KERNEL_RESET_REVIEW.md`)
+- **Zero Hardware Execution:** Observed 100% static analysis, source code inspection, and offline review. Zero physical hardware transactions executed. Hardware execution gate in `bin/fw9369-hw-tool` remains CLOSED.
+- **Authoritative Verdict:** `KERNEL RESET ARCHITECTURE REQUIRED`.
+
+### Stage 2E.1 — Unified Kernel Driver Architecture Design Complete (Zero Hardware Execution)
+
+- Designed a comprehensive, unified kernel driver architecture (`fte3600.ko`) that solves the core blockers of the pure-spidev model:
+  - **Task 1 — Evaluation of Existing Driver (`kernel/fte3600.c`):**
+    - Identified reusable components: ACPI `_CRS` parsing, `acpi_dev_add_driver_gpios()`, power management notifier (`fte3600_pm_notify`).
+    - Identified components requiring redesign: eliminated the fragmented tri-device model (`/dev/spidev1.0` + `/dev/gpiochip1` + `/dev/uio0`), replaced bus notifier matching with native `spi_driver` registration, and unified SPI transport with GPIO reset.
+  - **Task 2 — Reset GPIO Ownership Design:**
+    - Designed descriptor acquisition via `devm_gpiod_get(&spi->dev, "reset", GPIOD_OUT_LOW)` with `active_low = true` mapping.
+    - Verified that PCH Pad 14 telemetry (`PADCFG0 = 0x84000201 [LOCKED]`) allows writing bit 0 (`GPIOTXSTATE`) because `PADCFGLOCKTX` is not set.
+    - Formulated the hardware-verified 20 ms reset sequence (`recovery.c:9-21`) with 5 ms post-reset settle latency.
+  - **Task 3 — Unified SPI and Reset Coordination:**
+    - Designed a single ownership model under `struct mutex lock` in `struct fte3600_dev`.
+    - Proved that mutual exclusion strictly prevents SPI traffic while reset is asserted and prevents reset pulses during active SPI DMA.
+    - Established that physical GPIO reset is the only mechanism that transitions the driver knowledge state from `UNKNOWN` to `ASSUMED_LOCKED`.
+  - **Task 4 — Kernel SPI Transport Design:**
+    - Designed native in-kernel transport using `spi_sync()` with Mode 0, 8-bit words, 1 MHz initial clock, and continuous CS# assertion (`cs_change = 0`).
+    - Eliminated the `spidev.bufsiz = 4096` restriction: in-kernel DMA buffer allocation seamlessly handles the 10,246-byte Phase 4 burst read.
+    - Integrated on-chip wire CRC validation (`fw9369_crc_wire`) directly in kernel space.
+  - **Task 5 — Userspace Interface Design (`/dev/fte3600`):**
+    - Designed a secure character device interface with transactional ioctls (`FTE3600_IOC_RESET`, `FTE3600_IOC_INIT`, `FTE3600_IOC_CAPTURE`, `FTE3600_IOC_ARM`, `FTE3600_IOC_GET_STATE`).
+    - Completely barred raw arbitrary register writes, protecting non-volatile EFUSE registers (`0xF1`, `0xF4`) from accidental corruption.
+    - Integrated `poll()` and `read()` on Pad 229 interrupt events for GLib main loop compatibility.
+  - **Task 6 — State Machine Design:**
+    - Designed an explicit, fail-closed 8-state model (`UNINITIALIZED`, `RESETTING`, `RESET_COMPLETE`, `INITIALIZING`, `READY`, `CAPTURING`, `ERROR`, `UNKNOWN`).
+    - Enforced the invariant that the reset sequence is the **sole route out of UNKNOWN**.
+  - **Task 7 — libfprint Compatibility Strategy:**
+    - Mapped integration points for device discovery (udev), streamlined HAL (`open("/dev/fte3600")`), and minutiae extraction via libfprint's NBIS engine.
+- **Deliverables Authored:**
+  - `STAGE2E1_KERNEL_ARCHITECTURE_DESIGN.md` (and `diagnostics/STAGE2E1_KERNEL_ARCHITECTURE_DESIGN.md`)
+- **Zero Hardware Execution:** Observed 100% static analysis and architectural design. Zero physical hardware transactions executed. Hardware execution gate in `bin/fw9369-hw-tool` remains CLOSED.
+- **Authoritative Verdict:** `ARCHITECTURE APPROVED FOR SOFTWARE IMPLEMENTATION`.
+
+### Stage 2E.1.1 — Independent Architecture Correction and Implementation Readiness Review (Zero Hardware Execution)
+
+- Conducted an adversarial re-audit of `STAGE2E1_KERNEL_ARCHITECTURE_DESIGN.md` and corrected all unsupported, inverted, or technically inaccurate claims prior to Stage 2E.2:
+  - **Correction 1 — Active-Low GPIO Semantics Proven and Corrected:**
+    - Proved that Linux GPIO descriptor API operates on **logical values**: logical `1` = active/asserted (physical 0V), logical `0` = inactive/deasserted (physical 3.3V).
+    - Corrected the inverted logic from Stage 2E.1: calling `gpiod_set_value_cansleep(desc, 1)` asserts reset; `gpiod_set_value_cansleep(desc, 0)` deasserts reset.
+    - Verified that `GPIOD_OUT_LOW` at descriptor acquisition initializes the line to logical 0 (inactive = physical HIGH / operational state), preventing unintended reset clamping during probe.
+    - Explicitly formulated the corrected sequence: pre-reset settle 10 ms (logical 0), assert 20 ms (logical 1), deassert (logical 0), and settle 10 ms (logical 0).
+  - **Correction 2 — ACPI Driver GPIO Mapping Order & Device Attachment:**
+    - Proved that because ACPI DSDT lacks `_DSD` properties for `FP01`, calling `devm_gpiod_get(&spi->dev, "reset", ...)` directly returns `-ENOENT`.
+    - Proved that `devm_acpi_dev_add_driver_gpios(&spi->dev, mapping)` must be called against `&spi->dev` **before** calling `devm_gpiod_get()`.
+    - Confirmed active-low polarity mapping (`active_low = true` for index 0 reset, `false` for index 1 IRQ).
+  - **Correction 3 — Reset Reliability & Electrical Reality Reassessment:**
+    - Proved that kernel GPIO API return status only confirms register writes to the Intel PCH LPSS GPIO pad; it does not measure physical voltage at the sensor pin.
+    - Clarified that a successful reset pulse transitions software state from `UNKNOWN` to `RESET_COMPLETE`, not `READY` or `ASSUMED_LOCKED`. Transition to an operational state requires subsequent SPI verification of chip ID `0x9362` and CRC `0x1C53`.
+    - Corrected post-reset settle latency from the arbitrary 5 ms to the reference driver's 10 ms / 20 ms window (`recovery.c:75, 103`, `factory_startup.c:341`).
+  - **Correction 4 — SPI DMA Allocation & PXA2xx Limits Reassessment:**
+    - Proved that `GFP_DMA` is inappropriate and harmful on x86_64, as it forces allocations into the legacy 16 MB ISA zone (`ZONE_DMA`).
+    - Established that standard `kmalloc(size, GFP_KERNEL)` must be used; the Linux SPI core dynamically maps heap buffers via `spi_map_buf()`.
+    - Verified that PXA2xx controller driver (`spi-pxa2xx.c`) configures `MAX_DMA_LEN = 64 KiB`, which supports the 10,246 B Phase 4 burst read with continuous CS# assertion (`cs_change = 0`).
+    - Formally recorded that the 10,246-byte transfer remains unverified on physical hardware.
+  - **Correction 5 — Mutex & Threaded IRQ Execution Context Architecture:**
+    - Specified strict execution contexts: never acquire mutexes or call `spi_sync()` in hard IRQ context.
+    - Enforced `devm_request_threaded_irq()` with `IRQF_TRIGGER_RISING | IRQF_ONESHOT`.
+    - Proved that FT9362 interrupt acknowledgement requires SPI transactions (read `0x1A82`, write `0x1A84` in `fw9369_release.c:309-326`), which must run in threaded IRQ context holding `data->lock`.
+    - Detailed deadlock avoidance during frame capture, clean unbind/shutdown ordering, and reset serialization.
+  - **Correction 6 — Character Device ABI & libfprint Integration:**
+    - Corrected the claim regarding `fpi_ssm`: `fpi_ssm` is an internal libfprint C library API; the kernel does not communicate with it.
+    - Documented the required integration path: custom libfprint driver plugin (`FpImageDevice`) opening `/dev/fte3600` via udev rule.
+    - Defined UAPI ABI hardening: fixed-width types (`__u32`, `__u8`), 64-bit field alignment for compat ioctl safety, single-open exclusive lease (`O_EXCL`), and interruptible mutex locking (`mutex_lock_interruptible`).
+  - **Correction 7 — Pad 229 Interrupt Configuration & Discrepancy Audit:**
+    - Reassessed ACPI `GpioInt` resource (Pin 323 / Pad 229, `Edge, ActiveHigh, PullNone`).
+    - Confirmed historical PCH register delta (`0x82000100`) maintains high-impedance RX input mode with output driver strictly disabled.
+  - **Correction 8 — Disaggregated Status Fields & Absolute Safety Boundary:**
+    - Partitioned status fields into Architecture Design, Static Source Verification, Offline Software Tests, Hardware Verification, and Hardware Authorization Gate.
+    - Explicitly stated that Stage 2A was the last authorized hardware operation, no reset pulse or FIFO burst has been hardware-verified, no unified kernel driver has been tested, the hardware gate remains closed, and the 227/227 tests do not validate kernel code.
+    - Removed all unsubstantiated claims ("hardware-verified reset", "100% verified hardware reset capability").
+- **Deliverables Authored:**
+  - `STAGE2E1_1_ARCHITECTURE_CORRECTION_REPORT.md` (and `diagnostics/STAGE2E1_1_ARCHITECTURE_CORRECTION_REPORT.md`)
+  - Updated `STAGE2E1_KERNEL_ARCHITECTURE_DESIGN.md` (and `diagnostics/STAGE2E1_KERNEL_ARCHITECTURE_DESIGN.md`)
+- **Zero Hardware Execution:** Observed 100% static analysis, source code inspection, and offline review. Zero physical hardware transactions executed. Hardware execution gate in `bin/fw9369-hw-tool` remains CLOSED (exit code 1).
+- **Authoritative Verdict:** `APPROVED FOR SOFTWARE IMPLEMENTATION — WITH DOCUMENTED LIMITATIONS`.
+
+### Stage 2E.1.2 — Final Kernel Implementation Preconditions Review (Zero Hardware Execution)
+
+- Resolved all remaining technical blockers, concurrency mechanisms, and safety boundaries prior to authoring `fte3600.ko` in Stage 2E.2:
+  - **1. Interrupt Acknowledgement Safety (`0x1A82` & `0x1A84`):**
+    - Traced reference driver sources (`fw9369_release.c:309-326`, `ft93xx.c:485, 493`, `tests/test-fte3600-fw9369-runtime.c:128`).
+    - Verified that register `0x1A84` is a write-1-to-clear interrupt acknowledgement register.
+    - Reconciled prior safety reviews which strictly barred writing `0x1A84`: physical interrupt acknowledgement via `0x1A84` is formally marked **BLOCKED pending separate authorization**.
+    - Proved that `IRQF_ONESHOT` safely keeps the interrupt masked at the PCH controller without requiring register writes, preventing interrupt storms.
+    - Enforced rule: Stage 2E.2 software implementation **must NOT silently access `0x1A84`**.
+  - **2. ACPI Interrupt Configuration & Flags:**
+    - Analyzed kernel interrupt header semantics (`include/linux/interrupt.h:26-31`): passing `IRQF_TRIGGER_NONE` instructs the kernel to preserve the ACPI firmware-configured trigger mode (`Edge, ActiveHigh`).
+    - Established that the driver must pass **only `IRQF_ONESHOT`** to `devm_request_threaded_irq()`, avoiding trigger overrides or pinctrl conflict.
+  - **3. FIFO Transfer Length Discrepancy Resolved:**
+    - Resolved distinction between wire transfer and payload:
+      - Raw wire transfer length submitted to `spi_sync()`: **10,246 bytes** (`FW9369_FIFO_TRANSFER_LEN` = 6-byte command prefix + 10,240-byte image payload).
+      - Image payload buffer copied to userspace: **10,240 bytes** (`FW9369_IMAGE_BYTES` = 5,120 16-bit words, stripping prefix bytes `rx[0..5]`).
+  - **4. PXA2xx SPI Controller Limits:**
+    - Verified controller configuration: `MAX_DMA_LEN = 64 KiB`. The 10,246 B transfer is within controller limits with continuous CS# assertion (`cs_change = 0`).
+    - Formally recorded that burst read remains **unverified on physical hardware** and prohibited from execution.
+  - **5. Probe and Reset Lifecycle Policy A Adopted:**
+    - Formally selected **Policy A (Passive Probe / Explicit Userspace Reset)** over Policy B (Auto-Reset in Probe).
+    - Probe acquires descriptors with `GPIOD_OUT_LOW`, registers `/dev/fte3600`, and sets state to `UNINITIALIZED` with zero hardware signaling. Reset occurs exclusively upon explicit userspace `FTE3600_IOC_RESET`.
+    - Confirmed reset pulse achieves `RESET_COMPLETE`, not `READY` or verified lock state; SPI chip ID validation is required for `READY`. Any failed reset leaves state `UNKNOWN`.
+  - **6. Character-Device Concurrency & Lifecycle Architecture:**
+    - Replaced reliance on `O_EXCL` with driver-owned atomic open counter (`atomic_cmpxchg(&data->is_open, 0, 1)`).
+    - Serialized all ioctls under `data->lock` using `mutex_lock_interruptible()`.
+    - Documented unbind/shutdown sequence: mark offline, wake wait queues, deregister cdev, free IRQ, drain in-flight ioctls.
+  - **7. Pad 229 Safety Wording & Baseline Continuity:**
+    - Distinguished PCH register status: output driver disabled (`PADCFG0_GPIOTXDIS = 1`), receiver active, routing active, `PullNone` termination.
+    - Prohibited direct PADCFG memory writes; confirmed interrupt path is not hardware-verified.
+  - **8. Implementation Checklist Divided:**
+    - Clearly categorized into Approved for software implementation, Blocked pending further source verification (0x1A84 ACK), and Prohibited pending separate hardware authorization.
+- **Deliverables Authored:**
+  - `STAGE2E1_2_FINAL_IMPLEMENTATION_PRECONDITIONS.md` (and `diagnostics/STAGE2E1_2_FINAL_IMPLEMENTATION_PRECONDITIONS.md`)
+  - Updated `STAGE2E1_KERNEL_ARCHITECTURE_DESIGN.md` (and `diagnostics/STAGE2E1_KERNEL_ARCHITECTURE_DESIGN.md`)
+- **Zero Hardware Execution:** Observed 100% static analysis and offline review. Zero physical hardware transactions executed. Hardware execution gate in `bin/fw9369-hw-tool` remains CLOSED (exit code 1).
+- **Authoritative Verdict:** `PRECONDITIONS SATISFIED — STAGE 2E.2 SOFTWARE IMPLEMENTATION MAY BEGIN`.
+
+### Stage 2E.2 — Restricted Unified Kernel Driver Software Implementation Complete (Zero Hardware Execution)
+
+- Implemented the first software-only version of the unified Linux kernel driver `fte3600.ko` and UAPI header `kernel/fte3600.h`:
+  - **1. Native ACPI SPI Driver Registration:**
+    - Implemented `struct spi_driver fte3600_spi_driver` matching ACPI ID `"FTE3600"` via `fte3600_acpi_ids`.
+    - Registered driver GPIO mappings via `devm_acpi_dev_add_driver_gpios(&spi->dev, fte3600_acpi_gpios)` prior to requesting descriptors.
+    - Acquired reset GPIO descriptor via `devm_gpiod_get(&spi->dev, "reset", GPIOD_OUT_LOW)` with logical 0 (inactive).
+    - Configured SPI parameters: Mode 0, 8-bit words, 1 MHz clock frequency via `spi_setup()`.
+    - Implemented Policy A passive probe: probe acquires resources and registers character device `/dev/fte3600`, but drives zero reset pulses and issues zero SPI transactions. Initial state: `FTE3600_STATE_UNINITIALIZED`.
+  - **2. Active-Low Reset GPIO Helper:**
+    - Implemented `fte3600_hw_reset_pulse()`: pre-reset settle 10 ms (logical 0), assert 20 ms (logical 1 = physical LOW), deassert (logical 0 = physical HIGH), settle 10 ms.
+    - Serialized under `mutex_lock_interruptible(&data->lock)`. Transitions state to `FTE3600_STATE_RESET_COMPLETE`.
+    - Formally recorded that physical voltage on Pad 14 remains unverified. Reset ioctl was not invoked against hardware.
+  - **3. In-Kernel SPI Transport & CRC Validation:**
+    - Implemented synchronous transport helper `fte3600_spi_sync_transfer()` using `spi_sync()` with `GFP_KERNEL` heap memory (prohibiting `GFP_DMA`).
+    - Implemented on-chip wire CRC-16 calculation `fte3600_crc16_wire()` (CCITT MSB-first, poly `0x1021`, seed `0xFFFF`), matching test vector `[0x93, 0x62] -> 0x1C53`.
+    - Transport failures fail-closed, setting state to `FTE3600_STATE_UNKNOWN`.
+  - **4. Deferred Features Enforced:**
+    - Frame capture deferred: `FTE3600_IOC_CAPTURE` returns `-EOPNOTSUPP`. Zero FIFO burst reads executed.
+    - Physical interrupt servicing deferred: Pad 229 IRQ not requested, registers `0x1A84` / `0x1A82` not accessed, PADCFG registers untouched.
+  - **5. Character-Device UAPI & Concurrency:**
+    - Created `kernel/fte3600.h` with 32-byte fixed-width structures (`__u32`, `__u8`), 64-bit alignment, versioning (`FTE3600_UAPI_VERSION = 1`), and ioctl magic `'F'`.
+    - Implemented atomic single-open enforcement (`atomic_cmpxchg(&data->is_open, 0, 1)`), rejecting concurrent opens with `-EBUSY`.
+    - Handled signals with `mutex_lock_interruptible(&data->lock)` returning `-ERESTARTSYS`.
+  - **6. Context Lifetime and Teardown:**
+    - Context reference-counted via `kref`. Memory freed in `fte3600_destroy_context()` only after both driver remove and all open file handles release.
+    - Removal marks driver offline (`atomic_set(&data->offline, 1)`), wakes wait queues, and rejects subsequent operations with `-ENODEV`.
+  - **7. Actual Kernel Compilation Results:**
+    - Built against running kernel headers (`7.2.8-9-omarchy`) using `gcc (GCC) 16.2.1 20260810`.
+    - Compiled with **zero compiler warnings and zero errors**.
+    - Generated `fte3600.ko` with valid BTF debug information and ACPI alias `acpi*:FTE3600:*`.
+  - **8. New Offline Test Suite:**
+    - Authored `kernel/fte3600-test.c` (10 unit tests covering UAPI sizes, constants, ioctls, CRC vectors, 8-state model, single-open concurrency, threaded ioctls, kref lifetime, offline behavior, and parameter validation).
+    - Executed: **10 / 10 Tests Passed (100.0%)**.
+    - Existing mock test suite (`bin/fw9369-tests`): **227 / 227 Passed (100.0%)**.
+- **Deliverables Authored:**
+  - `kernel/fte3600.h`
+  - `kernel/fte3600.c`
+  - `kernel/fte3600-test.c`
+  - `kernel/Makefile`
+  - `STAGE2E2_KERNEL_IMPLEMENTATION_REPORT.md` (and `diagnostics/STAGE2E2_KERNEL_IMPLEMENTATION_REPORT.md`)
+- **Zero Hardware Execution:** Observed 100% static analysis, kernel compilation, and offline testing. `fte3600.ko` was not loaded; zero physical hardware transactions executed. Hardware execution gate in `bin/fw9369-hw-tool` remains CLOSED (exit code 1).
+- **Authoritative Verdict:** `SOFTWARE IMPLEMENTATION COMPILED — HARDWARE UNTESTED`.
+
+### Stage 2E.2.1 — Independent Kernel Driver Safety and Correctness Audit (Zero Hardware Execution)
+
+- Conducted an independent, read-only static analysis and correctness audit of the Stage 2E.2 kernel implementation:
+  - **1. Character-Device Lifetime vs. Driver Removal Concurrency Flaw (DEF-01):**
+    - Uncovered a critical Use-After-Free (UAF) race between `devres`-managed resources (`devm_gpiod_get`) and the `kref`-backed character device.
+    - If `/dev/fte3600` is kept open when the driver unbinds via sysfs, `fte3600_remove()` completes and driver core calls `devres_release_all()`, freeing `data->reset_gpiod`.
+    - Subsequent `ioctl(fd, FTE3600_IOC_RESET)` calls pass `data->offline` check before acquiring `data->lock`, then dereference freed `data->reset_gpiod` inside `fte3600_hw_reset_pulse()`.
+    - Identified required architectural fix for Stage 2E.3: serialize removal under `data->lock`, nullify pointers, and re-check `data->offline` under lock in ioctls.
+  - **2. Reset Sequence & State Invariant Audit (DEF-02):**
+    - Verified ACPI GPIO mapping table: `active_low = true` for index 0 matches ACPI CRS index 0.
+    - Confirmed acquisition with `GPIOD_OUT_LOW` ensures physical HIGH (inactive) on boot.
+    - Verified pulse timing: 10 ms pre-settle, 20 ms assert (physical LOW), 10 ms deassert (physical HIGH).
+    - Identified defect: `fte3600_hw_reset_pulse()` unconditionally transitions state to `RESET_COMPLETE` without error checking.
+    - Verified that no code path transitions to `READY` upon reset pulse; transition to `READY` strictly requires SPI verification.
+  - **3. UAPI & IOCTL Security Boundary Analysis:**
+    - Confirmed all UAPI structures in `kernel/fte3600.h` are exactly 32 bytes with 64-bit field alignment, making 32-bit compat safe without thunking.
+    - Confirmed bounds and zero-checks on all reserved fields.
+    - Confirmed deferred commands (`FTE3600_IOC_INIT`, `FTE3600_IOC_CAPTURE`) unconditionally return `-EOPNOTSUPP`.
+    - Confirmed zero userspace-driven dynamic allocations in kernel space.
+  - **4. SPI Transport & Wire CRC-16 Implementation Analysis (DEF-03, DEF-04):**
+    - Identified that `fte3600_spi_sync_transfer()` and `fte3600_crc16_wire()` are marked `__maybe_unused` with zero call sites in `fte3600.c`.
+    - Identified that `fte3600_spi_sync_transfer()` lacks upper bounds verification against `FTE3600_FIFO_TRANSFER_LEN` and pointer null checks.
+  - **5. IRQ & FIFO Isolation Confirmed:**
+    - Zero registrations for Pad 229 IRQ.
+    - Zero occurrences of prohibited registers `0x1A84`, `0x1A82`, `0xF1`, `0xF4`, or `0x9A`.
+    - Frame capture deferred with `-EOPNOTSUPP`.
+  - **6. Test Validity Classification:**
+    - Formally classified `kernel/fte3600-test.c` as Category B (Standalone Userspace Simulation Test Harness).
+    - Emphasized that it does not execute inside kernel space or test the compiled `fte3600.ko` module.
+  - **7. Build Verification:**
+    - Linux kernel `7.2.8-9-omarchy`, GCC `16.2.1 20260810`.
+    - Module `fte3600.ko` compiles with 0 warnings, 0 errors.
+- **Deliverables Authored:**
+  - `STAGE2E2_1_INDEPENDENT_SOURCE_AUDIT.md`
+  - `diagnostics/STAGE2E2_1_INDEPENDENT_SOURCE_AUDIT.md`
+- **Zero Hardware Execution:** Observed 100% static analysis and offline review. `fte3600.ko` was not loaded; zero physical hardware transactions executed. Hardware execution gate in `bin/fw9369-hw-tool` remains CLOSED (exit code 1).
+- **Authoritative Verdict:** `STATIC AUDIT PASSED WITH BLOCKING LIMITATIONS`.
+
+### Stage 2E.2.2 — Correct Kernel Driver Lifetime, Reset-State, and Transport Defects (Zero Hardware Execution)
+
+- Resolved all critical defects identified in Stage 2E.2.1 (DEF-01 through DEF-05):
+  - **1. Character-Device and Devres Lifetime Resolution (DEF-01):**
+    - Migrated character-device management from `kref` to canonical embedded `struct device dev` coupled via `cdev_device_add()` and `cdev_device_del()`.
+    - Integrated device release callback `fte3600_device_release()` invoked by driver core when final `put_device()` reference is dropped.
+    - Implemented strict Hardware-Resource Shutdown Protocol: `fte3600_remove()` acquires `data->lock`, marks `offline = 1`, and nullifies `data->reset_gpiod = NULL` and `data->spi = NULL` before unbind returns.
+    - Serialized all ioctl operations under `data->lock` with mandatory re-check of `offline` and `reset_gpiod` under the lock, completely eliminating the Use-After-Free race on devres memory.
+    - Retained safe in-memory `GET_STATE` execution post-removal with `FTE3600_FLAG_OFFLINE` asserted.
+  - **2. Reset Handling and State Semantics Hardened (DEF-02):**
+    - Added `lockdep_assert_held(&data->lock)` and descriptor validation to `fte3600_hw_reset_pulse()`.
+    - Preserved active-low mapping: logical 1 = physical LOW (asserted), logical 0 = physical HIGH (inactive).
+    - Preserved reference timing: 10 ms pre-settle, 20 ms assert, 10 ms post-settle.
+    - Documented that `gpiod_set_value_cansleep()` returns `void`, confirming LPSS register access only, not physical pin voltage.
+    - Introduced semantic alias `FTE3600_STATE_RESET_SEQUENCE_ISSUED` for `FTE3600_STATE_RESET_COMPLETE` in `kernel/fte3600.h`, maintaining 100% ABI compatibility while making state semantics explicit.
+  - **3. Hardened SPI Transport Helper (DEF-03):**
+    - Hardened `fte3600_spi_sync_transfer()`: validates `data->spi`, checks `data->offline`, validates TX/RX buffer pointers (`!tx && !rx` returns `-EINVAL`), rejects zero-length (`len == 0`), enforces maximum transfer length `len <= FTE3600_MAX_SPI_TRANSFER_LEN` (10,246 bytes), checks `m.status`, and enforces `lockdep_assert_held(&data->lock)`.
+  - **4. Wire CRC-16 Verification (DEF-04):**
+    - Verified CCITT polynomial `0x1021`, seed `0xFFFF`, MSB-first, test vector `[0x93, 0x62] -> 0x1C53`. Documented explicitly as an unlinked standalone helper.
+  - **5. Single-Client Lease Open Race Sealed (DEF-05):**
+    - Added post-lease re-check of `data->offline` in `fte3600_cdev_open()`; if offline, lease is cleared (`is_open = 0`) and `-ENODEV` is returned without taking a device reference.
+  - **6. Testing Expansion (All 11 Mandatory Scenarios):**
+    - Expanded `kernel/fte3600-test.c` from 10 to 17 automated tests covering all 11 lifecycle, concurrency, removal, and transport scenarios.
+    - Executed: **17 / 17 Passed (100.0%)**.
+    - Explicitly recorded that KUnit is unavailable because `# CONFIG_KUNIT is not set` in running kernel configuration.
+    - Protocol mock test suite (`bin/fw9369-tests`): **227 / 227 Passed (100.0%)**.
+  - **7. Build Verification:**
+    - Compiled against Linux kernel `7.2.8-9-omarchy` build headers with **0 warnings and 0 errors**.
+- **Deliverables Authored:**
+  - `STAGE2E2_2_LIFETIME_AND_TRANSPORT_FIX_REPORT.md`
+  - `diagnostics/STAGE2E2_2_LIFETIME_AND_TRANSPORT_FIX_REPORT.md`
+- **Zero Hardware Execution:** Observed 100% static analysis, kernel compilation, and offline testing. `fte3600.ko` was not loaded; zero physical hardware transactions executed. Hardware execution gate in `bin/fw9369-hw-tool` remains CLOSED (exit code 1).
+- **Authoritative Verdict:** `DEFECTS CORRECTED — STATIC VERIFICATION PASSED, HARDWARE UNTESTED`.
+
+### Stage 2E.2.3 — cdev_device Lifetime Proof and Independent Verification (Zero Hardware Execution)
+
+- Performed a read-only static analysis and binary disassembly verification of the Stage 2E.2.2 character-device lifetime implementation:
+  - **1. Target Kernel Implementation Verified (`7.2.8-9-omarchy`):**
+    - Directly disassembled `vmlinux` binary at `/usr/lib/modules/7.2.8-9-omarchy/build/vmlinux`.
+    - Proved that `cdev_device_add()` sets `cdev->kobj.parent = &dev->kobj` and calls `kobject_get(cdev->kobj.parent)`.
+    - Verified that VFS `chrdev_open()` holds a reference to `cdev->kobj` during open; because `cdev->kobj` remains non-zero, its parent (`&data->dev.kobj`) is guaranteed alive throughout the entire execution of `fte3600_cdev_open()`.
+  - **2. Open/Remove Race Analysis (Seven Mandatory Interleavings):**
+    - Analyzed Cases A through G separately:
+      - *Case A:* Open starts and acquires cdev ref before remove $\to$ safe, devres alive.
+      - *Case B:* Remove begins before open checks offline $\to$ open sees `offline == 1` and returns `-ENODEV`.
+      - *Case C:* Open observes offline false, remove sets offline true before `get_device()` $\to$ post-lease re-check in `fte3600_cdev_open()` catches offline, rolls back lease, and returns `-ENODEV`.
+      - *Case D:* Remove calls `cdev_device_del()` while open runs $\to$ `chrdev_open` ref prevents destruction, open aborts or completes cleanly.
+      - *Case E:* Open succeeds, then remove runs while file open $\to$ file descriptor holds reference, hardware pointers nullified under `data->lock`, devres destroyed, subsequent ioctls abort with `-ENODEV`, memory cleanly freed on `close()`.
+      - *Case F:* Remove begins while ioctl executes $\to$ remove blocks on `data->lock`, ioctl finishes before devres cleanup.
+      - *Case G:* Remove begins while ioctl waits for lock $\to$ remove sets offline and nulls pointers, ioctl unblocks and aborts immediately with `-ENODEV`.
+    - Proved zero Use-After-Free or devres access post-removal across all interleavings.
+  - **3. Removal Ordering and Probe Error Paths:**
+    - Confirmed strict sequence: `cdev_device_del()` $\to$ `mutex_lock(&data->lock)` $\to$ `atomic_set(&data->offline, 1)` $\to$ nullify pointers $\to$ `mutex_unlock(&data->lock)` $\to$ `wake_up_all` $\to$ `put_device(&data->dev)` $\to$ return to driver core $\to$ `devres_release_all()`.
+    - Verified that all error paths after `device_initialize()` in `probe()` call `put_device(&data->dev)` to trigger `fte3600_device_release()`.
+  - **4. Test Claims & Harness Boundaries Audited:**
+    - Confirmed `kernel/fte3600-test.c` (17 tests) is a Category B userspace simulation.
+    - Explicitly documented that it models driver logic but does not execute kernel-space device-model code.
+    - Recorded that KUnit is unavailable because `# CONFIG_KUNIT is not set` in running kernel configuration.
+  - **5. Transport Helper Boundaries Verified:**
+    - Confirmed `fte3600_spi_sync_transfer()` enforces `lockdep_assert_held(&data->lock)`, offline rejection, buffer nullity, and transfer bounds (`1 <= len <= 10246`).
+- **Deliverables Authored:**
+  - `STAGE2E2_3_DEVICE_MODEL_LIFETIME_VERIFICATION.md`
+  - `diagnostics/STAGE2E2_3_DEVICE_MODEL_LIFETIME_VERIFICATION.md`
+- **Zero Hardware Execution:** Observed 100% static analysis, binary disassembly, and offline review. `fte3600.ko` was not loaded; zero physical hardware transactions executed. Hardware execution gate in `bin/fw9369-hw-tool` remains CLOSED (exit code 1).
+- **Authoritative Verdict:** `DEVICE-MODEL LIFETIME VERIFIED — STATIC ONLY, HARDWARE UNTESTED`.
+
+### Stage 2E.3 — Final Hardware-Readiness Audit for First Fingerprint Sensor Identification (Zero Hardware Execution)
+
+- Conducted a comprehensive static hardware-readiness audit of the unified kernel driver:
+  - **1. Driver Architecture & Lifetime Integrity Verified:**
+    - Confirmed retention of embedded `struct device dev` with `cdev_device_add()` / `cdev_device_del()` architecture in `kernel/fte3600.c`.
+    - Confirmed strict Hardware-Resource Shutdown Protocol serializing unbind under `data->lock`, nullifying `reset_gpiod` and `spi` before `remove()` returns to driver core.
+    - Verified single-client lease with offline rollback and safe retained `GET_STATE` execution.
+  - **2. ACPI & SPI Controller Ownership Audited:**
+    - Confirmed ACPI device `FTE3600:00` at `\_SB.PC00.SPI1.FP01`, bus `pxa2xx-spi.2` (`spi1`), CS 0 (`spi1.0`).
+    - Verified device is completely unbound (`/sys/bus/spi/devices/spi-FTE3600:00/driver` absent).
+    - Verified `spidev` is not bound and not loaded.
+    - Confirmed dynamic GPIO mapping: CRS index 0 $\to$ Pad 14 (reset), CRS index 1 $\to$ Pad 229 (IRQ).
+    - Confirmed host OS ownership handoff via `_INI` (`SHPO(0x090E0003, 1)` and `SHPO(0x0900000E, 1)`).
+  - **3. Reset Readiness & Limitations Documented:**
+    - Confirmed active-low reset pulse: 10 ms pre-settle, 20 ms assert, 10 ms post-settle.
+    - Documented API limitation: `gpiod_set_value_cansleep()` returns `void`, verifying LPSS controller write only, not physical pin voltage.
+    - Confirmed state transitions to `FTE3600_STATE_RESET_COMPLETE` (aliased as `FTE3600_STATE_RESET_SEQUENCE_ISSUED`); does NOT imply `READY`.
+    - Noted physical reset pulse has never been executed through the unified driver.
+  - **4. PRIMARY BLOCKER IDENTIFIED — Missing Driver Identification Logic:**
+    - Audited the 5-step identification sequence: wake write `0x09 0xF6 0xC6 0x01` (4 B), 4 ms delay, wake readback `0x08 0xF7 0xC6 0x00 0x00` (5 B; verify byte 4 == `0x01`), Chip ID read `0x04 0xFB 0x9A 0x8B...` (10 B; verify `0x9362`), and wire CRC-16 validation (`0x1C53`).
+    - Found that `fte3600_spi_sync_transfer()` and `fte3600_crc16_wire()` remain marked `__maybe_unused` with zero callers in `fte3600.c`.
+    - Found that `FTE3600_IOC_INIT` unconditionally returns `-EOPNOTSUPP`.
+    - Concluded the driver is software-incomplete; it cannot execute identification transactions until the in-kernel identification sequence is implemented.
+  - **5. Failure State Machine & Recovery Audited:**
+    - Analyzed 11 deterministic failure scenarios (GPIO failure, SPI error, short read, readback mismatch, wrong ID, CRC mismatch, unbind race, bus float/ground).
+    - Confirmed fail-closed transition to `FTE3600_STATE_UNKNOWN` on all faults. Recovery strictly requires subsequent `FTE3600_IOC_RESET`. Zero automatic write retries.
+  - **6. Kernel & Controller Constraints Verified:**
+    - SPI Mode 0, 8 bits/word, 1 MHz clock.
+    - Controller limit `MAX_DMA_LEN = 64 KiB`.
+    - Confirmed `spidev.bufsiz` is completely irrelevant to the native in-kernel `spi_driver`.
+    - FIFO capture remains strictly disabled with `-EOPNOTSUPP` pending prefix resolution.
+  - **7. Software Isolation Verified:**
+    - 0 IRQ handlers registered. Zero access to registers `0x1A84`, `0x1A82`, `0xF1`, `0xF4`, or `0x9A`.
+    - Execution gate in `bin/fw9369-hw-tool` sealed (exit code 1).
+  - **8. First Hardware Test Proposal Formulated:**
+    - Drafted strictly bounded 10-step future test proposal (bind $\to$ open $\to$ reset $\to$ wake write $\to$ readback $\to$ chip ID $\to$ CRC $\to$ close $\to$ unbind $\to$ stop).
+    - Formally recorded that the proposal cannot yet be executed due to the missing driver identification code.
+- **Deliverables Authored:**
+  - `STAGE2E3_HARDWARE_READINESS_AUDIT.md`
+  - `diagnostics/STAGE2E3_HARDWARE_READINESS_AUDIT.md`
+- **Zero Hardware Execution:** Observed 100% static analysis and offline review. `fte3600.ko` was not loaded; zero physical hardware transactions executed. Hardware execution gate in `bin/fw9369-hw-tool` remains CLOSED (exit code 1).
+- **Authoritative Verdict:** `NOT READY — SOFTWARE IMPLEMENTATION INCOMPLETE`.
+
+### Stage 2E.4 — Implement Minimal FT9362 Chip Identification (Zero Hardware Execution)
+
+- Implemented the complete, minimal, read-only hardware identification sequence directly within the unified kernel driver (`kernel/fte3600.c`):
+  - **1. Linked SPI Transport & Wire CRC Helpers:**
+    - Removed `__maybe_unused` compiler attributes from `fte3600_crc16_wire()` and `fte3600_spi_sync_transfer()`.
+    - Actively linked both helpers into the newly implemented `fte3600_hw_identify()` function.
+  - **2. Implemented Minimal FT9362 Identification Engine (`fte3600_hw_identify`):**
+    - **Preconditions:** Enforces caller holds `data->lock` (`lockdep_assert_held`), verifies online status and non-null `data->spi`, and strictly requires state to be `FTE3600_STATE_RESET_COMPLETE`.
+    - **Step A (Wake Write):** Transmits `0x09 0xF6 0xC6 0x01` (4 bytes, writing `0x01` to volatile register `0xC6`).
+    - **Step B (Transceiver Stabilization):** Delays 4 ms (`usleep_range(4000, 5000)`) with CS deasserted high.
+    - **Step C (Wake Readback Verification):** Transmits `0x08 0xF7 0xC6 0x00 0x00` (5 bytes). Verifies byte `rx[4] == 0x01`. Mismatch transitions state to `UNKNOWN`, sets `last_error = EIO`, and returns `-EIO`.
+    - **Step D (Chip ID Interrogation):** Transmits `0x04 0xFB 0x9A 0x8B 0x00 0x00 0x00 0x00 0x00 0x00` (10 bytes). Extracts `chip_id = ((u16)rx[6] << 8) | rx[7]` and `crc_rx = ((u16)rx[8] << 8) | rx[9]`.
+    - **Step E (Wire CRC-16 Calculation):** Computes `crc_calc = fte3600_crc16_wire(&rx[6], 2)` using CCITT polynomial `0x1021`, seed `0xFFFF`, MSB-first.
+    - **Step F (Variant Gate & Fault Evaluation):**
+      - Detects bus ground / slave inactive (`chip_id == 0x0000`) $\to$ transitions to `UNKNOWN`, returns `-ENODEV`.
+      - Detects bus float / slave unpowered (`chip_id == 0xFFFF`) $\to$ transitions to `UNKNOWN`, returns `-ENODEV`.
+      - Detects CRC mismatch (`crc_rx != crc_calc`) $\to$ transitions to `UNKNOWN`, returns `-EBADMSG`.
+      - Enforces variant gate (`chip_id != FTE3600_EXPECTED_CHIP_ID`, `0x9362`) $\to$ transitions to `UNKNOWN`, returns `-ENODEV`.
+      - On full verification: transitions state to `FTE3600_STATE_READY`, resets `last_error = 0`, logs device identity, and returns `0`.
+  - **3. DMA Buffer Safety Hardening:**
+    - Embedded cacheline-aligned buffers (`tx_buf[32]` and `rx_buf[32]`) within `struct fte3600_data`.
+    - Because `struct fte3600_data` is kmalloc-allocated, transfer buffers reside in physically contiguous lowmem pages, eliminating stack DMA vulnerabilities (`CONFIG_VMAP_STACK`) and module `.rodata` vmalloc address faults.
+  - **4. Transactional IOCTL Integration (`FTE3600_IOC_INIT`):**
+    - Replaced unconditional `-EOPNOTSUPP` in `fte3600_ioctl_common()`:
+      - Validates ABI version (`params.version == FTE3600_UAPI_VERSION`) and reserved fields (`reserved[0..5] == 0`) before locking $\to$ `-EINVAL`.
+      - Acquires `mutex_lock_interruptible(&data->lock)` $\to$ `-ERESTARTSYS`.
+      - Re-checks atomic offline flag and `data->spi` validity under lock $\to$ `-ENODEV`.
+      - Invokes `fte3600_hw_identify(data)`.
+      - Releases mutex and returns status.
+  - **5. Fail-Closed State Invariants Verified:**
+    - Any transport or protocol error transitions `data->state` to `FTE3600_STATE_UNKNOWN`.
+    - Once in `UNKNOWN`, subsequent `INIT` and `CAPTURE` calls return `-EPERM`.
+    - Recovery strictly requires an explicit userspace `FTE3600_IOC_RESET`.
+    - Repeated `INIT` after success is rejected with `-EPERM`; state remains strictly `READY`.
+  - **6. Comprehensive Offline Test Suite (32 Tests):**
+    - Expanded `kernel/fte3600-test.c` with Suite 6 validating all 15 Stage 2E.4 identification scenarios:
+      1. Valid wake response (`rx[4] == 0x01` $\to$ returns 0, state `READY`).
+      2. Invalid wake response (`rx[4] != 0x01` $\to$ returns `-EIO`, state `UNKNOWN`).
+      3. Valid FT9362 ID and CRC (`0x9362` and `0x1C53` $\to$ returns 0, state `READY`).
+      4. CRC mismatch (`crc_rx != calc` $\to$ returns `-EBADMSG`, state `UNKNOWN`).
+      5. Unexpected chip ID (`0x9368`, `0x9391` $\to$ returns `-ENODEV`, state `UNKNOWN`).
+      6. All-zero response (`0x0000` $\to$ returns `-ENODEV`, state `UNKNOWN`).
+      7. All-ones response (`0xFFFF` $\to$ returns `-ENODEV`, state `UNKNOWN`).
+      8. SPI transfer error (`-EIO` $\to$ returns `-EIO`, state `UNKNOWN`).
+      9. Short/incomplete transfer (`m.status != 0` $\to$ returns negative status, state `UNKNOWN`).
+      10. Failure after wake write (read fails $\to$ returns `-EIO`, state `UNKNOWN`, NOT left `READY`).
+      11. INIT from invalid state (`UNINITIALIZED`, `INITIALIZING`, `READY`, `UNKNOWN` $\to$ `-EPERM`).
+      12. INIT while device offline ($\to$ returns `-ENODEV`, 0 hardware accesses).
+      13. Repeated INIT after success ($\to$ returns `-EPERM`, state preserved as `READY`).
+      14. Concurrent RESET and INIT serialization under mutex (strict mutual exclusion, no data races).
+      15. Removal during an operation (remove blocks until in-flight INIT completes, clean shutdown).
+    - Achieved **32 / 32 PASS (100%)** in `make -C kernel check`.
+  - **7. Offline Verification & Regression Integrity:**
+    - Kernel module compiled cleanly against `7.2.8-9-omarchy`: 0 warnings, 0 errors (`make -C kernel all`).
+    - ACPI glue policy test: 9 / 9 groups passed (`kernel/fte3600-policy-test`).
+    - Automated mock suite: 227 / 227 passed (`bin/fw9369-tests`).
+    - Hardware execution gate sealed: `bin/fw9369-hw-tool` exits with code 1 unconditionally.
+- **Deliverables Authored:**
+  - `STAGE2E4_IMPLEMENTATION_REPORT.md`
+  - `diagnostics/STAGE2E4_IMPLEMENTATION_REPORT.md`
+- **Zero Hardware Execution:** Observed 100% software-only implementation and offline simulation. `fte3600.ko` was compiled but never loaded; zero physical hardware transactions executed. Hardware execution gate in `bin/fw9369-hw-tool` remains CLOSED (exit code 1).
+- **Authoritative Verdict:** `SOFTWARE IMPLEMENTATION COMPLETE — IDENTIFICATION VERIFIED OFFLINE`.
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -2142,22 +2142,847 @@ Awaiting user review of `diagnostics/STAGE1_EXECUTION_REPORT.md`. Do not start S
   - `diagnostics/STAGE2E43_INDEPENDENT_AUDIT.md`
 - **Authoritative Verdict:** `STATIC AUDIT PASSED — READY FOR SEPARATE HARDWARE-TEST REVIEW`.
 
+### Stage 2E.5 — Hardware Test Plan Preparation and Independent Safety Review (Plan & Static Review Only)
 
+- Prepared a comprehensive, risk-controlled runtime hardware test plan for the unified `fte3600.ko` driver:
+  - **1. Hardware Baseline & Evidence Documented:**
+    - Documented verified Stage 2A physical evidence: Dynabook Satellite Pro C40-J (`PYS46G-06J02D`), kernel `7.2.8-9-omarchy`, controller `pxa2xx-spi.2`, device `spi-FTE3600:00`, SPI Mode 0, 8-bit, 1 MHz, Chip ID `0x9362`, wire CRC `0x1C53`.
+    - Documented historical deviations: Pad 229 differs from BIOS boot state (`0x82000100` vs `0x80100100`) and is NOT described as restored. Pad 14 physical voltage has never been directly measured with an oscilloscope. Sensor internal silicon state (register `0xC6`) remains unknown post-Stage 2A.
+  - **2. Decoupled 3-Stage Hardware Validation Procedures:**
+    - **Stage A (Passive Module Probe):** `insmod fte3600.ko`, ACPI match, SPI bind, GPIO descriptor acquisition (`GPIOD_OUT_LOW`), SPI setup (Mode 0, 8-bit, 1 MHz), `/dev/fte3600` creation, `GET_STATE` verifies initial state is strictly `UNINITIALIZED` (0). Proved probe is genuinely passive: zero SPI transfers and zero reset pulses.
+    - **Stage B (Explicit Reset IOCTL):** Invoked only after separate authorization. `FTE3600_IOC_RESET` issues 40 ms active-low pulse sequence to GPIO controller. Verifies state transitions to `RESET_SEQUENCE_ISSUED` (2). Prohibits voltage claims; stops immediately without proceeding to identification.
+    - **Stage C (Explicit Identification IOCTL):** Invoked only after separate authorization. `FTE3600_IOC_INIT` executes verified 6-step transaction protocol (wake write `0xC6=0x01`, 4 ms delay, wake readback `0x01`, Chip ID read `0x1A8B`, CRC-16 validation). Verifies transition to `IDENTIFIED` (8), NOT `READY`. Confirms `FTE3600_IOC_CAPTURE` returns `-EOPNOTSUPP`.
+  - **3. Rollback & Recovery Protocols:**
+    - Documented exact operator CLI commands, expected states before/after, safe unloading (`rmmod fte3600` without `-f`), and sysfs resource release verification.
+    - Clarified that unloading driver releases host resources only and does not restore sensor-internal state. Documented cold power-cycle requirements (AC disconnected, full power rail discharge) to reset sensor silicon if state becomes uncertain.
+  - **4. 13-Case Failure Matrix:**
+    - Exhaustively analyzed 13 failure modes (ACPI match, GPIO acquire, SPI setup, cdev creation, probe error, reset error, SPI transfer error, short transfer, wake readback mismatch, unexpected chip ID, CRC mismatch, removal race, UNKNOWN state).
+    - Defined reporting, immediate execution halt, host cleanup, and sensor state evaluation for every case.
+  - **5. Safety & Execution Boundary Maintained:**
+    - Strictly plan and static review only. Zero hardware operations executed.
+    - Zero module loads; zero device binds; zero GPIO toggling; zero SPI commands.
+    - Hardware execution gate in `bin/fw9369-hw-tool` remains CLOSED (exit code 1).
+    - Zero git commits created.
+- **Deliverables Authored:**
+  - `STAGE2E5_HARDWARE_TEST_PLAN.md`
+  - `diagnostics/STAGE2E5_HARDWARE_TEST_PLAN.md`
+- **Authoritative Verdict:** `PLAN COMPLETE — READY FOR USER REVIEW`.
 
+### Stage 2E.5.1 — Hardware Test Plan Safety Corrections (Static Review & Plan Revision)
 
+- Conducted a comprehensive static source inspection of `kernel/fte3600.c`, `kernel/fte3600.h`, platform ACPI descriptions, and hardware investigation reports to correct all safety oversights, unwarranted assumptions, and terminology errors in the test plan:
+  - **1. Meaning of Passive Probe Corrected:**
+    - Established that while probe is **software-passive** (zero SPI transfers, zero reset pulses, state initialized to `UNINITIALIZED`), it is **NOT electrically passive**.
+    - Inspected `fte3600_probe()` line 602 (`devm_gpiod_get(&spi->dev, "reset", GPIOD_OUT_LOW)`).
+    - Disclosed that requesting `GPIOD_OUT_LOW` actively invokes `gpiolib` and `intel_gpio_direction_output()`, issuing MMIO register writes to Pad 14's `PADCFG0` on Intel Tiger Lake GPIO controller `INT34C5:00`.
+    - Clarified that `active_low = true` maps logical 0 to physical HIGH (`TXSTATE = 1`), actively asserting inactive reset voltage on the line.
+    - Disclosed that `gpiolib` does not read or preserve prior pad configuration, and that descriptor acquisition actively alters pin state if Pad 14 was previously tri-stated or low.
+  - **2. Reset Recovery Claims & Semantics Corrected:**
+    - Inspected `fte3600_ioctl_common()` (lines 436–457) and `fte3600_hw_reset_pulse()` (lines 131–158).
+    - Documented that RESET is accepted from ANY driver state provided the device is online and mutex is acquired.
+    - Documented that a failed reset returns `-ENODEV` (or `-ERESTARTSYS`) and leaves driver state **unchanged** (does not transition to `UNKNOWN`).
+    - Clarified that `RESET_SEQUENCE_ISSUED` (2) proves only host controller MMIO register dispatch; it does not measure physical pin voltage or verify sensor silicon reset.
+    - Formally established that RESET from `UNKNOWN` is an **attempted recovery**, not a verified recovery.
+    - Clarified that subsequent identification proves sensor responsiveness and identity, but does NOT establish capture readiness.
+  - **3. Unsupported Power-Off Claims Eliminated:**
+    - Completely removed the unverified 15-second duration.
+    - Documented that the Dynabook Satellite Pro C40-J has an internal rechargeable battery, so disconnecting AC does not cut system rail power.
+    - Documented that modern Tiger Lake-LP platforms often maintain auxiliary standby rails (`VREG_FP`, `VCC_AUX`) in ACPI S5 (shutdown) or warm reboot.
+    - Officially classified sensor power removal behavior as **UNKNOWN**.
+    - Disclosed that a verified sensor power-cycle method has not yet been established.
+  - **4. IOCTL Error Descriptions Corrected:**
+    - Differentiated internal kernel negative errnos from POSIX userspace `ioctl()` returning `-1` with `errno` set.
+    - Documented `FTE3600_IOC_CAPTURE` returning `-1` with `errno == EOPNOTSUPP`.
+    - Updated `tools/fte3600-tool.c` specification accordingly.
+  - **5. Comprehensive Failure Matrix Audited & Corrected:**
+    - Re-audited all 13 failure modes against driver implementation.
+    - Corrected FL-06: failed reset leaves state unchanged (does not set `UNKNOWN`).
+    - Corrected FL-10: distinguished bus grounded/floating (`0x0000`/`0xFFFF`) from valid non-matching ID (`0x9368`), which proves sensor silicon IS RESPONSIVE and actively transmitting over SPI.
+    - Corrected FL-11: CRC mismatch proves wire corruption, not sensor inactivity.
+    - Corrected FL-12: documented exact mutex serialization, pointer nullification, and devres release lifecycle.
+  - **6. Stage A Rollback, Teardown & Device Lifetime Audited:**
+    - Inspected `fte3600_remove()` and `fte3600_device_release()`.
+    - Documented that open file descriptors persist after `cdev_device_del()`, but are prevented from accessing hardware via `atomic_set(&data->offline, 1)` and pointer nullification under `data->lock`.
+    - Documented that devres releases GPIO and SPI resources only after `remove()` finishes, while `struct fte3600_data` memory persists until the last userspace handle closes via `put_device(&data->dev)`.
+    - Defined operator verification checklist (`lsof`, `rmmod`, sysfs unbind, `lsmod`).
+    - Strictly prohibited forced module unloading (`rmmod -f`).
+  - **7. Hardware Safety Gate & Execution Boundary Maintained:**
+    - Strictly static review and documentation correction.
+    - Zero hardware operations authorized or executed.
+    - Zero module loads/unloads; zero GPIO/SPI access.
+    - Hardware execution gate in `bin/fw9369-hw-tool` remains CLOSED (exit code 1).
+    - Driver source code (`kernel/fte3600.c` and `kernel/fte3600.h`) completely untouched.
+    - Zero git commits created.
+- **Deliverables Authored:**
+  - `STAGE2E5_HARDWARE_TEST_PLAN.md` (corrected)
+  - `diagnostics/STAGE2E5_HARDWARE_TEST_PLAN.md` (mirrored)
+  - `STAGE2E51_PLAN_SAFETY_REVIEW.md` (authored)
+  - `diagnostics/STAGE2E51_PLAN_SAFETY_REVIEW.md` (mirrored)
+- **Authoritative Verdict:** `PLAN CORRECTED — READY FOR SEPARATE USER REVIEW`.
 
+### Stage 2E.5.2 — Final Stage A Electrical-Risk and Error-Semantics Audit (Static Source & Documentation Audit)
 
+- Conducted a strictly read-only, independent static source audit of the corrected hardware test plan against `kernel/fte3600.c`, `kernel/fte3600.h`, platform ACPI tables, and Linux kernel subsystems:
+  - **1. Audit 1 — Stage A Reset-Line Side Effects & Electrical Impact:**
+    - Inspected `kernel/fte3600.c` lines 60–68 (`fte3600_acpi_gpios`) and 601–608 (`devm_gpiod_get(&spi->dev, "reset", GPIOD_OUT_LOW)`).
+    - Established that `GPIOD_OUT_LOW` requests output direction and logical value 0.
+    - Established that `active_low = true` causes `gpiod_direction_output()` to invert logical 0 to raw physical 1 (physical HIGH).
+    - Identified callback sequence: `gpiod_configure_flags()` -> `gpiod_direction_output()` -> `chip->direction_output()` (`intel_gpio_direction_output()` in `pinctrl-intel.c`).
+    - Documented controller MMIO register writes to Pad 14's `PADCFG0` on Intel Tiger Lake GPIO controller `INT34C5:00`: clearing `PADCFG0_GPIOTXDIS` (enabling transmitter) and setting `PADCFG0_GPIOTXSTATE` (driving HIGH).
+    - Proved that the operation actively changes Pad 14 from a previous high-impedance input or low state to physical HIGH without preserving prior register configuration.
+    - Proved that driving physical HIGH releases hardware reset (active-low), removing the reset clamp and potentially permitting autonomous sensor silicon startup or idle sequencing.
+    - Updated test plan to explicitly disclose that Stage A may change the sensor's reset condition and electrical state even though it issues no deliberate reset pulse and no SPI transfers. Reaffirmed that probe is **software-passive**, but **electrically non-passive**.
+    - Enforced strict distinctions between GPIO request, logical value, physical polarity, actual measured pin voltage (unmeasured), and sensor internal state (unknown).
+  - **2. Audit 2 — Signal Interruption & IOCTL Error Semantics:**
+    - Inspected `fte3600_ioctl_common()` lines 402–513 across all IOCTL paths.
+    - Analyzed propagation of `mutex_lock_interruptible(&data->lock)` returning internal kernel errno `-ERESTARTSYS`.
+    - Established that at the syscall boundary, if `SA_RESTART` is configured, the kernel transparently restarts the `ioctl()` system call; if not, the kernel converts `-ERESTARTSYS` to `-EINTR`, and libc `ioctl()` returns `-1` with `errno == EINTR`.
+    - Proved driver internal state remains unchanged in both restart and interrupt scenarios.
+    - Reconciled all IOCTL error descriptions for exact consistency between internal kernel errno, libc `ioctl()` return value (`-1` or `0`), and userspace `errno`.
+  - **3. Audit 3 — Failure Matrix Evidence & Classification:**
+    - Inspected `fte3600_hw_identify()` lines 324–358.
+    - Evaluated `0x0000` / `0xFFFF` as bus fault / unpowered / disconnected without unestablished inferences.
+    - Evaluated wire CRC mismatch as transmission corruption, proving bytes were clocked into buffer and not indicating sensor inactivity.
+    - Evaluated unexpected Chip ID: verified that in code, CRC check occurs before Chip ID equality check; passing CRC with non-matching ID proves active, responsive unsupported variant.
+    - Restructured failure matrix with evidence-based separations: observed transfer result, protocol validation result, possible explanations, and unestablished conclusions.
+  - **4. Audit 4 — Device Removal and Module Lifetime:**
+    - Inspected `fte3600_fops.owner = THIS_MODULE`, `data->cdev.owner = THIS_MODULE`, open/release, probe, remove, and exit.
+    - Proved that ordinary module unload (`rmmod fte3600`) is **strictly prevented with `-EBUSY`** by Linux VFS while userspace file descriptors remain open (`module_refcount > 0`).
+    - Proved that sysfs device unbind (`echo ... > unbind`) proceeds regardless of open descriptors, unlinks devnode via `cdev_device_del()`, clears pointers under lock, releases devres GPIO/SPI, and preserves `struct fte3600_data` memory safely via `data->dev` kobject refcounts until all open file descriptors close.
+    - Documented serialization of in-flight ioctls and rejection of future ioctls with `-ENODEV`.
+  - **5. Audit 5 — Final Plan Consistency & Deliverables:**
+    - Synchronized `STAGE2E5_HARDWARE_TEST_PLAN.md` and `diagnostics/STAGE2E5_HARDWARE_TEST_PLAN.md`.
+    - Authored `STAGE2E52_FINAL_STAGE_A_RISK_AUDIT.md` and mirrored to `diagnostics/STAGE2E52_FINAL_STAGE_A_RISK_AUDIT.md`.
+  - **6. Hardware Safety Gate & Execution Boundary Maintained:**
+    - Strictly static source and documentation audit. Zero hardware operations executed.
+    - Zero kernel modules loaded or unloaded; zero devices bound or unbound; zero GPIO or SPI operations.
+    - Hardware execution gate in `bin/fw9369-hw-tool` remains CLOSED (exit code 1).
+    - Driver source files (`kernel/fte3600.c` and `kernel/fte3600.h`) completely untouched.
+    - Zero git commits created.
+- **Deliverables Authored / Updated:**
+  - `STAGE2E5_HARDWARE_TEST_PLAN.md` (updated)
+  - `diagnostics/STAGE2E5_HARDWARE_TEST_PLAN.md` (mirrored)
+  - `STAGE2E52_FINAL_STAGE_A_RISK_AUDIT.md` (authored)
+  - `diagnostics/STAGE2E52_FINAL_STAGE_A_RISK_AUDIT.md` (mirrored)
+  - `PROGRESS.md` (updated)
+- **Authoritative Verdict:** `STATIC AUDIT PASSED — READY FOR SEPARATE USER REVIEW`.
 
+### Stage 2E.5.3 — Final Evidence-Boundary Corrections (Documentation Review & Finalization)
 
+- Conducted a narrowly scoped documentation review to establish strict evidence boundaries across `STAGE2E5_HARDWARE_TEST_PLAN.md`:
+  - **1. Qualified `ERESTARTSYS` Signal Interruption:**
+    - Documented confirmed code invariant: `mutex_lock_interruptible(&data->lock)` returns early before the mutex is acquired and before `fte3600_hw_reset_pulse()` executes.
+    - Replaced unconditional `SA_RESTART` / `EINTR` claims with a qualified explanation noting that userspace outcomes depend on signal handler flags and syscall restart machinery.
+  - **2. CRC-Valid Nonmatching Chip IDs:**
+    - Documented code invariant: wire CRC validation occurs strictly before Chip ID equality check in `fte3600_hw_identify()`.
+    - Described non-`0x9362` responses with valid CRC strictly as "CRC-valid, nonmatching chip IDs" indicating protocol-level responses.
+    - Completely removed speculative variant names (FT9368, FT9361) that lack protocol reference documentation in this repository.
+  - **3. Hypotheses for `0x0000` and `0xFFFF`:**
+    - Retained potential causes strictly as hypotheses (trace short/float, unpowered sensor, active clamp, tri-state).
+    - Explicitly stated that these values do not diagnose the underlying electrical or power condition.
+  - **4. Qualified Module Unload vs. Device Unbind:**
+    - Qualified `.owner = THIS_MODULE` VFS reference tracking explanation.
+    - Reaffirmed practical safety rules: always close all file descriptors before ordinary `rmmod fte3600`, never force unload (`rmmod -f`), and never confuse sysfs device unbind with module unload.
+  - **5. GPIO Voltage & Pad 14 Boundary Enforced:**
+    - Ensured every description of Pad 14 distinguishes requested logical value (0) and expected physical polarity (HIGH) from independently measured voltage (never measured).
+    - Confirmed no static audit may claim that the sensor pin actually reached HIGH.
+  - **6. Hardware Safety Gate & Execution Boundary Maintained:**
+    - Gate remains strictly CLOSED (`bin/fw9369-hw-tool` exit code 1).
+    - Zero hardware operations authorized or performed.
+    - Zero module loads/unloads; zero GPIO/SPI access.
+    - Zero driver source code modifications (`kernel/fte3600.c` and `kernel/fte3600.h` untouched).
+    - Zero git commits created.
+- **Deliverables Authored / Updated:**
+  - `STAGE2E5_HARDWARE_TEST_PLAN.md` (reconciled & finalized)
+  - `diagnostics/STAGE2E5_HARDWARE_TEST_PLAN.md` (mirrored)
+  - `STAGE2E53_FINAL_EVIDENCE_BOUNDARY_REVIEW.md` (authored)
+  - `diagnostics/STAGE2E53_FINAL_EVIDENCE_BOUNDARY_REVIEW.md` (mirrored)
+  - `PROGRESS.md` (updated)
+- **Authoritative Verdict:** `DOCUMENTATION FINALIZED — READY FOR USER AUTHORIZATION DECISION`.
 
+## 2026-11-03 — Stage 2E.6: Stage A Hardware Probe Execution & Verification
 
+### Status
+STAGE A PASSED — PROBE AND CLEANUP VERIFIED
 
+### Scope & Explicit User Authorization
+Under explicit user authorization restricted strictly to **Stage A**, the unified kernel driver (`kernel/fte3600.ko`) was inserted into the running kernel (`7.2.8-9-omarchy`), probed against ACPI SPI device `spi-FTE3600:00`, queried for initial software state via UAPI ioctl, and cleanly unloaded with complete host resource release.
 
+### Absolute Stage B/C Constraints Enforced
+- Zero `FTE3600_IOC_RESET` ioctls issued.
+- Zero deliberate hardware reset pulses executed (`fte3600_hw_reset_pulse()` uncalled).
+- Zero `FTE3600_IOC_INIT` ioctls issued.
+- Zero SPI bus transactions executed (`fte3600_spi_sync_transfer()` uncalled).
+- Zero `FTE3600_IOC_CAPTURE` ioctls issued.
+- Zero sensor register reads or writes performed.
+- Zero legacy Stage 2A/raw SPI scripts executed.
+- Zero forced module unloads (`rmmod -f` strictly avoided).
 
+### Execution Evidence & Telemetry Summary
+- **Pre-Flight Inspection:** All pre-flight safety gates passed cleanly (kernel release match, module vermagic `7.2.8-9-omarchy SMP preempt mod_unload` match, zero conflicting modules, unbound `spi-FTE3600:00`, absent `/dev/fte3600`).
+- **Module Insertion (`insmod kernel/fte3600.ko`):** Driver module loaded as `fte3600 20480 0`. Standard out-of-tree tainting logged without kernel errors.
+- **ACPI Matching & Device Binding:** Sysfs link `/sys/bus/spi/devices/spi-FTE3600:00/driver` bound to `fte3600`. Kernel logged: `fte3600 spi-FTE3600:00: FTE3600 driver bound (passive probe, state UNINITIALIZED)`.
+- **Reset GPIO Acquisition:** `devm_gpiod_get(&spi->dev, "reset", GPIOD_OUT_LOW)` acquired `gpio-14`. With ACPI `ACTIVE_LOW` inversion, logical 0 was driven physical HIGH (`gpio-14 (|reset) out hi ACTIVE LOW` confirmed in debugfs). Pad 14 `PADCFG0` remained locked (`0x84000201`).
+- **Character Device Registration:** `/dev/fte3600` successfully created with major 511, minor 0, permissions `crw------- (0600)`.
+- **State Query (`bin/fte3600-tool get-state`):** Reported version 1, state `0 (UNINITIALIZED)`, flags `0x00000000`, last error `0 (None)`.
+- **Controlled Host Teardown (`rmmod fte3600`):** Pre-checked 0 open descriptors. Clean unload executed. Kernel logged: `fte3600 spi-FTE3600:00: FTE3600 driver unbound`.
+- **Post-Cleanup Host State:** `/dev/fte3600` removed, `spi-FTE3600:00` unbound, module absent from `lsmod`, GPIO claims released to kernel (`None`).
+- **Hardware Safety Gate:** `bin/fw9369-hw-tool` remains SEALED (exits code 1).
+- **Driver Source Code:** `kernel/fte3600.c` and `kernel/fte3600.h` completely untouched (`git diff kernel/` is empty). Zero git commits created.
 
+### Deliverables Authored
+- `STAGE2E6_STAGE_A_HARDWARE_REPORT.md` (authored)
+- `diagnostics/STAGE2E6_STAGE_A_HARDWARE_REPORT.md` (mirrored)
+- `diagnostics/stage-a-results.txt` (full execution trace)
+- `tools/fte3600-tool.c` & `bin/fte3600-tool` (minimal UAPI test utility)
+- `scripts/stage-a-test.sh` & `scripts/run-stage-a-in-terminal.sh` (reproducible test runners)
+- `PROGRESS.md` (updated)
 
+## 2026-11-03 — Stage 2E.6.1: Read-Only Pad 229 Configuration Investigation
 
+### Status
+INVESTIGATION COMPLETE — PAD 229 TRANSITION EXPLAINED & VERIFIED BENIGN
 
+### Core Findings & Attribution
+- **Observed Discrepancy:** Pad 229 (`CPU_GP_0` / Fingerprint IRQ) transitioned from `PADCFG0 = 0x80100100` before Stage A to `0x82000100` during and after Stage A.
+- **Root Cause Confirmed via Kernel Disassembly:** The transition was NOT triggered by `kernel/fte3600.c` (which contains zero IRQ calls, never requests the IRQ descriptor, and registers no handlers). Instead, it was triggered by the generic Linux SPI core's bus probe wrapper, `spi_probe()` in `drivers/spi/spi.c` (`vmlinux` at `0xffffffff824df730`). When binding any driver to an ACPI SPI slave with `spi->irq < 0`, `spi_probe()` calls `acpi_dev_gpio_irq_wake_get_by()`, which resolves the `GpioInt` in DSDT (Pin 323) and calls `irq_set_irq_type(irq, IRQ_TYPE_EDGE_RISING)`.
+- **Hardware Register Modification:** `irq_set_irq_type()` dispatches to `intel_gpio_irq_type()` in `drivers/pinctrl/intel/pinctrl-intel.c` (`vmlinux` at `0xffffffff820c18e0`), which clears bit 20 (`PADCFG0_GPIROUTIOXAPIC`) and sets bit 25 (`PADCFG0_RXEVCFG_EDGE`, `0x02000000`), transforming `0x80100100` into `0x82000100`.
+- **Teardown Invariant:** Mainline Linux `pinctrl-intel` and `gpiolib` do not cache or reprogram BIOS boot states upon driver unbind; the hardware register remains in the ACPI-compliant edge configuration until the next cold reboot (ACPI S5).
+- **Electrical Safety Assessment:** Throughout the transition, bit 8 (`PADCFG0_GPIOTXDIS`) remains `1`. The PCH output buffer is strictly disabled, leaving the pin in high-impedance input mode with zero electrical drive or contention.
+- **Testing Impact:** Further hardware testing is NOT blocked by Pad 229. The behavior is deterministic, benign, conforms to ACPI platform tables, and is identical to the behavior observed in Stage 1 and Stage 2A.
 
+### Deliverables Authored
+- `STAGE2E6_1_PAD229_INVESTIGATION.md` (authored)
+- `diagnostics/STAGE2E6_1_PAD229_INVESTIGATION.md` (mirrored)
+- `PROGRESS.md` (updated)
 
+## 2026-11-03 — Stage 2E.7.3: Stage B Runner Final Safety Corrections & Descriptor Fail-Closed Hardening
 
+### Status
+FINAL HARDENING COMPLETE — FAIL-CLOSED INSPECTION, ZERO PROCESS TERMINATION, STRICT FAILURE PRESERVATION VERIFIED
+
+### Corrections Implemented
+1. **Genuinely Fail-Closed Descriptor Inspection:**
+   - Evaluated exact local documentation and behavior of installed `lsof` (4.99.7) and `fuser`. Both commands return exit code 1 on errors as well as when no files match.
+   - Hardened `check_open_descriptors()` to capture `stdout` and `stderr` into separate channels.
+   - An exit code of 1 is accepted as proof of zero open descriptors ONLY if both `stdout` and `stderr` are completely empty. Any stderr output (e.g. status error, syntax error, permission warning) is classified as an inspection failure (`inspection_ok=0`).
+   - If `lsof` is unavailable or fails, falls back to `fuser`.
+   - If `fuser` is unavailable or fails, falls back to direct `/proc/[0-9]*/fd/*` scanning.
+   - In `/proc` scanning, readlink failures are evaluated against `/proc/$pid`: if the process is alive, it increments `proc_read_errors` and sets `inspection_ok=0`.
+   - If any inspection method is inconclusive or encounters an error, the script prints `[SAFETY STOP] Cannot definitively verify descriptor closure. Refusing module unload` and returns status 2, blocking `rmmod`.
+2. **Dual Independent Pre-Unload Verifications:**
+   - Teardown performs an initial descriptor audit (Step 1).
+   - Immediately prior to `rmmod fte3600`, teardown performs a second independent descriptor re-verification (Step 2).
+   - Only if both checks pass cleanly does `rmmod fte3600` proceed.
+3. **Total Elimination of Automatic Process Termination:**
+   - Excised all code that signaled (`SIGTERM`, `kill`, `pkill`) userspace processes holding `/dev/fte3600`.
+   - If an open descriptor is found, the script logs the PID and cmdline, issues `[SAFETY STOP]`, and halts module removal without terminating any process.
+4. **Absolute Preservation of Primary Reset Failure:**
+   - Captured `RESET_RC` from `"$TOOL_BIN" reset`.
+   - Snapshot 2 and dmesg run with non-fatal status capture (`SNAPSHOT2_RC`, `DMESG_RC`).
+   - If `RESET_RC != 0`, it is strictly assigned to `TEST_EXIT_STATUS`. A subsequent Snapshot 2 or dmesg success cannot mask it, and a subsequent failure cannot replace it.
+   - The primary reset failure code is propagated through `exit "$TEST_EXIT_STATUS"` into `cleanup_handler`.
+   - Cleanup failure is tracked independently via `CLEANUP_OVERALL_OK` and reported distinctly in the logs without overwriting the primary failure exit code.
+
+### Deliverables Authored & Updated
+- `scripts/stage-b-test.sh` (hardened with fail-closed multi-tier inspection, zero signaling, dual pre-unload checks, and strict reset failure preservation)
+- `scripts/run-stage-b-in-terminal.sh` (verified clean)
+- `STAGE2E7_1_CLEANUP_AUDIT.md` (updated with Stage 2E.7.3 architecture, code snippets, and 22-case failure matrix)
+- `diagnostics/STAGE2E7_1_CLEANUP_AUDIT.md` (mirrored)
+- `PROGRESS.md` (updated)
+
+## 2026-11-03 — Stage 2E.7.4: Final Fail-Closed Descriptor Audit & Device Identity Matching
+
+### Status
+AUDIT COMPLETE — PRIMARY /proc DEVICE-IDENTITY MATCHING IMPLEMENTED & VERIFIED
+
+### Corrections Implemented
+1. **Independent Primary `/proc` Device-Identity Audit:**
+   - Exits code 1 from `lsof` and `fuser` are treated purely as supplementary diagnostics, never as proof of descriptor closure.
+   - Replaced path-string-only comparison with Linux character-device identity matching. Evaluates candidate descriptors in `/proc/[0-9]*/fd/*` via `stat -L -c "%F|%r|%t:%T"`, resolving candidate `st_rdev` and `major:minor` directly against `/dev/fte3600` identity (`RECORDED_DEV_RDEV`, `RECORDED_DEV_MAJOR_HEX`, `RECORDED_DEV_MINOR_HEX`, `/sys/class/fte3600/fte3600/dev`).
+   - Immune to symlink aliases, alternate mount pathnames, and unlinked character device nodes.
+   - Distinguishes processes that terminated during scanning from unreadable entries on active processes; if any active process descriptor cannot be stat'ed/read, the scan is marked incomplete (`proc_read_errors > 0`), triggering a fail-closed safety stop that halts `rmmod`.
+   - If `/dev/fte3600` is missing and device identity cannot be established, halts and refuses `rmmod`.
+2. **Dual Sequential Independent Verifications:**
+   - Teardown requires two sequential, independent descriptor checks (Step 1 Initial Audit and Step 2 Pre-Unload Re-Verification) before normal `rmmod fte3600`.
+   - Any error, open descriptor, or inconclusive scan in either check halts `rmmod`.
+3. **Verification of RESET Utility & Kernel Implementation:**
+   - Source inspection of `tools/fte3600-tool.c` (lines 55–64) verified that one invocation of `fte3600-tool reset` issues exactly ONE `ioctl(fd, FTE3600_IOC_RESET)` with zero retries, zero loops, and zero secondary ioctls.
+   - Source inspection of `kernel/fte3600.c` (lines 131–158 and 436–457) verified that `fte3600_hw_reset_pulse()` issues exclusively the 40 ms GPIO active-low reset pulse sequence, with ZERO SPI transfers, ZERO sensor register accesses, and ZERO initialization writes.
+
+### Deliverables Authored & Updated
+- `scripts/stage-b-test.sh` (hardened with fail-closed device identity matching and dual independent verifications)
+- `STAGE2E7_1_CLEANUP_AUDIT.md` (updated with Stage 2E.7.4 architecture and line mappings)
+- `diagnostics/STAGE2E7_1_CLEANUP_AUDIT.md` (mirrored)
+- `PROGRESS.md` (updated)
+
+## 2026-11-03 — Stage 2E.7.5: Descriptor Audit Correctness Fixes & Final Verification
+
+### Status
+AUDIT COMPLETE — DESCRIPTOR AUDIT CORRECTNESS FIXES IMPLEMENTED & VERIFIED
+
+### Corrections Implemented
+1. **Unmasked Return Code Capture for Supplementary `lsof` and `fuser`:**
+   - Excised `|| true` from subshells in `scripts/stage-b-test.sh` lines 169 and 189.
+   - Real return codes (`lsof_rc` and `fuser_rc`) are now accurately captured under temporary `set +e` / `set -e`.
+   - Re-verified that `lsof` and `fuser` remain strictly supplementary diagnostics; their results never override the primary `/proc` audit.
+2. **Strict Device Identity Validation in Phase 2:**
+   - Hardened `record_devnode_identity()` in `scripts/stage-b-test.sh` lines 680–736.
+   - `DEV_IDENTITY_RECORDED=1` is ONLY set if all required fields (`rdev > 0`, `major_hex`, `minor_hex`, `type == character special file`) and sysfs attributes are rigorously validated and cross-checked.
+   - If device identity cannot be established or validated, the test aborts immediately before issuing any hardware commands.
+3. **Validated Sysfs Identity Conversion Helper:**
+   - Implemented `convert_sysfs_dev_to_identity()` (lines 61–105) validating decimal `major:minor` pairs (e.g. `240:0`).
+   - Enforces format regex `^[0-9]+:[0-9]+$`, range checks (`major <= 4095`, `minor <= 1048575`), computes lowercase hex (`printf "%x"`), and calculates 64-bit Linux raw decimal `rdev` via `makedev` bitwise formula: `(((major & 0xfffff000) << 32) | ((major & 0xfff) << 8) | ((minor & 0xffffff00) << 12) | (minor & 0xff))`.
+   - Rejects empty, malformed, negative, or out-of-range inputs.
+4. **Explicit `/proc` Directory Enumeration:**
+   - Replaced blind glob expansion with explicit `ls -1A` enumeration capturing return codes and stderr via temporary files.
+   - Cleanly distinguishes genuinely empty FD directories (`rc == 0`, output empty), populated directories (`rc == 0`, output non-empty), inaccessible directories on living processes (`rc != 0`, `[ -d "/proc/$pid" ]` true -> increments `proc_read_errors`), and ephemeral processes terminated during scan (`rc != 0`, process directory gone -> clean).
+5. **Fail-Closed Safety Stop Preserved:**
+   - Dual sequential independent descriptor checks (Step 1 Initial Audit and Step 2 Pre-Unload Re-Verification) are enforced.
+   - If `proc_read_errors > 0`, `procs_examined == 0`, or character device identity cannot be resolved, `check_open_descriptors()` returns status `2`, halting `rmmod` and leaving the module safely loaded.
+6. **Zero Process Termination & Single Reset Invariant:**
+   - Verified zero process termination commands (`kill`, `pkill`, `SIGTERM`, `SIGKILL`) exist in the runner.
+   - Verified exactly ONE `ioctl(fd, FTE3600_IOC_RESET)` is dispatched with zero retries and zero SPI transfers.
+
+### Deliverables Authored & Updated
+- `scripts/stage-b-test.sh` (hardened with fail-closed multi-tier inspection, unmasked status capture, and validated identity conversion)
+- `STAGE2E7_1_CLEANUP_AUDIT.md` (updated with Stage 2E.7.5 architecture and line mappings)
+- `diagnostics/STAGE2E7_1_CLEANUP_AUDIT.md` (mirrored)
+- `PROGRESS.md` (updated)
+
+## 2026-11-03 — Stage 2E.7.5 / Stage 2E.7.6: Final Stage B Safety Corrections & Kernel Reference Audit
+
+### Status
+AUDIT COMPLETE — FAIL-CLOSED IDENTITY, DIRECT STATUS CAPTURE, ERREXIT ISOLATION & KERNEL REFCOUNT VERIFIED
+
+### Corrections & Verification Findings
+1. **Genuinely Fail-Closed Character Device Identity Validation:**
+   - Validates character devnode with `test -c /dev/fte3600` (not merely `test -e`).
+   - Collects `stat -c "%r"` (decimal raw `rdev`), `stat -c "%t"` (hex major), and `stat -c "%T"` (hex minor).
+   - Validates internal mutual consistency within `stat` itself by confirming `stat_rdev == makedev(maj, min)`.
+   - Verified driver class registration in `kernel/fte3600.c`: checks primary class path `/sys/class/fte3600/fte3600/dev` and bus path `/sys/bus/spi/devices/spi-FTE3600:00/fte3600/dev`.
+   - Parses sysfs decimal `major:minor` via `convert_sysfs_dev_to_identity()`, converting to lowercase hex and 64-bit `rdev`.
+   - Cross-checks `stat` and sysfs identities; any discrepancy immediately aborts with exit code 1.
+   - `DEV_IDENTITY_RECORDED=1` is set ONLY on confirmed consistency.
+2. **Direct Status Capture for `lsof` and `fuser` with Errexit Isolation:**
+   - Excised `|| true` subshell masking. Commands run directly under temporary `set +e`, capturing actual `$?`.
+   - Shell `errexit` is restored conditionally via `if [ "$was_errexit" -eq 1 ]; then set -e; fi` using `shopt -o -q errexit`.
+   - When called from `cleanup_handler()` (which enters via `set +e`), `was_errexit` is 0, guaranteeing `errexit` is never re-enabled during host teardown.
+   - `lsof` and `fuser` remain supplementary diagnostics; their results never override primary fail-closed `/proc` inspection.
+3. **Fail-Closed `/proc` Directory Enumeration:**
+   - Replaced blind glob expansion with explicit `ls -1A` enumeration capturing return codes and stderr directly.
+   - Cleanly distinguishes genuinely empty FD directories (`rc=0`, empty stdout), populated directories (`rc=0`, non-empty), inaccessible directories on living processes (`rc!=0`, `[ -d "/proc/$pid" ]` true -> increments `proc_read_errors` and triggers Safety Stop status 2), and exited processes (`rc!=0`, process directory vanished -> clean continue).
+   - Candidate descriptors matched by underlying character device identity (`st_rdev` and `major:minor`) via `stat -L`.
+4. **Kernel Module Reference Counting Audit:**
+   - Inspected `kernel/fte3600.c` and verified `.owner = THIS_MODULE` is explicitly registered on `fte3600_fops` (line 545) and `data->cdev.owner` (line 623).
+   - In-kernel `delete_module()` (`kernel/module/main.c`) atomically returns `-EBUSY` if `module_refcount(mod) != 0`.
+   - Normal `rmmod` is rejected at the kernel VFS layer if any file descriptor is open, providing atomic protection against open-file races.
+   - Forced unload (`rmmod -f`) is strictly barred.
+5. **Absolute Reset Failure Precedence:**
+   - Exactly one invocation of `"$TOOL_BIN" reset` occurs in the entire Stage B flow.
+   - If `reset` fails, `TEST_EXIT_STATUS=RESET_RC` is locked as the primary failure. Snapshot 2 or dmesg diagnostics cannot overwrite `RESET_RC`.
+   - Clarified hardware reset semantics: a successful reset ioctl proves only that the driver issued the GPIO pulse sequence; it does not prove physical sensor voltage, SPI communication, or scanner functionality.
+6. **Synthetic Offline Tests (23 Scenarios across Stage 2E.7.6, 2E.7.7 & 2E.7.8):**
+   - Implemented automated offline test suite in `scratch/test_synthetic_suite.py` testing the exact logic of `convert_sysfs_dev_to_identity()`, `record_devnode_identity()`, `check_open_descriptors()`, and exit status resolution without accessing hardware or loading modules.
+   - 100% pass rate (23/23):
+     1. Existing FD where stat fails but readlink succeeds: PASS (status 2, incomplete scan stop).
+     2. Existing FD where stat fails and readlink fails: PASS (status 2, incomplete scan stop).
+     3. FD disappears / closes during inspection: PASS (status 0, clean pass).
+     4. Process exits during inspection: PASS (status 0, clean pass).
+     5. Dangling devnode symlink detection: PASS (status 2, safety stop).
+     6. Symlink to different character device: PASS (status 2, safety stop).
+     7. Symlink to expected character device: PASS (status 0, verified).
+     8. Malformed sysfs major:minor rejection: PASS (status 0, rejected).
+     9. Negative and oversized value rejection: PASS (status 0, rejected).
+     10. Numeric parsing avoiding octal traps: PASS (status 0, base-10 forced).
+     11. Normal unload refusal after inconclusive audit: PASS (`rmmod` never called, module kept loaded).
+     12. Preservation of RESET failure status during cleanup: PASS (primary `RESET_RC` preserved).
+     13. Baseline valid matching stat and sysfs identities: PASS (status 0).
+     14. Identity mismatch between stat and sysfs: PASS (status 1).
+     15. Missing sysfs identity fails closed: PASS (status 1).
+     16. Open descriptor detection holding character device: PASS (status 1, holder identified).
+     17. Inaccessible active process descriptor directory: PASS (status 2).
+     18. Temporary directory creation failure: PASS (status 2).
+     19. Failed stat command on devnode (empty rdev): PASS (status 2, caught before arithmetic).
+     20. Malformed non-numeric rdev in stat output: PASS (status 2, regex caught).
+     21. Malformed non-hex major in stat output: PASS (status 2, regex caught).
+     22. Missing sysfs attribute during cleanup while loaded: PASS (status 2, fail closed).
+     23. Stat internal calculation inconsistency: PASS (status 2, calculation mismatch caught).
+
+### Deliverables Authored & Updated
+- `scripts/stage-b-test.sh` (hardened with pre-arithmetic stat validation, fail-closed cleanup-time sysfs checks, dangling symlink detection, inconclusive FD handling, and octal-safe conversion)
+- `scripts/run-stage-b-in-terminal.sh` (verified clean)
+- `STAGE2E7_1_CLEANUP_AUDIT.md` (updated with Stage 2E.7.8 architecture, kernel audit, and failure matrix)
+- `diagnostics/STAGE2E7_1_CLEANUP_AUDIT.md` (mirrored)
+- `STAGE2E7_7_FINAL_DESCRIPTOR_AUDIT.md` (Stage 2E.7.7 final static audit report)
+- `diagnostics/STAGE2E7_7_FINAL_DESCRIPTOR_AUDIT.md` (mirrored)
+- `STAGE2E7_8_FINAL_CLEANUP_AUDIT.md` (authored comprehensive Stage 2E.7.8 final static audit report)
+- `diagnostics/STAGE2E7_8_FINAL_CLEANUP_AUDIT.md` (mirrored)
+- `PROGRESS.md` (updated)
+
+## Stage 2E.7.9 — Module Insertion Race and Final Source Audit (2026-11-03)
+
+### Current Status
+- **Hardware Boundary:** STRICTLY STATIC REVIEW. Zero hardware operations executed; no module loading, no SPI transfers, no GPIO toggling, no ioctls.
+- **Stage B Status:** ON HOLD pending independent review of this audit.
+- **Synthetic Test Suite:** 28 offline synthetic tests executed; 28/28 passed (100% pass rate).
+
+### Key Technical Achievements
+1. **Module Insertion Race Window Elimination:**
+   - Discovered and addressed race condition where asynchronous signals (`SIGINT`, `SIGTERM`, `SIGHUP`) arriving immediately after `insmod` returns 0 but before `MODULE_INSERTED=1` assignment caused `cleanup_handler` to abandon teardown.
+   - Decoupled module existence from Bash variable assignment using 3-tier tracking:
+     - `INITIAL_FTE3600_LOADED`: Records pre-existing kernel module presence during preflight.
+     - `MODULE_INSERTION_ATTEMPTED`: Set to 1 immediately prior to `insmod`.
+     - `current_module_loaded`: Live kernel state queried via `lsmod`.
+   - Guaranteed that if `MODULE_INSERTION_ATTEMPTED == 1` and `current_module_loaded == 1`, controlled teardown runs regardless of `MODULE_INSERTED`.
+   - Guaranteed that pre-existing modules (`INITIAL_FTE3600_LOADED == 1`) are never unloaded by this script.
+   - Guaranteed that unowned modules (`current_module_loaded == 1 && MODULE_INSERTION_ATTEMPTED == 0`) fail closed with a Safety Stop.
+2. **Stat Attribute Bounds Checking against 64-Bit Integer Overflow:**
+   - Added explicit string length bounds checking in `record_devnode_identity()` and `check_open_descriptors()`:
+     - Decimal `rdev`: `${#rdev} -le 19` (Bash signed 64-bit `intmax_t` max value is 19 digits).
+     - Hexadecimal `maj_hex`: `${#maj_hex} -le 8` (32-bit field limit).
+     - Hexadecimal `min_hex`: `${#min_hex} -le 8` (32-bit field limit).
+   - Prevents Bash arithmetic integer overflow or syntax errors from malformed stat inputs.
+3. **Exhaustive 11-Path Cleanup Control Flow Audit:**
+   - Audited all 11 control flow paths from preflight through traps, descriptor audits, graceful `rmmod fte3600`, and exit.
+   - Proved zero hardware commands (ioctls, SPI transfers, register access) occur during cleanup.
+   - Proved strict preservation of primary failure exit codes (including `RESET_RC`).
+   - Confirmed prohibition of `rmmod -f` and prohibition of process termination.
+4. **Kernel Reference Protection & Module Unload Safety Audit:**
+   - Analyzed Linux VFS reference tracking: `cdev.owner` protects only the open lookup path in `chrdev_open()`; `file_operations.owner = THIS_MODULE` holds a module reference for the full open file descriptor lifetime until `__fput()`.
+   - Confirmed in-kernel `delete_module()` rejects removal with `-EBUSY` under `module_mutex` if descriptors are open.
+   - Confirmed `get_device(&data->dev)` / `put_device(&data->dev)` and `atomic_set(&data->offline, 1)` prevent use-after-free and isolate hardware during unbind.
+5. **Expanded 28-Scenario Offline Synthetic Test Suite:**
+   - Added Tests 24–28 covering module insertion race, pre-existing module protection, unowned module fail-closed behavior, and oversized stat bounds checks.
+   - All 28 tests pass offline (100% pass rate).
+
+### Deliverables Authored & Updated
+- `scripts/stage-b-test.sh` (hardened with module insertion race protection, 3-tier ownership logic, and stat attribute length bounds checks)
+- `scripts/run-stage-b-in-terminal.sh` (verified clean)
+- `STAGE2E7_9_MODULE_INSERTION_RACE_AUDIT.md` (authored comprehensive Stage 2E.7.9 audit report)
+- `diagnostics/STAGE2E7_9_MODULE_INSERTION_RACE_AUDIT.md` (mirrored)
+- `scratch/test_synthetic_suite.py` (expanded to 28 offline synthetic tests)
+- `PROGRESS.md` (updated)
+
+## Stage 2E.7.10 — External Module Ownership Race and Signal-Safe Insertion (2026-11-03)
+
+### Current Status
+- **Hardware Boundary:** STRICTLY STATIC REVIEW. Zero hardware operations executed; no module loading, no SPI transfers, no GPIO toggling, no ioctls.
+- **Stage B Status:** ON HOLD pending independent review of this audit.
+- **Synthetic Test Suite:** 36 offline synthetic tests executed; 36/36 passed (100% pass rate).
+
+### Key Technical Achievements
+1. **External Module Ownership Race Resolution:**
+   - Identified vulnerability where `MODULE_INSERTION_ATTEMPTED=1` was erroneously treated as proof of ownership: if an external administrator or process loaded `fte3600` after preflight, this script's `insmod` would fail with `EEXIST` (exit code 1), but `cleanup_handler` would observe the loaded module, assume ownership, and dispatch `rmmod`, unloading the external module.
+   - Enforced strict ownership rule: ownership is granted IF AND ONLY IF this invocation successfully inserted the module (`THIS_INVOCATION_INSERTED=1`, set strictly on `insmod_rc == 0`).
+   - A failed `insmod` never grants ownership. If a module is loaded externally, `cleanup_handler` logs a Safety Stop and refuses `rmmod`.
+2. **Signal-Safe Insertion Critical Section:**
+   - Designed critical section around foreground `insmod` using `defer_signal` for `INT`, `TERM`, and `HUP`.
+   - Traps record incoming signals in `DEFERRED_SIGNAL` without interrupting command execution or return code capture.
+   - Commits `THIS_INVOCATION_INSERTED=1` atomically before restoring standard traps.
+   - Dispatches deferred signals immediately after critical section exit, guaranteeing `cleanup_handler` always sees consistent ownership state.
+3. **Multi-Tier Module State Inspection (`query_module_state`):**
+   - Implemented 3-tier inspection: `/sys/module/fte3600` (sysfs), `/proc/modules`, and `lsmod`.
+   - Distinguishes 0 (confirmed loaded), 1 (confirmed absent), and 2 (inspection error / inconclusive).
+   - Invariant: inspection errors are NEVER interpreted as proof of module absence; they trigger a Safety Stop and refuse unload.
+4. **Cooperative Test Runner Lock (`flock`):**
+   - Added cooperative lock on `/run/lock/fte3600-test.lock` during preflight to coordinate multiple test harness instances.
+   - Clarified that cooperative locks do not protect against uncoordinated external administrators (`modprobe fte3600`), establishing in-script ownership validation as the authoritative defense.
+5. **Expanded 36-Scenario Offline Synthetic Test Suite:**
+   - Added Tests 29–36 covering external module load before insmod, insmod failure due to existing module, successful insmod followed by signal, signal during critical section, successful insertion with normal cleanup, pre-existing module protection, inconclusive ownership state, and inconclusive module-state inspection.
+   - All 36 tests pass offline (100% pass rate).
+
+### Deliverables Authored & Updated
+- `scripts/stage-b-test.sh` (hardened with signal-safe insertion critical section, strict ownership validation, multi-tier module inspection, and cooperative lock)
+- `scripts/run-stage-b-in-terminal.sh` (verified clean)
+- `STAGE2E7_10_EXTERNAL_OWNERSHIP_RACE_AUDIT.md` (authored comprehensive Stage 2E.7.10 audit report)
+- `diagnostics/STAGE2E7_10_EXTERNAL_OWNERSHIP_RACE_AUDIT.md` (mirrored)
+- `scratch/test_synthetic_suite.py` (expanded to 36 offline synthetic tests)
+- `PROGRESS.md` (updated)
+
+## Stage 2E.7.11 — Signal Delivery, Module Instance Identity and Lock Fail-Closed Audit (2026-11-03)
+
+### Current Status
+- **Hardware Boundary:** STRICTLY STATIC REVIEW. Zero hardware operations executed; no module loading, no SPI transfers, no GPIO toggling, no ioctls.
+- **Stage B Status:** ON HOLD pending independent review of this audit.
+- **Synthetic Test Suite:** 50 offline synthetic tests executed; 50/50 passed (100% pass rate).
+
+### Key Technical Achievements
+1. **Signal Delivery Investigation & Conservative State Machine:**
+   - Investigated Linux terminal job control and process group signal dispatch: `SIGINT` from Ctrl+C delivers to both the parent shell and the child `insmod` foreground process group.
+   - Clarified that `insmod` has no custom signal handler and terminates immediately on signal ($rc = 128 + \text{signum}$).
+   - Established that a signal-interrupted `insmod` leaves the in-kernel insertion status ambiguous (`init_module` may have completed or been aborted).
+   - Implemented a 4-state insertion state machine: `NOT_ATTEMPTED`, `DEFINITELY_FAILED`, `DEFINITELY_SUCCEEDED`, and `UNCERTAIN`.
+   - Guaranteed that any signal-interrupted insertion ($rc \ge 128$) transitions to `UNCERTAIN` and permanently bars teardown (`rmmod`), failing closed.
+2. **Module Instance Fingerprinting Against External Replacement:**
+   - Identified threat model where a module could be replaced by an external administrator or process during script pauses or test execution.
+   - Implemented multi-attribute sysfs fingerprinting in `capture_module_instance_identity()` and `verify_module_instance_identity()`: directory inode (`stat -c %i`), directory change time (`stat -c %Z`), KASLR `.text` section virtual address, `srcversion`, and `coresize`.
+   - Enforced verification prior to `rmmod` in `cleanup_handler()`. Any mismatch halts teardown fail-closed.
+   - Documented userspace architectural limitation: Linux `delete_module(2)` takes only a string name, creating an inherent kernel-level TOCTOU window; verified sysfs fingerprinting provides the maximum protection achievable from userspace.
+3. **Fail-Closed Cooperative Locking (`flock`):**
+   - Hardened preflight Check 0 cooperative lock on `/run/lock/fte3600-test.lock`: verified `/run/lock` directory exists, verified `flock` utility is installed, verified FD 200 opens cleanly, and acquired non-blocking exclusive lock (`flock -n 200`).
+   - Any failure or lock contention halts execution immediately fail-closed.
+   - Lock remains held continuously on FD 200 for the full script lifecycle and is explicitly released in `cleanup_handler()`.
+   - Documented the advisory scope of `flock` and proved script internal ownership checks protect against uncoordinated commands.
+4. **Independent 3-Source `query_module_state()` Audit:**
+   - Implemented strict fail-closed consensus across `/sys/module/fte3600`, direct read of `/proc/modules`, and `lsmod`.
+   - Guaranteed that an inaccessible source, failed command, or contradictory observation returns status 2 (INCONCLUSIVE) and triggers a Safety Stop in cleanup.
+5. **Signed 64-Bit Integer Overflow Hardening:**
+   - Discovered that 19-digit decimal `rdev` values between $9{,}223{,}372{,}036{,}854{,}775{,}808$ and $9{,}999{,}999{,}999{,}999{,}999{,}999$ cause integer wraparound in 64-bit Bash arithmetic.
+   - Implemented `validate_decimal_rdev()` with lexicographical string bounds comparison against `INT64_MAX` ($9{,}223{,}372{,}036{,}854{,}775{,}807$) and non-zero checks.
+   - Implemented `validate_hex_majmin()` enforcing string length $\le 8$ (32-bit field limit).
+6. **50-Scenario Offline Synthetic Test Suite:**
+   - Expanded test harness to 50 comprehensive tests covering all failure paths, signal interruptions, instance mismatches, lock defects, and numeric overflows.
+   - 50/50 tests pass (100% pass rate).
+
+### Deliverables Authored & Updated
+- `scripts/stage-b-test.sh` (hardened with 4-state insertion state machine, module instance fingerprinting, fail-closed locking, multi-source module querying, and 64-bit integer overflow protection)
+- `scripts/run-stage-b-in-terminal.sh` (verified clean)
+- `STAGE2E7_11_SIGNAL_IDENTITY_LOCK_AUDIT.md` (authored comprehensive Stage 2E.7.11 audit report)
+- `diagnostics/STAGE2E7_11_SIGNAL_IDENTITY_LOCK_AUDIT.md` (mirrored)
+- `scratch/test_synthetic_suite.py` (expanded to 50 offline synthetic tests)
+- `PROGRESS.md` (updated)
+
+## Stage 2E.7.12 — Independent Module Ownership and Cleanup Source Audit (2026-11-03)
+
+### Current Status
+- **Hardware Boundary:** STRICTLY STATIC REVIEW. Zero hardware operations executed; no module loading, no SPI transfers, no GPIO toggling, no ioctls.
+- **Stage B Status:** ON HOLD pending independent review of this audit.
+- **Synthetic Test Suite:** 57 offline synthetic tests executed; 57/57 passed (100% pass rate).
+
+### Key Technical Achievements
+1. **Independent Module Instance Identity Audit:**
+   - Established technically that multi-attribute fingerprinting (kernfs inode, ctime, .text, srcversion, coresize) provides heuristic detection against dissimilar module replacement, not an atomic or cryptographic instance guarantee.
+   - Formally documented kernfs inode reuse, 1-second timestamp resolution (`stat -c %Z`), vmalloc address reuse (`module_alloc()`), and identical binary checksums across reloads.
+   - Demonstrated in Synthetic Test 53 that identical reloads within the same second cannot be distinguished from userspace.
+2. **Unload Race & Pre-Unload Re-Verification:**
+   - Documented the architectural limitation of Linux `delete_module(2)`, which takes only a string module name, creating an unavoidable kernel-level TOCTOU window between verification and removal.
+   - Added pre-unload module instance re-verification immediately before `rmmod fte3600` in Teardown Step 3 of `scripts/stage-b-test.sh`. This eliminates the duration of the two `/proc` descriptor audits from the race window (verified in Synthetic Test 52).
+3. **Module-State Verification & Documentation Correction:**
+   - Corrected comments and documentation in `query_module_state()` to explain that `lsmod` parses `/proc/modules`. Clarified that sysfs (`kernfs`) and procfs (`/proc/modules`) are the two independent kernel representations, with `lsmod` serving as an auxiliary userspace parser cross-check (verified in Synthetic Test 54).
+4. **Signal and Insertion State Machine Audit:**
+   - Verified the 4-state insertion machine (`NOT_ATTEMPTED`, `DEFINITELY_FAILED`, `DEFINITELY_SUCCEEDED`, `UNCERTAIN`).
+   - Moved `capture_module_instance_identity()` into the insertion critical section immediately upon `insmod_rc == 0`. This guarantees `MOD_INSTANCE_RECORDED=1` is committed before processing deferred signals, allowing clean teardown if a signal arrives before probe completion (verified in Synthetic Test 56).
+   - Confirmed interrupted `insmod` (`rc >= 128`) permanently bars unload fail-closed (verified in Synthetic Test 55).
+5. **Cleanup Ordering & Ownership Verification:**
+   - Audited the complete `cleanup_handler()` control flow. Verified that pre-existing modules, failed insertions, uncertain insertions, and unowned modules are never unloaded.
+   - Verified that no hardware operations, second resets, or process terminations occur during cleanup.
+6. **57-Scenario Offline Synthetic Test Suite:**
+   - Added Tests 51–57 covering KASLR text address mismatch, mid-cleanup replacement detection, identical reload blind spot audit, procfs/lsmod shared dependency, interrupted insmod fail-closed behavior, critical-section instance capture, and exhaustive ownership paths.
+   - 57/57 tests pass (100% pass rate).
+7. **Final Conclusion Selection:**
+   - Selected Conclusion A: Source audit found a defensible cleanup policy, with all remaining limitations explicitly documented.
+
+### Deliverables Authored & Updated
+- `scripts/stage-b-test.sh` (hardened with pre-unload instance re-verification, critical-section instance capture, and corrected query_module_state documentation)
+- `scripts/run-stage-b-in-terminal.sh` (verified clean)
+- `STAGE2E7_12_INDEPENDENT_SOURCE_AUDIT.md` (authored comprehensive Stage 2E.7.12 audit report)
+- `diagnostics/STAGE2E7_12_INDEPENDENT_SOURCE_AUDIT.md` (mirrored)
+- `scratch/test_synthetic_suite.py` (expanded to 57 offline synthetic tests)
+- `PROGRESS.md` (updated)
+
+## Stage 2E.7.13 — Module Ownership Continuity and Unload Safety Audit (2026-11-03)
+
+### Current Status
+- **Hardware Boundary:** STRICTLY STATIC REVIEW. Zero hardware operations executed; no module loading, no SPI transfers, no GPIO toggling, no ioctls.
+- **Stage B Status:** ON HOLD pending independent review of this audit.
+- **Synthetic Test Suite:** 62 offline synthetic tests executed; 62/62 passed (100% pass rate).
+
+### Key Technical Achievements
+1. **Insertion-to-Capture Ownership Gap Investigation:**
+   - Proved that because Linux `init_module(2)` / `finit_module(2)` returns an integer status rather than an instance handle, userspace can only query sysfs after `insmod` completes.
+   - Evaluated the 5-step scenario where an external entity replaces the module before `capture_module_instance_identity()` runs: the script records the replacement's attributes as its baseline and mistakenly validates it during cleanup.
+   - Formally demonstrated this limitation in Synthetic Test 58.
+2. **Unload-Time TOCTOU Race Window Investigation:**
+   - Proved that because Linux `delete_module(2)` takes only a module name string, an external replacement occurring in the fork/exec window immediately before the syscall cannot be intercepted.
+   - Formally demonstrated this limitation in Synthetic Test 59.
+3. **Kernel Module Reference Counting & Lifetime Analysis:**
+   - Inspected `kernel/fte3600.c` and proved `.owner = THIS_MODULE` is set on `fte3600_fops` and `cdev.owner`.
+   - Confirmed that opening `/dev/fte3600` increments `module_refcount(mod)`, which pins the module against removal (`delete_module` returns `-EBUSY`).
+   - Confirmed `get_device(&data->dev)` protects only driver struct memory, not the module instance.
+   - Proved the ownership paradox: holding an open FD pins the module against external replacement, but also blocks normal `rmmod` during cleanup. No existing VFS reference can establish lifecycle continuity while still permitting normal removal.
+   - Formally demonstrated these behaviors in Synthetic Tests 60, 61, and 62.
+4. **Architectural Evaluation & Definitive Conclusion:**
+   - Evaluated Choices A (current userspace design), B (fail-closed refusal of automatic unload), and C (future kernel-assisted instance FD / UUID mechanism).
+   - Unambiguously selected **Conclusion B**: ownership continuity cannot be established reliably by the current userspace design alone against uncoordinated external module replacement.
+   - Recommended operational policy: Stage B is defensible strictly under the documented precondition of an isolated, single-tenant hardware platform (the Dynabook notebook) where no secondary administrator or automated daemon manipulates modules.
+5. **Expanded 62-Scenario Offline Synthetic Test Suite:**
+   - Added Tests 58–62 demonstrating the insertion-to-capture gap, unload-time race, module reference pinning (`-EBUSY`), device reference distinction, and full attribute match blind spot.
+   - 62/62 tests pass (100% pass rate).
+
+### Deliverables Authored & Updated
+- `STAGE2E7_13_OWNERSHIP_CONTINUITY_AUDIT.md` (authored comprehensive Stage 2E.7.13 audit report)
+- `diagnostics/STAGE2E7_13_OWNERSHIP_CONTINUITY_AUDIT.md` (mirrored)
+- `scratch/test_synthetic_suite.py` (expanded to 62 offline synthetic tests)
+- `PROGRESS.md` (updated)
+
+## Stage 2E.8 — Implement Option 1: Never Automatically Unload the Fingerprint Driver (2026-11-03)
+
+### Current Status
+- **Hardware Boundary:** STRICTLY STATIC IMPLEMENTATION & VERIFICATION. Zero hardware operations executed; no module loading, no SPI transfers, no GPIO toggling, no ioctls.
+- **Stage B Status:** ON HOLD pending independent review.
+- **Synthetic Test Suite:** 27 offline synthetic tests executed; 27/27 passed (100% pass rate).
+- **Static Invariant Audit:** Verified zero executable calls to `rmmod`, `modprobe -r`, `delete_module`, or `unbind` across all Stage B execution and launcher scripts.
+
+### Key Technical Achievements
+1. **Mandatory Option 1 Policy Enforcement:**
+   - Permanently eliminated automated module unloading (`rmmod`, `modprobe -r`, `delete_module`) from the Stage B test harness (`scripts/stage-b-test.sh`).
+   - The test harness never automatically unloads `fte3600.ko` under any execution outcome (whether test success, reset failure, signal interruption, uncertain insertion, devnode mismatch, or descriptor audit failure).
+   - Module unloading is transferred strictly and exclusively to the human system administrator via explicit, manual commands.
+2. **Architectural Simplification & Obsolete Logic Elimination:**
+   - Removed all complex, heuristic, and racy userspace instance-fingerprinting mechanisms rendered obsolete by Option 1: deleted `capture_module_instance_identity()`, `verify_module_instance_identity()`, `RECORDED_MOD_*` variables, and `MOD_INSTANCE_RECORDED`.
+   - Eliminated all potential TOCTOU windows associated with module ownership and unloading.
+3. **Non-Destructive Diagnostic Cleanup Redesign:**
+   - Re-architected `cleanup_handler()` into a read-only diagnostic reporter and script-resource releaser.
+   - Retained idempotent re-entrancy protection (`CLEANUP_IN_PROGRESS=1`).
+   - Retained non-aborting execution flow (`set +e`) for comprehensive reporting.
+   - Read-only audit of kernel module state (`query_module_state "fte3600"`), `/dev/fte3600` presence/absence, and SPI driver binding (`spi-FTE3600:00/driver`).
+   - Informative descriptor audit (`check_open_descriptors`) without process termination.
+   - Read-only hardware state logging (PCH Pad 14, Pad 229, debugfs GPIO claims, and `dmesg` tail).
+   - Clear policy banners for all states (`MODULE LEFT LOADED BY POLICY — MANUAL CLEANUP REQUIRED`, `MODULE STATE MAY BE PRESENT — INSERTION OUTCOME UNCERTAIN; DO NOT AUTOMATICALLY REMOVE`, `Module insertion definitely failed. Script does not own any loaded module.`, and `PRE-EXISTING MODULE PRESERVED IN KERNEL — NO UNLOAD PERFORMED`).
+   - Released script-owned cooperative lock (FD 200) only after all diagnostics finish.
+   - Strictly preserved primary test failure exit code or signal status across all branches.
+4. **Terminal Launcher Update:**
+   - Updated `scripts/run-stage-b-in-terminal.sh` banner and exit messages to reflect Option 1 policy.
+   - Verified zero background jobs, zero auto-retries, and zero unload commands.
+5. **Offline Synthetic Test Suite Expansion (27 Tests):**
+   - Updated `scratch/test_synthetic_suite.py` to cover foundational validation as well as all 14 mandatory Stage 2E.8 failure and preservation paths.
+   - Verified 100% pass rate (27/27 passed).
+   - Implemented automated static AST/regex check confirming zero executable unload or unbind commands in scripts.
+6. **Pre-Execution Host Invariant Verification:**
+   - Host kernel confirmed clean: `fte3600` absent from kernel, `/dev/fte3600` absent, `spi-FTE3600:00` unbound.
+   - Kernel source clean (`git diff -- kernel/` clean).
+   - Legacy safety gate sealed (`bin/fw9369-hw-tool` status 1).
+
+### Deliverables Authored & Updated
+- `scripts/stage-b-test.sh` (redesigned with fail-closed Option 1 no-auto-unload cleanup handler)
+- `scripts/run-stage-b-in-terminal.sh` (updated banner and exit notification)
+- `scratch/test_synthetic_suite.py` (updated to 27 tests covering all 14 Stage 2E.8 Option 1 paths)
+- `diagnostics/STAGE2E8_FAIL_CLOSED_NO_AUTO_UNLOAD.md` (authored comprehensive deliverable report)
+- `STAGE2E8_FAIL_CLOSED_NO_AUTO_UNLOAD.md` (mirrored to audit-artifact directory)
+- `PROGRESS.md` (updated)
+
+---
+
+## Stage 2E.8.1 — Independent No-Auto-Unload Implementation Audit (Completed)
+- **Status:** Complete (Static Source-Level Audit)
+- **Scope Boundary:** Static source-code and offline synthetic testing only. Stage B hardware execution remains ON HOLD. Zero module loading/unloading on host, zero SPI transfers, zero GPIO toggling, zero commits.
+- **Audit Findings:**
+  1. Traced full call graph from `scripts/run-stage-b-in-terminal.sh` through `scripts/stage-b-test.sh` and reachable helpers; proved 0 occurrences of `rmmod`, `modprobe -r`, `delete_module`, or driver `unbind`.
+  2. Verified `cleanup_handler()` idempotence (`CLEANUP_IN_PROGRESS=1`), non-aborting execution (`set +e`), preservation of original exit code, clean release of cooperative lock FD 200, and zero process termination.
+  3. Audited `/dev/fte3600` descriptor lifecycle: opened strictly by `bin/fte3600-tool` with explicit `close(fd)` on all return paths; kernel cleans up descriptors on abnormal termination.
+  4. Audited all 27 synthetic tests in `scratch/test_synthetic_suite.py`: all 27 classified as active implementation tests exercising production logic.
+  5. Selected **Conclusion A** (No-auto-unload policy is correctly enforced across all reachable Stage B execution paths).
+- **Deliverables Authored:**
+  - `diagnostics/STAGE2E8_1_INDEPENDENT_IMPLEMENTATION_AUDIT.md`
+  - Mirrored to audit-artifact directory
+
+---
+
+## Stage 2E.8.2 — Audit Corrections and Reset-Interruption Semantics (Completed)
+- **Status:** Complete (Static-Only Follow-Up Audit)
+- **Corrections & Audit Findings:**
+  1. **Reset-Interruption Semantics:** Traced execution across Cases A, B, C, and D. Proved that exit status $rc \ge 128$ is ambiguous between Case A (interrupted before ioctl; reset did not occur) and Cases B/C (interrupted during/after ioctl; reset occurred). Formally established that $rc \ge 128$ must strictly be classified as: `RESET OUTCOME UNCERTAIN — DO NOT RETRY`.
+  2. **Uninterruptible Sleep Analysis:** Evaluated `msleep(40)` in `TASK_UNINTERRUPTIBLE`. Proved that while the sleep itself cannot be cut short once entered, it does not prove the helper was entered, does not verify physical pin voltage, and does not establish sensor silicon readiness.
+  3. **No-Unload Invariant Refinement:** Corrected over-broad wording to the exact invariant: `THE HARNESS NEVER AUTOMATICALLY UNLOADS OR UNBINDS THE MODULE.` Explicitly distinguished across module absent, insertion definitely succeeded, insertion outcome uncertain, and pre-existing module states.
+  4. **Syntax Error & Trap Lifecycle:** Documented that Bash terminates before registering traps on parse-time syntax errors, but safety is preserved because zero unload commands exist anywhere in the harness.
+  5. **Re-inspection:** Confirmed zero unload/unbind commands across the full call graph, zero process termination, zero automatic reset retries, and active test logic across all 27 synthetic tests.
+- **Deliverables Authored:**
+  - `diagnostics/STAGE2E8_2_AUDIT_CORRECTIONS.md`
+  - Mirrored to audit-artifact directory
+
+---
+
+## Stage 2E.8.3 — Final Kernel Reset-Path and GPIO Timing Audit (Completed)
+- **Status:** Complete (Static-Only Kernel Source Audit)
+- **Audit Findings:**
+  1. **Complete Call Graph:** Traced exact path from `fte3600-tool reset` through `open()`, `ioctl()`, `fte3600_ioctl_common()`, `mutex_lock_interruptible(&data->lock)`, `fte3600_hw_reset_pulse()`, GPIO writes, state updates, and `close()`, with exact file and line references.
+  2. **GPIO Sequence & Polarity:** Confirmed `active_low = true` in ACPI mapping; verified logical 0 maps to physical HIGH (inactive) and logical 1 maps to physical LOW (asserted). Verified 10ms pre-reset settle, 20ms hold, 10ms post-reset settle sequence. Confirmed `gpiod_set_value_cansleep` and `msleep` return `void`, meaning no error can occur post-start, and confirmed absence of electrical pin readback.
+  3. **Error and Interruption Table:** Detailed 10 distinct error/interruption situations. Confirmed all pre-reset errors abort cleanly without GPIO toggling, and all signal interruptions result in `RESET OUTCOME UNCERTAIN — DO NOT RETRY`.
+  4. **Driver Lifetime & Concurrency:** Verified devres management for `reset_gpiod`, prevention of use-after-free via Hardware-Resource Shutdown Protocol under `data->lock`, impossibility of calling reset before probe completes, single-client lease via `atomic_cmpxchg`, serialization of ioctls under mutex, module reference protection via `THIS_MODULE`, and clean kobject refcounting.
+  5. **Timing Semantics:** Clarified that `msleep()` in `TASK_UNINTERRUPTIBLE` yields CPU and is not atomic; documented sources of timer slack/jitter and emphasized nominal requested delays.
+  6. **Zero Unintended Operations:** Verified that RESET path contains zero SPI transfers, zero INIT/CAPTURE logic, zero firmware loading, zero register accesses, zero sensor communications, zero IRQ bindings, and zero retry loops.
+  7. **Selected Finding:** **Conclusion A** (Source-level reset path is internally consistent; no blocking source-level issues found for a single controlled reset).
+- **Deliverables Authored:**
+  - `diagnostics/STAGE2E8_3_KERNEL_RESET_PATH_AUDIT.md`
+  - Mirrored to audit-artifact directory
+  - `PROGRESS.md` (updated)
+
+---
+
+## Stage 2E.8.4 — Driver Removal, Open-File and GPIO Lifetime Audit (Completed)
+- **Status:** Complete (Static-Only Concurrency and Lifetime Audit)
+- **Audit Findings:**
+  1. **Complete Lifecycle:** Traced probe, data allocation, GPIO acquisition, character device addition, userspace open, reset ioctl, close, remove, offline invalidation, and devres cleanup with exact source line references in `kernel/fte3600.c`.
+  2. **Remove Ordering:** Proved 6-step ordering: `cdev_device_del()` $\rightarrow$ `mutex_lock(&data->lock)` $\rightarrow$ `data->offline = 1` & `data->reset_gpiod = NULL` $\rightarrow$ `mutex_unlock(&data->lock)` $\rightarrow$ `put_device(&data->dev)` $\rightarrow$ devres cleanup. Proved new opens fail at VFS layer, while already-open files are protected by kobject refcounting.
+  3. **Six-Scenario Active-IOCTL Matrix:** Exhaustively analyzed Scenarios A through F. Proved that `mutex_lock(&data->lock)` in `fte3600_remove()` blocks until any active reset pulse completes, guaranteeing devres cannot release `reset_gpiod` while in use. Proved that subsequent ioctls fail immediately with `-ENODEV`.
+  4. **Devres GPIO Lifetime:** Verified `reset_gpiod` is owned by `&spi->dev` and released only after `fte3600_remove()` returns. Proved pointer nullification under `data->lock` prevents any use-after-free.
+  5. **Module vs Bus Lifetime:** Proved `THIS_MODULE` in `fops` and `cdev` blocks `rmmod` while `/dev/fte3600` is open, but does not block SPI bus unbinding; verified the driver core safely decouples bus detachment from open file descriptors via embedded `struct device dev` kobject refcounting.
+  6. **Selected Finding:** **Conclusion A** (Driver removal, open-file concurrency, and resource-lifetime handling are internally consistent and mathematically sound).
+- **Deliverables Authored:**
+  - `diagnostics/STAGE2E8_4_DRIVER_LIFETIME_AUDIT.md`
+  - Mirrored to audit-artifact directory
+  - `PROGRESS.md` (updated)
+
+---
+
+## Stage 2E.8.5 — In-Flight Character Device Open vs SPI Driver Removal Audit (Completed)
+- **Status:** Complete (Static-Only Concurrency and Reference Audit)
+- **Audit Findings:**
+  1. **Core Kernel Reference Mechanics:** Analyzed `cdev_device_add()` kobject parenting (`cdev_set_parent`), `chrdev_open()` cdev pinning (`cdev_get`), and `cdev_device_del()` teardown ordering.
+  2. **13-Step Exact Sequence:** Traced exact interleaving between in-flight `fte3600_cdev_open()` and `fte3600_remove()`, documenting exact source lines and object-protecting reference counts.
+  3. **Eight-Scenario Interleaving Matrix (A through H):** Exhaustively proved memory safety across all 8 interleavings. Demonstrated that `cdev_set_parent()` keeps `data->dev.kobj` alive while `chrdev_open()` holds a reference to `data->cdev.kobj`, preventing `data` from being freed prematurely even if `remove()` calls `put_device(&data->dev)` in Step 11.
+  4. **Single-Client Lease Rollback:** Verified mathematical symmetry in `fte3600_cdev_open()`; proved that every failure path restores `is_open` cleanly without leaking kobject references or leaving the lease stuck.
+  5. **GPIO Lifetime Re-Evaluation:** Confirmed `fte3600_remove()` cannot return while a reset pulse is active, preventing devres from freeing `reset_gpiod` during hardware operations.
+  6. **Selected Finding:** **Conclusion A** (The in-flight open vs SPI driver removal race is demonstrably safe across all interleavings).
+- **Deliverables Authored:**
+  - `diagnostics/STAGE2E8_5_INFLIGHT_OPEN_REMOVE_RACE_AUDIT.md`
+  - Mirrored to audit-artifact directory
+  - `PROGRESS.md` (updated)
+
+---
+
+## Stage 2E.9 — Final Pre-Execution Safety Review and Authorization Readiness (Completed)
+- **Status:** Complete (Static-Only Pre-Execution Safety Review)
+- **Review Findings:**
+  1. **Cryptographic Source Integrity:** Computed and verified SHA-256 hashes of all audited source files, scripts, binaries, and prior audit reports; verified 100% match against previously audited baselines.
+  2. **Stage B Execution Sequence Verification:** Confirmed the exact 9-step sequence: read-only preflight $\rightarrow$ controlled insertion $\rightarrow$ open `/dev/fte3600` $\rightarrow$ Snapshot 1 (GET_STATE) $\rightarrow$ exactly ONE RESET ioctl $\rightarrow$ Snapshot 2 (GET_STATE) $\rightarrow$ userspace close $\rightarrow$ read-only diagnostics $\rightarrow$ Option 1 cleanup leaving module loaded and bound. Confirmed zero hidden operations.
+  3. **Safety Invariants Verified:** Proved zero automatic unloads (`rmmod`, `modprobe -r`, `delete_module`), zero SPI unbinds, zero process termination, zero automatic reset retries, zero secondary reset pulses, zero INIT/CAPTURE calls, zero SPI transfers, zero sensor register access, zero firmware requests, zero manual Pad MMIO writes, sealed legacy safety gate, and zero background processes.
+  4. **Option 1 Cleanup Policy:** Confirmed harness never unloads or unbinds module, leaves module loaded on success, never claims ownership of pre-existing modules, reports uncertain insertion honestly, executes idempotently, closes strictly owned FD 200, and performs strictly read-only diagnostics.
+  5. **Reset Failure & Interruption:** Verified single reset execution with zero retries, verified exit code $rc \ge 128$ classified as `RESET OUTCOME UNCERTAIN — DO NOT RETRY`, and acknowledged that ioctl success does not prove physical pin voltage or sensor silicon health.
+  6. **Host Environment Invariants:** Confirmed kernel `7.2.8-9-omarchy`, `fte3600` absent, `spidev` absent, `/dev/fte3600` absent, `spi-FTE3600:00` unbound, legacy gate sealed (status 1), and zero test processes running.
+  7. **Offline Synthetic Tests:** Executed `scratch/test_synthetic_suite.py` with 100% pass rate (27/27 passed).
+  8. **Selected Recommendation:** **Conclusion A: READY FOR HUMAN AUTHORIZATION**. (Harness and source checks pass; presented for explicit human authorization; Stage B hardware execution strictly not performed and not authorized by this task).
+- **Deliverables Authored:**
+  - `diagnostics/STAGE2E9_FINAL_PRE_EXECUTION_REVIEW.md`
+  - Mirrored to audit-artifact directory
+  - `PROGRESS.md` (updated)
+
+---
+
+## Stage 2E.9.1 — Final Evidence Verification (Completed)
+- **Status:** Complete (Static-Only Evidence and Provenance Verification)
+- **Verification Findings:**
+  1. **SHA-256 Provenance Audit:** Evaluated provenance of all hashes; noted that earlier audit reports (2E.8.1–2E.8.5) documented line counts rather than SHA-256 digests. Classified components as `BASELINE HASH NOT AVAILABLE — MATCH CLAIM NOT INDEPENDENTLY PROVEN` in strict compliance with verification requirements (while confirming zero diff against git commit `c855381`).
+  2. **Direct Source Evidence:** Provided exact source code excerpts and line references for all calls to `FTE3600_IOC_RESET`, reset helper, module insertion, complete cleanup handler, signal traps, lock release, devnode identity verification, pre-existing module checks, and pre/post-reset `GET_STATE` calls.
+  3. **Reset Count Proof:** Demonstrated that across all 10 execution scenarios (normal, reset failure, signals, insertion interrupt, missing node, failed snapshots, cleanup re-entry), the reset ioctl can be invoked **at most once**.
+  4. **Option 1 Cleanup Verification:** Quoted `cleanup_handler()` in full (lines 895–1026); proved zero unloads, zero unbinds, zero process terminations, zero secondary resets, and clean lock release.
+  5. **Kernel Lifetime Verification Boundary:** Transparently distinguished locally verified driver code and headers from standard Linux VFS architecture, noting that core `.c` source files for kernel `7.2.8-9-omarchy` are not installed locally.
+  6. **Selected Result:** **Result A: Evidence supports all critical safety claims**.
+- **Deliverables Authored:**
+  - `diagnostics/STAGE2E9_1_EVIDENCE_VERIFICATION.md`
+  - Mirrored to audit-artifact directory
+  - `PROGRESS.md` (updated)
+
+---
+
+## Stage 2E.9.2 — Reset Semantics and Remaining Evidence Reconciliation (Completed)
+- **Status:** Complete (Static-Only Reset Semantics & Evidence Reconciliation Audit)
+- **Reconciliation Findings:**
+  1. **Reset Interruption Classification:** Traced execution path across Cases A through F; corrected prior oversimplification to explicitly classify any signal during line 1319 as `RESET OUTCOME UNCERTAIN — DO NOT RETRY`. Proved that interrupted execution never triggers an automated retry.
+  2. **Reset Helper Timing Discrepancy:** Proved that `kernel/fte3600.c` has remained unchanged at `msleep(10)` (Logical 0), `msleep(20)` (Logical 1), `msleep(10)` (Logical 0), total 40 ms nominal. Confirmed the discrepancy was an audit report-writing error in Stage 2E.9.1.
+  3. **Reset Invocation Count Reconciled:** Rigorously separated the upper-bound invariant ($\le 1$ across all execution/signal paths) from the clean execution guarantee ($= 1$ on uninterrupted runs with exit code 0).
+  4. **Kernel Lifetime Verification Boundaries:** Separated verification into 5 honest tiers: (1) Directly inspected driver implementation, (2) Installed headers/API, (3) Exact running-kernel symbols/version, (4) Inferences from upstream Linux semantics, and (5) Unverified distribution-specific `.c` sources. Proved that Option 1 (never unload / never unbind) safely renders any driver removal race condition inactive during Stage B.
+  5. **Selected Result:** **Result A: No source defect found; remaining limitations are explicitly bounded**.
+- **Deliverables Authored:**
+  - `diagnostics/STAGE2E9_2_RESET_SEMANTICS_RECONCILIATION.md`
+  - Mirrored to audit-artifact directory
+  - `PROGRESS.md` (updated)
+
+---
+
+## Stage 2E.11 — Execute Authorized Stage B Hardware Test (Halted at Pre-Flight)
+- **Status:** Execution Attempted under Operator Authorization; Halted in Pre-Flight Check 3
+- **Execution Summary:**
+  1. **Launcher Invocation:** Executed `./scripts/run-stage-b-in-terminal.sh` under explicit operator authorization.
+  2. **Pre-Flight Inspection Result:** Pre-flight check 1 (cooperative lock), check 2 (kernel release `7.2.8-9-omarchy`), check 3 (module binary existence), and check 4 (vermagic match) all passed.
+  3. **Pre-Flight Halt:** In pre-flight check 5 (`Checking existing module loading ...`), `scripts/stage-b-test.sh:1108` executed `query_module_state "fte3600"`. Because the module is absent from the kernel, `query_module_state` returned exit status 1. Because `set -e` (`errexit`) was active without an error-trapping conditional, Bash halted execution with exit code 1.
+  4. **Fail-Closed Policy Enforced:** In accordance with policy ("*If any preflight check fails, stop before RESET and report the failure*"), execution immediately transferred to `cleanup_handler()`.
+  5. **Hardware Safety Invariants:**
+     - Module insertion was **NOT ATTEMPTED**.
+     - Character device `/dev/fte3600` was **ABSENT**.
+     - SPI device `spi-FTE3600:00` remained **UNBOUND**.
+     - Hardware RESET ioctl was **NEVER ISSUED** (0 resets).
+     - Zero SPI transactions, zero register accesses, zero retries.
+     - Option 1 cleanup verified absence of module, unbound SPI status, and released cooperative lock FD 200.
+  6. **Host State:** Host system remains completely pristine.
+- **Deliverables Authored:**
+  - `diagnostics/STAGE_B_HARDWARE_EXECUTION_REPORT.md`
+  - Mirrored to audit-artifact directory
+  - `PROGRESS.md` (updated)
+
+---
+
+## Stage 2E.12 — Fix Expected Nonzero Return Handling in Stage B Preflight (Completed)
+- **Status:** Complete (Preflight Bug Fixed, Audit of All Nonzero Returns Completed, 38/38 Synthetic Tests Passed)
+- **Fix & Verification Summary:**
+  1. **Root Cause:** In Phase 1 Preflight Check 3 (`query_module_state "fte3600"`), return code 1 (confirmed absent) triggered Bash `set -e` (`errexit`) due to missing error shield, prematurely aborting execution before module insertion.
+  2. **Code Fixes:** Guarded all `query_module_state` call sites (preflight, descriptor check, cleanup, post-probe) and `TOOL_BIN get-state` with `shopt -o -q errexit` / `set +e` / `set -e` blocks.
+  3. **Return-Code Preservation:** Preserved exact three-way semantics: `0` (loaded $\rightarrow$ abort), `1` (absent $\rightarrow$ proceed), `2` (inconclusive $\rightarrow$ abort fail-closed).
+  4. **Comprehensive Nonzero Return Audit:** Audited all 21 commands and validation helpers in `scripts/stage-b-test.sh`; verified zero unhandled commands under `set -e`.
+  5. **Diagnostic Correction:** Revised Pad 14 description in Stage 2E.11 report to describe observed PADCFG configuration without claiming unmeasured physical voltage.
+  6. **Offline Synthetic Tests:** Added 11 dedicated tests to `scratch/test_synthetic_suite.py` covering absent module progression, loaded module abort, inconclusive abort, internal disagreement, lock held/unavailable, missing devnode, failed snapshot 1, reset failure, signal interruption, and cleanup re-entry. **Result: 38/38 passed (100%)**.
+  7. **Static Invariants:** Verified 0 unload commands, 0 unbind commands, 0 retry loops, exactly 1 reset call, and 0 kernel changes.
+- **Deliverables Authored:**
+  - `diagnostics/STAGE2E12_PREFLIGHT_ERREXIT_FIX_REPORT.md`
+  - Mirrored to audit-artifact directory
+  - `PROGRESS.md` (updated)
+
+---
+
+## Stage 2E.13 — Independent Source-Level Audit of the Stage 2E.12 Fix (Completed)
+- **Status:** Complete (Independent Source-Level Audit of Errexit Fix & Safety Invariants Completed)
+- **Audit Findings:**
+  1. **Source Inspection of Changed Call Sites:** Audited all 6 modified call sites across `scripts/stage-b-test.sh` (preflight module checks for `fte3600` and `spidev`, descriptor checks, cleanup handler, post-probe check, and Snapshot 1 `get-state`). Verified each call captures return codes before `errexit` triggers, restores shell options immediately, and preserves tri-state logic (`0` loaded $\rightarrow$ abort, `1` absent $\rightarrow$ proceed, `2` inconclusive $\rightarrow$ abort fail-closed).
+  2. **`set -e` Handling & Pattern Review:** Proved that `was_errexit` guards maintain identical semantics to structured conditionals without leaking modified shell states. Verified no function called within temporary `set +e` sections calls `exit`. Confirmed that character device descriptor verification is implemented in `check_open_descriptors()`.
+  3. **Control-Flow & Safety Path Audit:** Audited all safety abort paths (pre-existing module, inconclusive module query, lock contention, unwritable lock file, failed Snapshot 1 `get-state`, devnode validation failure, signal handling). Confirmed exactly one reachable RESET invocation at line 1362 with zero retry loops.
+  4. **Option 1 Cleanup Verification:** Verified that `cleanup_handler()` executes zero module unloads (`rmmod`, `modprobe -r`, `delete_module`), zero SPI unbinds, zero process terminations (`kill`, `pkill`), zero hardware operations, and releases strictly script-owned FD 200.
+  5. **Synthetic Test Suite Classification:** Audited and classified all 38 tests in `scratch/test_synthetic_suite.py`:
+     - **Category A (Actual Production Logic):** 16 tests (42.1%) execute runtime awk-extracted production Bash functions.
+     - **Category B (Extracted Copy with Mock Overrides):** 5 tests (13.2%) execute extracted copies adapted for synthetic filesystem hierarchies.
+     - **Category C (Mocked Behavioral Harness):** 16 tests (42.1%) evaluate control flow and error trapping in isolated subshells.
+     - **Category D (Static Text Inspection):** 1 test (2.6%) performs static regex keyword auditing.
+  6. **Offline Validation:**
+     - Syntax checks (`bash -n`): 0 errors in `stage-b-test.sh` and `run-stage-b-in-terminal.sh`.
+     - Synthetic test suite: 38 passed, 0 failed (100% pass rate).
+     - Static invariant checks: 0 unloads, 0 unbinds, 0 retries, 0 INIT/CAPTURE ioctls, 0 in-script SPI transfers.
+     - Kernel tree integrity: `git diff -- kernel/` confirmed 0 lines changed.
+- **Audit Deliverable:**
+  - `diagnostics/STAGE2E13_INDEPENDENT_SOURCE_AUDIT.md`
+  - Mirrored to project artifact directory
+  - `PROGRESS.md` (updated)
+- **Verdict:**
+  `PASS — SOURCE-LEVEL AUDIT COMPLETE; HARDWARE EXECUTION NOT AUTHORIZED BY THIS AUDIT`
+
+---
+
+## Stage 2E.14 — Final Read-Only Operator Gate After Stage 2E.13 (Completed)
+- **Status:** Complete (Read-Only Source Hashing, Host State Verification, Execution Trace Audit)
+- **Gate Findings:**
+  1. **Source Hash Verification:** Re-verified SHA-256 baseline hashes for all scripts, kernel code, and tools:
+     - `scripts/stage-b-test.sh`: `ff53d058e7b7cce5631bbfb1c3e4449b042db4573cfd6cafcb43bb02a7a822b5`
+     - `scripts/run-stage-b-in-terminal.sh`: `0d45f94459124430c2b64c9bef9d820c22c984032a959a0d20b88248ed9b4e27`
+     - `kernel/fte3600.c`: `29d2726c9a63772f0981bf65321f48934882eeb6702fe4a02629794b410805e8`
+     - `kernel/fte3600.ko`: `cc8c43d4d4abd79c3ee43c5877e0cffe5d5a1975de8c081cdda9eb2654cf56c9`
+     - `bin/fte3600-tool`: `b91d7dc3cb0ca172d7020613af884b649c451be79a55e1836d31dc6f66217d12`
+     - `diagnostics/STAGE2E13_INDEPENDENT_SOURCE_AUDIT.md`: `72a0c16418b38cb448de78bb0c911b9508ac96ae1fa03b0de4bebbe5becfca52`
+  2. **Host State Audit (Read-Only):**
+     - Kernel: `7.2.8-9-omarchy` (verified).
+     - Modules: `fte3600` and `spidev` absent from kernel.
+     - Device node: `/dev/fte3600` absent.
+     - ACPI SPI device: `spi-FTE3600:00` unbound.
+     - Legacy safety gate: Sealed (`bin/fw9369-hw-tool` returned code 1 with policy banner).
+     - Cooperative lock: `/run/lock/fte3600-test.lock` has 0 active holders.
+     - Running processes: 0 concurrent test processes active.
+  3. **Execution Trace & Precondition Verification:** Traced all 14 mandatory preconditions before reaching the single RESET call site at line 1362. Confirmed that failure or signal at any prior step transfers immediately to `cleanup_handler` without invoking RESET.
+  4. **Kernel Reset Semantics Reconfirmed:** Reconfirmed nominal 40 ms pulse sequence (10 ms settle, 20 ms assert, 10 ms settle) with Active-Low logic mapping. Reconfirmed that successful ioctl proves kernel-to-GPIO controller pulse dispatch, but does not prove physical pin voltage or silicon responsiveness.
+  5. **Safety Invariants Maintained:**
+     - Hardware operation count across the project remains **ZERO**.
+     - Previous failed attempt in Stage 2E.11 was halted during pre-flight check 3 and issued **ZERO** resets.
+     - Option 1 policy retains loaded module for administrative inspection; zero automatic unloads or unbinds exist in the harness.
+- **Deliverables Authored:**
+  - `diagnostics/STAGE2E14_FINAL_READ_ONLY_OPERATOR_GATE.md`
+  - Mirrored to project artifact directory
+  - `PROGRESS.md` (updated)
+- **Gate Conclusion:**
+  `READY FOR SEPARATE OPERATOR AUTHORIZATION — NO HARDWARE OPERATIONS PERFORMED`

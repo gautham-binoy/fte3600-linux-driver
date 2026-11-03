@@ -1,0 +1,54 @@
+===============================================================================
+ Stage 2E.8 — Stage B Controlled Hardware Reset Test & Verification
+ Option 1 Policy: Never Automatically Unload the Fingerprint Driver
+ Host: Dynabook Satellite Pro C40-J (PYS46G-06J02D)
+ Target: spi-FTE3600:00 (FocalTech FT9362 / FW9369)
+ Kernel: 7.2.8-9-omarchy
+ Timestamp: 2026-11-03T22:23:31+05:30
+===============================================================================
+
+--- [PHASE 1] Pre-Flight System & Safety Inspection ---
+Acquiring fail-closed cooperative test runner lock: /run/lock/fte3600-test.lock ... [PASS] (Exclusive cooperative lock held on FD 200)
+Checking kernel version: 7.2.8-9-omarchy ... [PASS]
+Checking module file: /home/titan/fte3600-linux-driver/kernel/fte3600.ko ... [PASS]
+Module vermagic: 7.2.8-9-omarchy SMP preempt mod_unload  ... [PASS]
+Checking existing module loading ... 
+--- [CLEANUP] Post-Test Diagnostic & Resource Release Handler ---
+Invoked via: EXIT (incoming exit status: 1)
+
+--- Module & Device State Audit ---
+[INFO] fte3600 module is confirmed absent from kernel.
+Checking character device node /dev/fte3600 ... [INFO] /dev/fte3600 is ABSENT
+Checking SPI driver binding link ... [INFO] SPI device is UNBOUND
+
+--- Post-Test Hardware State ---
+PCH Pad 14 post-test: pin 14 (SPKR) 14:INT34C5:00 GPIO 0x84000201 0x0003c026 0x00000000 [LOCKED]
+PCH Pad 229 post-test: pin 229 (CPU_GP_0) 323:INT34C5:00 GPIO 0x82000100 0x00000029 0x00000000 [LOCKED tx]
+GPIO lines claimed by fte3600 post-test: None
+
+--- Kernel Ring Buffer Messages ---
+[48531.270305] IPv6: MLD: clamping QRV from 1 to 2!
+[48537.209527] IPv6: MLD: clamping QRV from 1 to 2!
+[48537.209531] IPv6: MLD: clamping QRV from 1 to 2!
+[48543.353526] IPv6: MLD: clamping QRV from 1 to 2!
+[48543.353532] IPv6: MLD: clamping QRV from 1 to 2!
+[48549.292637] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=16686 DF PROTO=2 
+[48549.292638] IPv6: MLD: clamping QRV from 1 to 2!
+[48549.292643] IPv6: MLD: clamping QRV from 1 to 2!
+[48555.231845] IPv6: MLD: clamping QRV from 1 to 2!
+[48555.231851] IPv6: MLD: clamping QRV from 1 to 2!
+[48561.375906] IPv6: MLD: clamping QRV from 1 to 2!
+[48561.375912] IPv6: MLD: clamping QRV from 1 to 2!
+[48567.314931] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=17135 DF PROTO=2 
+[48567.315009] IPv6: MLD: clamping QRV from 1 to 2!
+[48567.315013] IPv6: MLD: clamping QRV from 1 to 2!
+
+===============================================================================
+ OPTION 1 POLICY: AUTOMATIC MODULE UNLOAD IS PERMANENTLY DISABLED
+===============================================================================
+[POLICY] Insertion state: NOT_ATTEMPTED. No automatic unload performed.
+===============================================================================
+
+[INFO] Script-owned cooperative lock released (FD 200 closed).
+
+[INFO] Script terminated with exit status 1 (trigger: EXIT).

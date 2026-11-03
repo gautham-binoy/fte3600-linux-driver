@@ -1,0 +1,81 @@
+===============================================================================
+ Stage 2E.6 — Stage A Hardware Probe Execution & Verification
+ Host: Dynabook Satellite Pro C40-J (PYS46G-06J02D)
+ Target: spi-FTE3600:00 (FocalTech FT9362 / FW9369)
+ Kernel: 7.2.8-9-omarchy
+ Timestamp: 2026-11-03T13:32:26+05:30
+===============================================================================
+
+--- [PHASE 1] Pre-Flight System & Safety Inspection ---
+Checking kernel version: 7.2.8-9-omarchy ... [PASS]
+Checking module file: /home/titan/fte3600-linux-driver/kernel/fte3600.ko ... [PASS]
+Module vermagic: 7.2.8-9-omarchy SMP preempt mod_unload  ... [PASS]
+Checking existing module loading ... [PASS] (Neither fte3600 nor spidev loaded)
+Checking SPI device presence: /sys/bus/spi/devices/spi-FTE3600:00 ... [PASS]
+Checking SPI device binding status ... [PASS] (Device unbound)
+Checking character device node presence: /dev/fte3600 ... [PASS] (Node absent)
+Checking validation utility: /home/titan/fte3600-linux-driver/bin/fte3600-tool ... [PASS]
+
+--- Baseline Hardware & Register State ---
+PCH Pad 14 (Reset):   pin 14 (SPKR) 14:INT34C5:00 GPIO 0x84000201 0x0003c026 0x00000000 [LOCKED]
+PCH Pad 229 (IRQ):    pin 229 (CPU_GP_0) 323:INT34C5:00 GPIO 0x80100100 0x00000029 0x00000000 [LOCKED tx]
+GPIO lines claimed by fte3600: None
+Dmesg baseline line count: 2034
+
+--- [PHASE 2] Stage A Module Insertion & Driver Probe ---
+Executing: insmod /home/titan/fte3600-linux-driver/kernel/fte3600.ko
+
+--- Post-Probe Verification ---
+Checking lsmod for fte3600 ... [PASS]
+fte3600                20480  0
+Checking SPI driver binding link ... [PASS] Bound to: ../../../../../../../bus/spi/drivers/fte3600
+Checking character device node /dev/fte3600 ... [PASS]
+crw------- 1 root root 511, 0 Nov  3 13:32 /dev/fte3600
+
+Checking GPIO allocation in debugfs ...
+ gpio-14  (                    |reset               ) out hi ACTIVE LOW
+PCH Pad 14 under probe: pin 14 (SPKR) 14:INT34C5:00 GPIO 0x84000201 0x0003c026 0x00000000 [LOCKED]
+PCH Pad 229 under probe: pin 229 (CPU_GP_0) 323:INT34C5:00 GPIO 0x82000100 0x00000029 0x00000000 [LOCKED tx]
+
+--- Querying Initial State via FTE3600_IOC_GET_STATE ---
+>> FTE3600 State Snapshot:
+   Version:    1
+   State:      0 (UNINITIALIZED)
+   Flags:      0x00000000
+   Last Error: 0 (None)
+
+--- Kernel Ring Buffer Messages During Probe ---
+
+--- [PHASE 4] Controlled Host Teardown & Resource Release ---
+Checking for open file descriptors on /dev/fte3600 ... [PASS] (Zero open descriptors)
+Executing: rmmod fte3600
+Verifying /dev/fte3600 node removal ... [PASS] (Devnode removed)
+Verifying SPI device unbinding ... [PASS] (SPI device unbound)
+Verifying fte3600 module absence in lsmod ... [PASS] (Module unloaded cleanly)
+
+--- Post-Cleanup Hardware State ---
+PCH Pad 14 post-cleanup: pin 14 (SPKR) 14:INT34C5:00 GPIO 0x84000201 0x0003c026 0x00000000 [LOCKED]
+PCH Pad 229 post-cleanup: pin 229 (CPU_GP_0) 323:INT34C5:00 GPIO 0x82000100 0x00000029 0x00000000 [LOCKED tx]
+GPIO lines claimed by fte3600 post-cleanup: None
+
+--- Kernel Ring Buffer Messages During Teardown ---
+[16680.251976] IPv6: MLD: clamping QRV from 1 to 2!
+[16680.251982] IPv6: MLD: clamping QRV from 1 to 2!
+[16686.396034] IPv6: MLD: clamping QRV from 1 to 2!
+[16686.396035] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=64525 DF PROTO=2 
+[16686.396039] IPv6: MLD: clamping QRV from 1 to 2!
+[16692.335175] IPv6: MLD: clamping QRV from 1 to 2!
+[16692.335180] IPv6: MLD: clamping QRV from 1 to 2!
+[16698.274328] IPv6: MLD: clamping QRV from 1 to 2!
+[16698.274334] IPv6: MLD: clamping QRV from 1 to 2!
+[16703.288229] fte3600: loading out-of-tree module taints kernel.
+[16703.288234] fte3600: module verification failed: signature and/or required key missing - tainting kernel
+[16703.304922] fte3600 spi-FTE3600:00: FTE3600 driver bound (passive probe, state UNINITIALIZED)
+[16704.418224] IPv6: MLD: clamping QRV from 1 to 2!
+[16704.418229] IPv6: MLD: clamping QRV from 1 to 2!
+[16704.503301] fte3600 spi-FTE3600:00: FTE3600 driver unbound
+
+===============================================================================
+ Stage A Execution and Controlled Teardown Completed Successfully.
+ Log written to: /home/titan/fte3600-linux-driver/diagnostics/stage-a-results.txt
+===============================================================================

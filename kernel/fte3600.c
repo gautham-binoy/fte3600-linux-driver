@@ -4,7 +4,7 @@
  * Target Silicon: FocalTech FT9362 / FW9369 Fingerprint Sensor
  * Target Platform: Dynabook Satellite Pro C40-J (PYS46G-06J02D)
  *
- * Architecture Stage 2E.4: Minimal FT9362 Chip Identification Sequence
+ * Architecture Stage 2E.4.2: SPI Completion Verification and Identification-State Corrections
  * Safety Gate: Physical hardware access strictly prohibited; offline compilation only.
  */
 
@@ -118,14 +118,15 @@ static void fte3600_device_release(struct device *dev)
  * gpiod_set_value_cansleep() returns void. Therefore, successful completion of
  * this sequence only proves that register writes were issued to the Intel PCH
  * LPSS GPIO controller. It does NOT verify physical pin voltage on Pad 14 or
- * that the sensor silicon responded.
+ * that the sensor silicon accepted the reset or entered a known state.
  *
  * State Semantics:
- * State transitions to FTE3600_STATE_RESET_COMPLETE (alias RESET_SEQUENCE_ISSUED).
- * This indicates strictly that the electrical reset timing pulse was issued to
- * the GPIO controller. It does NOT indicate that the sensor is initialized,
- * calibrated, or ready. Transition to READY strictly requires subsequent SPI
- * chip ID and CRC verification.
+ * State transitions to FTE3600_STATE_RESET_SEQUENCE_ISSUED (compatibility alias
+ * FTE3600_STATE_RESET_COMPLETE). This indicates strictly that the electrical
+ * reset timing pulse was dispatched to the GPIO controller. It does NOT indicate
+ * that the sensor silicon is initialized, identified, calibrated, or ready.
+ * Physical sensor recovery and responsiveness are only proven if subsequent SPI
+ * chip ID and CRC interrogation succeeds.
  */
 static int fte3600_hw_reset_pulse(struct fte3600_data *data)
 {
@@ -149,10 +150,10 @@ static int fte3600_hw_reset_pulse(struct fte3600_data *data)
 	msleep(10); /* Reference settle latency (factory_startup.c:341) */
 
 	/*
-	 * Reset sequence completed on GPIO controller.
-	 * Sensor state is RESET_COMPLETE (reset pulse issued), NOT READY.
+	 * Electrical reset pulse sequence completed on GPIO controller.
+	 * State is RESET_SEQUENCE_ISSUED. Sensor silicon responsiveness is unverified.
 	 */
-	data->state = FTE3600_STATE_RESET_COMPLETE;
+	data->state = FTE3600_STATE_RESET_SEQUENCE_ISSUED;
 	return 0;
 }
 
@@ -212,6 +213,13 @@ static int fte3600_spi_sync_transfer(struct fte3600_data *data,
 		return m.status;
 	}
 
+	/* Verify full transfer completion: short transfers are treated as failed */
+	if (m.actual_length != len) {
+		data->state = FTE3600_STATE_UNKNOWN;
+		data->last_error = EIO;
+		return -EIO;
+	}
+
 	return 0;
 }
 
@@ -224,7 +232,7 @@ static int fte3600_spi_sync_transfer(struct fte3600_data *data,
  * Preconditions:
  * 1. Caller MUST hold data->lock. Enforced via lockdep_assert_held(&data->lock).
  * 2. Device must be online with valid data->spi.
- * 3. Driver state MUST be FTE3600_STATE_RESET_COMPLETE (electrical reset pulse issued).
+ * 3. Driver state MUST be FTE3600_STATE_RESET_SEQUENCE_ISSUED (electrical reset pulse issued).
  *
  * Sequence:
  * Step A: Write volatile register 0xC6 = 0x01 (ungate SPI transceiver clock, 4 bytes)
@@ -236,13 +244,18 @@ static int fte3600_spi_sync_transfer(struct fte3600_data *data,
  *
  * State Transitions:
  * Upon starting: state = FTE3600_STATE_INITIALIZING
- * Upon success:  state = FTE3600_STATE_READY, last_error = 0, return 0
+ * Upon success:  state = FTE3600_STATE_IDENTIFIED, last_error = 0, return 0
  * Upon error:    state = FTE3600_STATE_UNKNOWN, last_error = (u32)(-ret), return ret
  *
  * Fail-Closed Invariant:
  * On any transport failure, verification mismatch, or invalid ID/CRC, the driver
  * transitions to FTE3600_STATE_UNKNOWN. No automatic retries or undocumented cleanup
  * writes are issued. Recovery strictly requires a subsequent userspace FTE3600_IOC_RESET.
+ *
+ * Semantic Boundary:
+ * Transitions state to FTE3600_STATE_IDENTIFIED, NOT FTE3600_STATE_READY. Chip
+ * identification verifies bus responsiveness and silicon identity; full operational
+ * capture readiness (AFE calibration, baseline, FIFO arming) is deferred to future stages.
  */
 static int fte3600_hw_identify(struct fte3600_data *data)
 {
@@ -254,7 +267,7 @@ static int fte3600_hw_identify(struct fte3600_data *data)
 	if (atomic_read(&data->offline) || !data->spi)
 		return -ENODEV;
 
-	if (data->state != FTE3600_STATE_RESET_COMPLETE)
+	if (data->state != FTE3600_STATE_RESET_SEQUENCE_ISSUED)
 		return -EPERM;
 
 	data->state = FTE3600_STATE_INITIALIZING;
@@ -342,11 +355,11 @@ static int fte3600_hw_identify(struct fte3600_data *data)
 		return -ENODEV;
 	}
 
-	/* Identification verified: transition state to READY */
-	data->state = FTE3600_STATE_READY;
+	/* Identification verified: transition state to IDENTIFIED (NOT READY) */
+	data->state = FTE3600_STATE_IDENTIFIED;
 	data->last_error = 0;
 	dev_info(&data->spi->dev,
-		 "FocalTech FT9362 identified (ID 0x%04x, CRC 0x%04x, state READY)\n",
+		 "FocalTech FT9362 identified (ID 0x%04x, CRC 0x%04x, state IDENTIFIED)\n",
 		 chip_id, crc_rx);
 	return 0;
 }
@@ -410,8 +423,8 @@ static long fte3600_ioctl_common(struct file *filp, unsigned int cmd, unsigned l
 		snap.state = (u32)data->state;
 		if (atomic_read(&data->offline))
 			snap.flags |= FTE3600_FLAG_OFFLINE;
-		if (data->state == FTE3600_STATE_RESET_COMPLETE)
-			snap.flags |= FTE3600_FLAG_RESET_COMPLETED;
+		if (data->state == FTE3600_STATE_RESET_SEQUENCE_ISSUED)
+			snap.flags |= FTE3600_FLAG_RESET_SEQUENCE_ISSUED;
 		snap.last_error = data->last_error;
 
 		mutex_unlock(&data->lock);

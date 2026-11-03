@@ -27,24 +27,26 @@
 #define FTE3600_FIFO_TRANSFER_LEN  (FTE3600_FIFO_PREFIX_LEN + FTE3600_IMAGE_BYTES) /* 10246 */
 #define FTE3600_MAX_SPI_TRANSFER_LEN FTE3600_FIFO_TRANSFER_LEN
 
-/* Explicit 8-State State Machine */
+/* Explicit 9-State State Machine */
 enum fte3600_state {
-	FTE3600_STATE_UNINITIALIZED  = 0,
-	FTE3600_STATE_RESETTING      = 1,
-	FTE3600_STATE_RESET_COMPLETE = 2,
-	FTE3600_STATE_INITIALIZING   = 3,
-	FTE3600_STATE_READY          = 4,
-	FTE3600_STATE_CAPTURING      = 5,
-	FTE3600_STATE_ERROR          = 6,
-	FTE3600_STATE_UNKNOWN        = 7,
+	FTE3600_STATE_UNINITIALIZED         = 0,
+	FTE3600_STATE_RESETTING             = 1,
+	FTE3600_STATE_RESET_SEQUENCE_ISSUED = 2,
+	FTE3600_STATE_INITIALIZING          = 3,
+	FTE3600_STATE_READY                 = 4,
+	FTE3600_STATE_CAPTURING             = 5,
+	FTE3600_STATE_ERROR                 = 6,
+	FTE3600_STATE_UNKNOWN               = 7,
+	FTE3600_STATE_IDENTIFIED            = 8,
 };
 
-/* Semantic alias: RESET_COMPLETE indicates strictly that the electrical reset pulse sequence was issued */
-#define FTE3600_STATE_RESET_SEQUENCE_ISSUED FTE3600_STATE_RESET_COMPLETE
+/* Compatibility alias: RESET_COMPLETE indicates strictly that the electrical reset pulse sequence was issued */
+#define FTE3600_STATE_RESET_COMPLETE FTE3600_STATE_RESET_SEQUENCE_ISSUED
 
 /* Status Flags */
-#define FTE3600_FLAG_OFFLINE         (1U << 0)
-#define FTE3600_FLAG_RESET_COMPLETED (1U << 1)
+#define FTE3600_FLAG_OFFLINE                (1U << 0)
+#define FTE3600_FLAG_RESET_SEQUENCE_ISSUED  (1U << 1)
+#define FTE3600_FLAG_RESET_COMPLETED        FTE3600_FLAG_RESET_SEQUENCE_ISSUED
 
 /**
  * struct fte3600_state_snapshot - Telemetry and state query payload

@@ -2022,6 +2022,129 @@ Awaiting user review of `diagnostics/STAGE1_EXECUTION_REPORT.md`. Do not start S
 - **Zero Hardware Execution:** Observed 100% software-only implementation and offline simulation. `fte3600.ko` was compiled but never loaded; zero physical hardware transactions executed. Hardware execution gate in `bin/fw9369-hw-tool` remains CLOSED (exit code 1).
 - **Authoritative Verdict:** `SOFTWARE IMPLEMENTATION COMPLETE — IDENTIFICATION VERIFIED OFFLINE`.
 
+### Stage 2E.4.1 — Independent Static Audit of FT9362 Identification Implementation (Zero Hardware Execution)
+
+- Conducted an independent, read-only static source audit of the Stage 2E.4 minimal FT9362 identification implementation in `kernel/fte3600.c`, `kernel/fte3600.h`, and `kernel/fte3600-test.c`:
+  - **1. Wire Protocol Verification (Exact Match Against Stage 2A Evidence):**
+    - Step A (Wake Write): Transmits `[0x09, 0xF6, 0xC6, 0x01]` (4 bytes, `tx_buf`, `rx = NULL`) $\to$ exact match with `stage2a-identify.c:158-164`.
+    - Step B (Transceiver Delay): Delays 4 ms via `usleep_range(4000, 5000)` with CS deasserted high $\to$ exact match with `stage2a-identify.c:184`.
+    - Step C (Wake Readback Verification): Transmits `[0x08, 0xF7, 0xC6, 0x00, 0x00]` (5 bytes), validates `rx_buf[4] == 0x01` $\to$ exact match with `stage2a-identify.c:193-218`. Mismatch returns `-EIO` and transitions state to `UNKNOWN`.
+    - Step D (Chip ID Interrogation): Transmits `[0x04, 0xFB, 0x9A, 0x8B, 0..0]` (10 bytes), extracts MSB-first Chip ID at `rx[6..7]` and wire CRC at `rx[8..9]` $\to$ exact match with `stage2a-identify.c:233-257`.
+    - Step E (Wire CRC-16 Calculation): Computes CRC-16 CCITT (poly `0x1021`, seed `0xFFFF`, MSB-first) over exactly 2 bytes `&rx[6]` $\to$ exact match with `stage2a-identify.c:258`.
+    - Step F (Variant Gate & Fault Evaluation): Rejects bus ground (`0x0000`) and float (`0xFFFF`) with `-ENODEV`, rejects CRC mismatch with `-EBADMSG`, and requires Chip ID == `0x9362` (`FTE3600_EXPECTED_CHIP_ID`). Rejects `0x9368` and `0x9391` with `-ENODEV`; conditional register `0x1816` read is NOT performed for `0x9362`.
+  - **2. DEFECT IDENTIFIED — SPI Transfer Completion Semantics (`m.actual_length` Check Omitted):**
+    - In `fte3600_spi_sync_transfer()`, `spi_sync()` return code (`ret != 0`) and `m.status != 0` are checked.
+    - However, `m.actual_length` is **never read or compared against requested `len`**.
+    - If a transfer terminates prematurely or returns short with `status == 0`, the driver treats incomplete data as valid.
+    - **Recommended Correction:** Add `if (m.actual_length != len) { data->state = FTE3600_STATE_UNKNOWN; data->last_error = EIO; return -EIO; }`.
+  - **3. DMA Buffer Safety Verified:**
+    - `struct fte3600_data` is allocated via `kzalloc(..., GFP_KERNEL)` in `fte3600_probe()`, placing it in direct-mapped lowmem (`PAGE_OFFSET`).
+    - Dedicated transfer buffers `tx_buf[32]` and `rx_buf[32]` are cacheline-aligned (`____cacheline_aligned`), remain valid throughout `spi_sync()`, and are accessed strictly under `data->lock`.
+    - Zero stack variables and zero module `.rodata` symbols are passed to `spi_sync()`, eliminating `CONFIG_VMAP_STACK` DMA faults.
+    - 32-byte capacity is sufficient for all active identification packets (4 B, 5 B, 10 B).
+  - **4. SEMANTIC DEFECT IDENTIFIED — Premature `READY` State Transition:**
+    - Driver transitions to `FTE3600_STATE_READY` immediately upon chip ID verification.
+    - Identification proves silicon responsiveness, but does NOT initialize the AFE, arm the FIFO controller, capture image baselines, or configure interrupts.
+    - `FTE3600_IOC_CAPTURE` unconditionally returns `-EOPNOTSUPP`.
+    - **Recommended Correction:** Introduce `FTE3600_STATE_IDENTIFIED` in `enum fte3600_state`. Reserve `FTE3600_STATE_READY` for subsequent stages when full sensor capture is armed.
+  - **5. UNKNOWN-State Recovery & Reset Limitations Documented:**
+    - `case FTE3600_IOC_RESET:` permits execution from `UNKNOWN`.
+    - `gpiod_set_value_cansleep()` returns `void`, proving LPSS controller write dispatch only, not physical pin voltage on Pad 14 or sensor reset.
+    - State transitions to `FTE3600_STATE_RESET_COMPLETE` (alias `RESET_SEQUENCE_ISSUED`); only subsequent SPI interrogation proves sensor responsiveness.
+    - Repeated `INIT` from `READY` or `UNKNOWN` is rejected with `-EPERM`, preventing blind write loops.
+  - **6. Concurrency & Removal Safety Verified:**
+    - All SPI transactions, reset pulses, and offline checks serialize under `data->lock`.
+    - `fte3600_remove()` nullifies `reset_gpiod` and `spi` under the lock before returning, preventing post-unbind use-after-free.
+  - **7. Test Suite Classification Audited:**
+    - All 32 tests in `kernel/fte3600-test.c` are classified as **Category B independent userspace simulations**.
+    - None of the 32 tests link or execute the compiled kernel module `fte3600.ko` directly due to kernel symbol dependencies and `CONFIG_KUNIT=n`.
+  - **8. Security Boundary Verified:**
+    - FIFO capture remains disabled (`-EOPNOTSUPP`).
+    - IRQ handling remains absent (0 handlers).
+    - Prohibited registers (`0x1A84`, `0x1A82`, `0xF1`, `0xF4`, and write to `0x9A`) are absent.
+    - Hardware execution gate in `bin/fw9369-hw-tool` remains sealed (exit code 1).
+- **Deliverables Authored:**
+  - `STAGE2E41_INDEPENDENT_AUDIT.md`
+  - `diagnostics/STAGE2E41_INDEPENDENT_AUDIT.md`
+- **Zero Hardware Execution:** Observed 100% read-only static analysis. Zero source code modifications made. `fte3600.ko` was not loaded; zero physical hardware transactions executed. Hardware execution gate in `bin/fw9369-hw-tool` remains CLOSED (exit code 1).
+- **Authoritative Verdict:** `STATIC AUDIT PASSED WITH BLOCKING LIMITATIONS`.
+
+### Stage 2E.4.2 — SPI Completion and Identification-State Corrections (Zero Hardware Execution)
+
+- Implemented software-only corrections addressing all blocking findings from Stage 2E.4.1 static audit:
+  - **1. SPI Completion Verification (`m.actual_length` Check):**
+    - Updated `fte3600_spi_sync_transfer()` in `kernel/fte3600.c` to explicitly inspect `m.actual_length == len`.
+    - Short transfers return `-EIO`, transition `data->state` to `FTE3600_STATE_UNKNOWN`, and record `last_error = EIO`.
+    - Nonzero `m.status` returns completion status and sets `UNKNOWN`. Nonzero `spi_sync()` return code returns error and sets `UNKNOWN`.
+    - Completely eliminates acceptance of truncated payloads or uninitialized `rx_buf` bytes.
+  - **2. Identification State Boundary (`FTE3600_STATE_IDENTIFIED`):**
+    - Introduced `FTE3600_STATE_IDENTIFIED = 8` in `kernel/fte3600.h` without altering numeric values 0–7.
+    - Updated `fte3600_hw_identify()` in `kernel/fte3600.c` to transition to `FTE3600_STATE_IDENTIFIED` upon successful ID/CRC verification instead of premature `READY`.
+    - `FTE3600_STATE_READY` (state 4) remains strictly reserved for subsequent stages when AFE DAC calibration, finger detection thresholds, image baseline acquisition, and interrupt handling are fully configured.
+    - `FTE3600_IOC_CAPTURE` continues to return `-EOPNOTSUPP`.
+  - **3. Reset State Semantics Clarified:**
+    - Formalized `FTE3600_STATE_RESET_SEQUENCE_ISSUED = 2` as primary enum name with compatibility alias `#define FTE3600_STATE_RESET_COMPLETE FTE3600_STATE_RESET_SEQUENCE_ISSUED`.
+    - Documented that `gpiod_set_value_cansleep()` returns `void`, establishing controller register write dispatch only; physical pin voltage and sensor internal silicon state remain unproven until subsequent SPI interrogation succeeds.
+  - **4. DMA & Lowmem Buffer Safety:**
+    - Documented direct-mapped lowmem allocation (`kzalloc(..., GFP_KERNEL)`) guaranteeing physical contiguity for Intel LPSS PCI DMA.
+    - Verified `____cacheline_aligned` cache separation for `tx_buf[32]` and `rx_buf[32]`.
+    - Explicitly rejected `GFP_DMA` (16 MB ISA zone) and stack variables (`CONFIG_VMAP_STACK`).
+  - **5. Test Harness Expansion & Validation:**
+    - Expanded `kernel/fte3600-test.c` to 34 tests categorized as **Category B Standalone Userspace Simulation**.
+    - Added dedicated test scenarios for SPI transfer completion semantics (exact length, short length, status error, sync error) and semantic state boundary verification (`IDENTIFIED` vs `READY`, capture rejection).
+    - Ran `make -C kernel check`: **34 / 34 passed (100.0%)**.
+    - Ran `bin/fw9369-tests`: **227 / 227 passed (100.0%)**.
+    - Compiled `kernel/fte3600.ko` against `7.2.8-9-omarchy`: 0 warnings, 0 errors, BTF generated.
+  - **6. Security & Execution Boundaries Maintained:**
+    - Zero kernel modules loaded or bound to hardware.
+    - Zero physical hardware transactions executed.
+    - Hardware execution gate in `bin/fw9369-hw-tool` remains SEALED (exit code 1).
+    - Zero git commits created.
+- **Deliverables Authored:**
+  - `STAGE2E42_IMPLEMENTATION_REPORT.md`
+  - `diagnostics/STAGE2E42_IMPLEMENTATION_REPORT.md`
+- **Authoritative Verdict:** `SOFTWARE CORRECTIONS COMPLETE — STATIC VALIDATION PASSED`.
+
+### Stage 2E.4.3 — Independent Audit of Stage 2E.4.2 Corrections (Zero Hardware Execution)
+
+- Conducted an independent, read-only static source audit of the Stage 2E.4.2 implementation in `kernel/fte3600.c`, `kernel/fte3600.h`, and `kernel/fte3600-test.c`:
+  - **1. SPI Transfer Completion Verification Audited:**
+    - Confirmed `fte3600_spi_sync_transfer()` strictly enforces `m.actual_length == len`.
+    - Verified all error paths return negative errnos (`-ENODEV`, `-EINVAL`, `ret`, `m.status`, `-EIO`) and transition to `UNKNOWN`.
+    - Verified all callers in `fte3600_hw_identify()` abort immediately on error; truncated receive data is never consumed.
+    - Verified mutex serialization under `data->lock` and absence of automatic retries or recovery loops.
+  - **2. State Machine and UAPI Boundary Audited:**
+    - Verified numeric values of states 0 through 7 remain unchanged; `FTE3600_STATE_IDENTIFIED = 8` appended.
+    - Confirmed `fte3600_hw_identify()` transitions strictly to `IDENTIFIED` (8) and never to `READY` (4).
+    - Confirmed `READY` is isolated; `FTE3600_IOC_CAPTURE` unconditionally returns `-EOPNOTSUPP`.
+    - Confirmed `FTE3600_IOC_INIT` requires `RESET_SEQUENCE_ISSUED`; repeated `INIT` returns `-EPERM`.
+    - Verified UAPI snapshot layout (`snap.state` is `__u32`) and compatibility alias `#define FTE3600_STATE_RESET_COMPLETE FTE3600_STATE_RESET_SEQUENCE_ISSUED`.
+  - **3. DMA and SPI Buffer Architecture Audited:**
+    - Verified `tx_buf[32]` and `rx_buf[32]` reside on kernel heap inside `struct fte3600_data`, valid throughout `spi_sync()`, serialized by `data->lock`, fit 4-, 5-, 10-byte transfers, and avoid stack DMA hazards.
+    - Differentiated verified single-page heap contiguity from unverified multi-page direct-mapped contiguity claims.
+    - Formally documented controller-specific runtime DMA utilization (DMA vs PIO on Intel LPSS SPI2) as **UNVERIFIED** (non-blocking).
+  - **4. Reset Semantics Audited:**
+    - Confirmed active-low polarity (`GPIOD_OUT_LOW`, ACPI `active_low = true`) and reference timing (10ms, 20ms, 10ms).
+    - Confirmed `RESET_SEQUENCE_ISSUED` establishes controller register dispatch only; physical voltage verification is not claimed.
+    - Confirmed identification proves silicon responsiveness/presence, not complete initialization.
+  - **5. Test Suite Classification Audited:**
+    - Classified all 34 tests in `kernel/fte3600-test.c`: 3 static ABI checks (8.8%), 31 independent userspace simulations (91.2%), 0 in-kernel tests (0%).
+    - Confirmed simulation harness genuinely covers exact length, short length, status error, sync error, `IDENTIFIED`, no `READY`, and `CAPTURE` `-EOPNOTSUPP` (34/34 passed).
+  - **6. Security, Regression & Safety Verified:**
+    - Zero IRQ registration/handlers.
+    - Zero FIFO capture code (`-EOPNOTSUPP`).
+    - Zero writes to prohibited registers (`0x1A84`, `0x1A82`, `0xF1`, `0xF4`, and write to `0x9A`).
+    - Zero automatic retries. Zero physical hardware operations. Zero module loads.
+    - Hardware execution gate in `bin/fw9369-hw-tool` remains CLOSED (exit code 1).
+    - Zero git commits created.
+- **Deliverables Authored:**
+  - `STAGE2E43_INDEPENDENT_AUDIT.md`
+  - `diagnostics/STAGE2E43_INDEPENDENT_AUDIT.md`
+- **Authoritative Verdict:** `STATIC AUDIT PASSED — READY FOR SEPARATE HARDWARE-TEST REVIEW`.
+
+
+
+
 
 
 

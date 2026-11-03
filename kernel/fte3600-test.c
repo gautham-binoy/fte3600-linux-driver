@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
- * FTE3600 Unified Kernel Driver Software Test Harness (Stage 2E.2.2)
+ * FTE3600 Unified Kernel Driver Software Test Harness (Stage 2E.4.2)
  *
  * Test Category Classification:
  * CATEGORY B: Standalone Userspace Simulation Test Harness.
  * Validates UAPI layouts, state machine transitions, concurrency semantics,
  * lifetime reference counting, device removal shutdown protocol, SPI transport
- * bounds checking, and fail-closed security invariants.
+ * bounds checking, SPI transfer completion semantics (m.actual_length),
+ * semantic state boundary (FTE3600_STATE_IDENTIFIED vs READY), and fail-closed
+ * security invariants.
  *
  * NOTE: This is NOT an in-kernel runtime test (Category D) or KUnit test (Category C).
  * CONFIG_KUNIT is not set in the host kernel. Physical hardware tests remain barred.
@@ -111,7 +113,31 @@ static bool test_uapi_constants(void)
         return false;
     if (FTE3600_MAX_SPI_TRANSFER_LEN != 10246)
         return false;
-    if (FTE3600_STATE_RESET_SEQUENCE_ISSUED != FTE3600_STATE_RESET_COMPLETE)
+    if (FTE3600_STATE_UNINITIALIZED != 0)
+        return false;
+    if (FTE3600_STATE_RESETTING != 1)
+        return false;
+    if (FTE3600_STATE_RESET_SEQUENCE_ISSUED != 2)
+        return false;
+    if (FTE3600_STATE_RESET_COMPLETE != 2)
+        return false;
+    if (FTE3600_STATE_INITIALIZING != 3)
+        return false;
+    if (FTE3600_STATE_READY != 4)
+        return false;
+    if (FTE3600_STATE_CAPTURING != 5)
+        return false;
+    if (FTE3600_STATE_ERROR != 6)
+        return false;
+    if (FTE3600_STATE_UNKNOWN != 7)
+        return false;
+    if (FTE3600_STATE_IDENTIFIED != 8)
+        return false;
+    if (FTE3600_FLAG_OFFLINE != (1U << 0))
+        return false;
+    if (FTE3600_FLAG_RESET_SEQUENCE_ISSUED != (1U << 1))
+        return false;
+    if (FTE3600_FLAG_RESET_COMPLETED != (1U << 1))
         return false;
     return true;
 }
@@ -189,13 +215,13 @@ static int sim_do_reset(sim_dev_t *dev)
         dev->last_error = EIO;
         return -EIO;
     }
-    dev->state = FTE3600_STATE_RESET_COMPLETE;
+    dev->state = FTE3600_STATE_RESET_SEQUENCE_ISSUED;
     return 0;
 }
 
 static int sim_do_init(sim_dev_t *dev)
 {
-    if (dev->state != FTE3600_STATE_RESET_COMPLETE)
+    if (dev->state != FTE3600_STATE_RESET_SEQUENCE_ISSUED)
         return -EPERM;
 
     dev->state = FTE3600_STATE_INITIALIZING;
@@ -204,7 +230,7 @@ static int sim_do_init(sim_dev_t *dev)
         dev->last_error = EIO;
         return -EIO;
     }
-    dev->state = FTE3600_STATE_READY;
+    dev->state = FTE3600_STATE_IDENTIFIED;
     return 0;
 }
 
@@ -219,14 +245,22 @@ static bool test_state_transitions(void)
     if (sim_do_init(&dev) != -EPERM)
         return false;
 
-    if (sim_do_reset(&dev) != 0 || dev.state != FTE3600_STATE_RESET_COMPLETE)
+    if (sim_do_reset(&dev) != 0 || dev.state != FTE3600_STATE_RESET_SEQUENCE_ISSUED)
         return false;
 
-    if (sim_do_init(&dev) != 0 || dev.state != FTE3600_STATE_READY)
+    if (sim_do_init(&dev) != 0 || dev.state != FTE3600_STATE_IDENTIFIED)
+        return false;
+
+    /* Repeated init from IDENTIFIED is rejected */
+    if (sim_do_init(&dev) != -EPERM)
+        return false;
+
+    /* Verify sensor does not enter READY state */
+    if (dev.state == FTE3600_STATE_READY)
         return false;
 
     dev.spi_ok = false;
-    dev.state = FTE3600_STATE_RESET_COMPLETE;
+    dev.state = FTE3600_STATE_RESET_SEQUENCE_ISSUED;
     if (sim_do_init(&dev) != -EIO || dev.state != FTE3600_STATE_UNKNOWN)
         return false;
 
@@ -234,7 +268,7 @@ static bool test_state_transitions(void)
     if (sim_do_init(&dev) != -EPERM)
         return false;
 
-    if (sim_do_reset(&dev) != 0 || dev.state != FTE3600_STATE_RESET_COMPLETE)
+    if (sim_do_reset(&dev) != 0 || dev.state != FTE3600_STATE_RESET_SEQUENCE_ISSUED)
         return false;
 
     return true;
@@ -346,7 +380,7 @@ static int sim_driver_ioctl_reset(sim_context_t *ctx)
 
     /* Simulate hardware reset pulse */
     ctx->hardware_access_count++;
-    ctx->state = FTE3600_STATE_RESET_COMPLETE;
+    ctx->state = FTE3600_STATE_RESET_SEQUENCE_ISSUED;
 
     pthread_mutex_unlock(&ctx->lock);
     return 0;
@@ -362,8 +396,8 @@ static int sim_driver_ioctl_get_state(sim_context_t *ctx, struct fte3600_state_s
     snap->state = (uint32_t)ctx->state;
     if (atomic_load(&ctx->offline))
         snap->flags |= FTE3600_FLAG_OFFLINE;
-    if (ctx->state == FTE3600_STATE_RESET_COMPLETE)
-        snap->flags |= FTE3600_FLAG_RESET_COMPLETED;
+    if (ctx->state == FTE3600_STATE_RESET_SEQUENCE_ISSUED)
+        snap->flags |= FTE3600_FLAG_RESET_SEQUENCE_ISSUED;
     snap->last_error = ctx->last_error;
 
     pthread_mutex_unlock(&ctx->lock);
@@ -501,7 +535,7 @@ static void *thread_holding_ioctl(void *arg)
     /* Simulate hardware reset holding mutex */
     usleep(15000); /* 15 ms in critical section */
     r->ctx->hardware_access_count++;
-    r->ctx->state = FTE3600_STATE_RESET_COMPLETE;
+    r->ctx->state = FTE3600_STATE_RESET_SEQUENCE_ISSUED;
 
     pthread_mutex_unlock(&r->ctx->lock);
     return NULL;
@@ -531,7 +565,7 @@ static bool test_scenario_4_removal_racing_holding_ioctl(void)
     pthread_barrier_destroy(&r.barrier);
 
     /* Verified: ioctl completed reset cleanly BEFORE remove invalidated pointers */
-    bool pass = (ctx.hardware_access_count == 1 && ctx.state == FTE3600_STATE_RESET_COMPLETE);
+    bool pass = (ctx.hardware_access_count == 1 && ctx.state == FTE3600_STATE_RESET_SEQUENCE_ISSUED);
     pass = pass && (ctx.reset_gpiod == NULL && ctx.spi == NULL && atomic_load(&ctx.offline) == 1);
 
     sim_driver_release(&ctx);
@@ -795,16 +829,21 @@ static bool test_uapi_rejections(void)
     return true;
 }
 
-/* --- Suite 6: Stage 2E.4 Minimal FT9362 Chip Identification Scenarios --- */
+/* --- Suite 6: Stage 2E.4.2 Chip Identification & Completion Semantics --- */
 
 typedef struct {
     int wake_write_ret;        /* errno returned by spi_sync on wake write */
     int wake_write_status;     /* m.status on wake write */
+    size_t wake_write_actual_len; /* m.actual_length on wake write (normally 4) */
+
     int wake_read_ret;         /* errno returned by spi_sync on wake readback */
     int wake_read_status;      /* m.status on wake readback */
+    size_t wake_read_actual_len;  /* m.actual_length on wake readback (normally 5) */
     uint8_t wake_read_val;     /* rx[4] value on wake readback (normally 0x01) */
+
     int chip_id_ret;           /* errno returned by spi_sync on chip ID read */
     int chip_id_status;        /* m.status on chip ID read */
+    size_t chip_id_actual_len;    /* m.actual_length on chip ID read (normally 10) */
     uint16_t chip_id_val;      /* chip ID returned in rx[6..7] (normally 0x9362) */
     uint16_t chip_crc_val;     /* CRC returned in rx[8..9] */
     bool override_crc;         /* if true, use chip_crc_val; if false, auto-generate matching wire CRC */
@@ -814,7 +853,10 @@ typedef struct {
 static void init_mock_profile(mock_spi_profile_t *p)
 {
     memset(p, 0, sizeof(*p));
+    p->wake_write_actual_len = 4;
+    p->wake_read_actual_len = 5;
     p->wake_read_val = 0x01;
+    p->chip_id_actual_len = 10;
     p->chip_id_val = FTE3600_EXPECTED_CHIP_ID;
     p->override_crc = false;
     p->delay_us = 0;
@@ -825,7 +867,7 @@ static int sim_driver_hw_identify(sim_context_t *ctx, const mock_spi_profile_t *
     if (atomic_load(&ctx->offline) || !ctx->spi)
         return -ENODEV;
 
-    if (ctx->state != FTE3600_STATE_RESET_COMPLETE)
+    if (ctx->state != FTE3600_STATE_RESET_SEQUENCE_ISSUED)
         return -EPERM;
 
     ctx->state = FTE3600_STATE_INITIALIZING;
@@ -841,6 +883,11 @@ static int sim_driver_hw_identify(sim_context_t *ctx, const mock_spi_profile_t *
         ctx->state = FTE3600_STATE_UNKNOWN;
         ctx->last_error = (uint32_t)(-prof->wake_write_status);
         return prof->wake_write_status;
+    }
+    if (prof->wake_write_actual_len != 4) {
+        ctx->state = FTE3600_STATE_UNKNOWN;
+        ctx->last_error = EIO;
+        return -EIO;
     }
 
     /* Step B: Transceiver stabilization delay */
@@ -859,6 +906,11 @@ static int sim_driver_hw_identify(sim_context_t *ctx, const mock_spi_profile_t *
         ctx->last_error = (uint32_t)(-prof->wake_read_status);
         return prof->wake_read_status;
     }
+    if (prof->wake_read_actual_len != 5) {
+        ctx->state = FTE3600_STATE_UNKNOWN;
+        ctx->last_error = EIO;
+        return -EIO;
+    }
     if (prof->wake_read_val != 0x01) {
         ctx->state = FTE3600_STATE_UNKNOWN;
         ctx->last_error = EIO;
@@ -876,6 +928,11 @@ static int sim_driver_hw_identify(sim_context_t *ctx, const mock_spi_profile_t *
         ctx->state = FTE3600_STATE_UNKNOWN;
         ctx->last_error = (uint32_t)(-prof->chip_id_status);
         return prof->chip_id_status;
+    }
+    if (prof->chip_id_actual_len != 10) {
+        ctx->state = FTE3600_STATE_UNKNOWN;
+        ctx->last_error = EIO;
+        return -EIO;
     }
 
     uint16_t chip_id = prof->chip_id_val;
@@ -902,7 +959,8 @@ static int sim_driver_hw_identify(sim_context_t *ctx, const mock_spi_profile_t *
         return -ENODEV;
     }
 
-    ctx->state = FTE3600_STATE_READY;
+    /* Identification verified: transition state to IDENTIFIED (NOT READY) */
+    ctx->state = FTE3600_STATE_IDENTIFIED;
     ctx->last_error = 0;
     return 0;
 }
@@ -940,7 +998,7 @@ static bool test_id_scenario_1_valid_wake_response(void)
     sim_ctx_init(&ctx);
     sim_driver_open(&ctx);
 
-    if (sim_driver_ioctl_reset(&ctx) != 0 || ctx.state != FTE3600_STATE_RESET_COMPLETE)
+    if (sim_driver_ioctl_reset(&ctx) != 0 || ctx.state != FTE3600_STATE_RESET_SEQUENCE_ISSUED)
         return false;
 
     mock_spi_profile_t prof;
@@ -950,7 +1008,7 @@ static bool test_id_scenario_1_valid_wake_response(void)
     struct fte3600_init_params params = { .version = FTE3600_UAPI_VERSION };
     int ret = sim_driver_ioctl_init(&ctx, &params, &prof);
 
-    bool pass = (ret == 0 && ctx.state == FTE3600_STATE_READY && ctx.last_error == 0);
+    bool pass = (ret == 0 && ctx.state == FTE3600_STATE_IDENTIFIED && ctx.last_error == 0);
     pass = pass && (ctx.hardware_access_count == 4); /* 1 reset + 3 transfers */
 
     sim_driver_release(&ctx);
@@ -1008,7 +1066,7 @@ static bool test_id_scenario_3_valid_id_and_crc(void)
     struct fte3600_init_params params = { .version = FTE3600_UAPI_VERSION };
     int ret = sim_driver_ioctl_init(&ctx, &params, &prof);
 
-    bool pass = (ret == 0 && ctx.state == FTE3600_STATE_READY && ctx.last_error == 0);
+    bool pass = (ret == 0 && ctx.state == FTE3600_STATE_IDENTIFIED && ctx.last_error == 0);
 
     sim_driver_release(&ctx);
     sim_ctx_put(&ctx);
@@ -1149,14 +1207,14 @@ static bool test_id_scenario_8_spi_transfer_error(void)
     return (atomic_load(&ctx.freed) == 1);
 }
 
-/* 9. Short/incomplete transfer (m.status != 0) */
+/* 9. Short/incomplete transfer (m.status != 0 or actual_length < len) */
 static bool test_id_scenario_9_short_incomplete_transfer(void)
 {
     sim_context_t ctx;
     sim_ctx_init(&ctx);
     sim_driver_open(&ctx);
 
-    /* Incomplete message status on chip ID read */
+    /* 9a: Incomplete message status on chip ID read */
     sim_driver_ioctl_reset(&ctx);
     mock_spi_profile_t prof;
     init_mock_profile(&prof);
@@ -1167,12 +1225,36 @@ static bool test_id_scenario_9_short_incomplete_transfer(void)
     if (ret != -EIO || ctx.state != FTE3600_STATE_UNKNOWN || ctx.last_error != EIO)
         return false;
 
-    /* Status error on wake write */
+    /* 9b: Status error on wake write */
     sim_driver_ioctl_reset(&ctx);
     init_mock_profile(&prof);
     prof.wake_write_status = -EMSGSIZE;
     ret = sim_driver_ioctl_init(&ctx, &params, &prof);
     if (ret != -EMSGSIZE || ctx.state != FTE3600_STATE_UNKNOWN || ctx.last_error != EMSGSIZE)
+        return false;
+
+    /* 9c: Short transfer on wake write (actual_length == 3 != 4) with status == 0 */
+    sim_driver_ioctl_reset(&ctx);
+    init_mock_profile(&prof);
+    prof.wake_write_actual_len = 3;
+    ret = sim_driver_ioctl_init(&ctx, &params, &prof);
+    if (ret != -EIO || ctx.state != FTE3600_STATE_UNKNOWN || ctx.last_error != EIO)
+        return false;
+
+    /* 9d: Short transfer on wake readback (actual_length == 4 != 5) with status == 0 */
+    sim_driver_ioctl_reset(&ctx);
+    init_mock_profile(&prof);
+    prof.wake_read_actual_len = 4;
+    ret = sim_driver_ioctl_init(&ctx, &params, &prof);
+    if (ret != -EIO || ctx.state != FTE3600_STATE_UNKNOWN || ctx.last_error != EIO)
+        return false;
+
+    /* 9e: Short transfer on chip ID read (actual_length == 8 != 10) with status == 0 */
+    sim_driver_ioctl_reset(&ctx);
+    init_mock_profile(&prof);
+    prof.chip_id_actual_len = 8;
+    ret = sim_driver_ioctl_init(&ctx, &params, &prof);
+    if (ret != -EIO || ctx.state != FTE3600_STATE_UNKNOWN || ctx.last_error != EIO)
         return false;
 
     sim_driver_release(&ctx);
@@ -1198,8 +1280,8 @@ static bool test_id_scenario_10_failure_after_wake_write(void)
 
     bool pass = (ret == -EIO && ctx.state == FTE3600_STATE_UNKNOWN);
 
-    /* Fail-closed: verify sensor is not left in READY or INITIALIZING */
-    if (ctx.state == FTE3600_STATE_READY || ctx.state == FTE3600_STATE_INITIALIZING)
+    /* Fail-closed: verify sensor is not left in IDENTIFIED, READY, or INITIALIZING */
+    if (ctx.state == FTE3600_STATE_IDENTIFIED || ctx.state == FTE3600_STATE_READY || ctx.state == FTE3600_STATE_INITIALIZING)
         return false;
 
     /* Verify subsequent INIT fails with -EPERM without reset */
@@ -1211,7 +1293,7 @@ static bool test_id_scenario_10_failure_after_wake_write(void)
     return pass && (atomic_load(&ctx.freed) == 1);
 }
 
-/* 11. INIT from invalid state (UNINITIALIZED, INITIALIZING, READY, UNKNOWN) */
+/* 11. INIT from invalid state (UNINITIALIZED, INITIALIZING, READY, IDENTIFIED, UNKNOWN, RESETTING) */
 static bool test_id_scenario_11_invalid_state_init(void)
 {
     sim_context_t ctx;
@@ -1237,12 +1319,17 @@ static bool test_id_scenario_11_invalid_state_init(void)
     if (sim_driver_ioctl_init(&ctx, &params, &prof) != -EPERM || ctx.state != FTE3600_STATE_READY)
         return false;
 
-    /* 4. From UNKNOWN */
+    /* 4. From IDENTIFIED */
+    ctx.state = FTE3600_STATE_IDENTIFIED;
+    if (sim_driver_ioctl_init(&ctx, &params, &prof) != -EPERM || ctx.state != FTE3600_STATE_IDENTIFIED)
+        return false;
+
+    /* 5. From UNKNOWN */
     ctx.state = FTE3600_STATE_UNKNOWN;
     if (sim_driver_ioctl_init(&ctx, &params, &prof) != -EPERM || ctx.state != FTE3600_STATE_UNKNOWN)
         return false;
 
-    /* 5. From RESETTING */
+    /* 6. From RESETTING */
     ctx.state = FTE3600_STATE_RESETTING;
     if (sim_driver_ioctl_init(&ctx, &params, &prof) != -EPERM || ctx.state != FTE3600_STATE_RESETTING)
         return false;
@@ -1293,8 +1380,8 @@ static bool test_id_scenario_13_repeated_init_after_success(void)
     init_mock_profile(&prof);
     struct fte3600_init_params params = { .version = FTE3600_UAPI_VERSION };
 
-    /* First INIT succeeds */
-    if (sim_driver_ioctl_init(&ctx, &params, &prof) != 0 || ctx.state != FTE3600_STATE_READY)
+    /* First INIT succeeds -> transitions to IDENTIFIED */
+    if (sim_driver_ioctl_init(&ctx, &params, &prof) != 0 || ctx.state != FTE3600_STATE_IDENTIFIED)
         return false;
 
     /* Second INIT is rejected with -EPERM */
@@ -1302,12 +1389,12 @@ static bool test_id_scenario_13_repeated_init_after_success(void)
     if (ret2 != -EPERM)
         return false;
 
-    /* State must remain strictly READY */
-    if (ctx.state != FTE3600_STATE_READY)
+    /* State must remain strictly IDENTIFIED (never transition to READY) */
+    if (ctx.state != FTE3600_STATE_IDENTIFIED)
         return false;
 
     struct fte3600_state_snapshot snap;
-    if (sim_driver_ioctl_get_state(&ctx, &snap) != 0 || snap.state != (uint32_t)FTE3600_STATE_READY)
+    if (sim_driver_ioctl_get_state(&ctx, &snap) != 0 || snap.state != (uint32_t)FTE3600_STATE_IDENTIFIED)
         return false;
 
     sim_driver_release(&ctx);
@@ -1366,8 +1453,8 @@ static bool test_id_scenario_14_concurrent_reset_init_mutex(void)
     pthread_join(th2, NULL);
 
     /* Mutex guarantees state is a valid enum value and no torn memory exists */
-    bool valid_state = (ctx.state == FTE3600_STATE_RESET_COMPLETE ||
-                        ctx.state == FTE3600_STATE_READY ||
+    bool valid_state = (ctx.state == FTE3600_STATE_RESET_SEQUENCE_ISSUED ||
+                        ctx.state == FTE3600_STATE_IDENTIFIED ||
                         ctx.state == FTE3600_STATE_UNKNOWN);
 
     sim_driver_release(&ctx);
@@ -1421,7 +1508,7 @@ static bool test_id_scenario_15_removal_during_operation(void)
     pthread_barrier_destroy(&r.barrier);
 
     /* INIT completed cleanly before removal invalidated pointers */
-    bool pass = (r.init_ret == 0);
+    bool pass = (r.init_ret == 0 && ctx.state == FTE3600_STATE_IDENTIFIED);
     pass = pass && (atomic_load(&ctx.offline) == 1 && ctx.spi == NULL && ctx.reset_gpiod == NULL);
 
     /* Subsequent operation rejected with -ENODEV */
@@ -1435,12 +1522,112 @@ static bool test_id_scenario_15_removal_during_operation(void)
     return pass && (atomic_load(&ctx.freed) == 1);
 }
 
+/* 16. Dedicated SPI transfer completion semantics */
+static bool test_id_scenario_16_spi_completion_semantics(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    struct fte3600_init_params params = { .version = FTE3600_UAPI_VERSION };
+    mock_spi_profile_t prof;
+
+    /* 16a. Exact length match (actual_length == len) succeeds */
+    sim_driver_ioctl_reset(&ctx);
+    init_mock_profile(&prof);
+    prof.wake_write_actual_len = 4;
+    prof.wake_read_actual_len = 5;
+    prof.chip_id_actual_len = 10;
+    if (sim_driver_ioctl_init(&ctx, &params, &prof) != 0 || ctx.state != FTE3600_STATE_IDENTIFIED)
+        return false;
+
+    /* 16b. Short transfer with status == 0 fails with -EIO and UNKNOWN */
+    sim_driver_ioctl_reset(&ctx);
+    init_mock_profile(&prof);
+    prof.chip_id_actual_len = 7; /* Short transfer */
+    prof.chip_id_status = 0;     /* Status deceptively zero */
+    if (sim_driver_ioctl_init(&ctx, &params, &prof) != -EIO)
+        return false;
+    if (ctx.state != FTE3600_STATE_UNKNOWN || ctx.last_error != EIO)
+        return false;
+
+    /* 16c. Nonzero message status fails with status code and UNKNOWN */
+    sim_driver_ioctl_reset(&ctx);
+    init_mock_profile(&prof);
+    prof.chip_id_status = -EBUSY;
+    if (sim_driver_ioctl_init(&ctx, &params, &prof) != -EBUSY)
+        return false;
+    if (ctx.state != FTE3600_STATE_UNKNOWN || ctx.last_error != EBUSY)
+        return false;
+
+    /* 16d. Nonzero spi_sync return fails with ret code and UNKNOWN */
+    sim_driver_ioctl_reset(&ctx);
+    init_mock_profile(&prof);
+    prof.chip_id_ret = -ETIMEDOUT;
+    if (sim_driver_ioctl_init(&ctx, &params, &prof) != -ETIMEDOUT)
+        return false;
+    if (ctx.state != FTE3600_STATE_UNKNOWN || ctx.last_error != ETIMEDOUT)
+        return false;
+
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return (atomic_load(&ctx.freed) == 1);
+}
+
+/* 17. Semantic boundary: IDENTIFIED vs READY, and CAPTURE rejection */
+static bool test_id_scenario_17_semantic_boundary_capture_rejection(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    struct fte3600_init_params params = { .version = FTE3600_UAPI_VERSION };
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+
+    sim_driver_ioctl_reset(&ctx);
+    if (ctx.state != FTE3600_STATE_RESET_SEQUENCE_ISSUED)
+        return false;
+
+    if (sim_driver_ioctl_init(&ctx, &params, &prof) != 0)
+        return false;
+
+    /* Verify state is strictly IDENTIFIED (8), NOT READY (4) */
+    if (ctx.state != FTE3600_STATE_IDENTIFIED)
+        return false;
+    if (ctx.state == FTE3600_STATE_READY)
+        return false;
+
+    /* Verify telemetry snapshot reflects IDENTIFIED */
+    struct fte3600_state_snapshot snap;
+    if (sim_driver_ioctl_get_state(&ctx, &snap) != 0)
+        return false;
+    if (snap.state != (uint32_t)FTE3600_STATE_IDENTIFIED)
+        return false;
+
+    /* Verify FTE3600_IOC_CAPTURE continues to be rejected with -EOPNOTSUPP */
+    struct fte3600_frame_buffer fb = {
+        .version = FTE3600_UAPI_VERSION,
+        .length = FTE3600_IMAGE_BYTES,
+    };
+    if (mock_validate_ioctl(FTE3600_IOC_CAPTURE, &fb) != -EOPNOTSUPP)
+        return false;
+
+    /* Verify clean reset recovery from IDENTIFIED back to RESET_SEQUENCE_ISSUED */
+    if (sim_driver_ioctl_reset(&ctx) != 0)
+        return false;
+    if (ctx.state != FTE3600_STATE_RESET_SEQUENCE_ISSUED)
+        return false;
+
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return (atomic_load(&ctx.freed) == 1);
+}
+
 /* --- Main Runner --- */
 
 int main(void)
 {
     printf("===================================================================\n");
-    printf(" FTE3600 Unified Kernel Driver Test Suite (Stage 2E.4 Hardened)\n");
+    printf(" FTE3600 Unified Kernel Driver Test Suite (Stage 2E.4.2 Hardened)\n");
     printf(" Mode: Standalone Userspace Simulation (Zero Hardware Access)\n");
     printf("===================================================================\n\n");
 
@@ -1453,7 +1640,7 @@ int main(void)
     RUN_TEST(test_crc_vectors, "Wire CRC (0x1C53) and Word LE CRC (0x313E, 0x5B7C, 0xE4AA)");
 
     printf("\n--- Test Suite 3: State Machine Transitions & Invariants ---\n");
-    RUN_TEST(test_state_transitions, "8-state model, UNKNOWN fail-closed invariant, reset recovery");
+    RUN_TEST(test_state_transitions, "9-state model, UNKNOWN fail-closed invariant, reset recovery");
 
     printf("\n--- Test Suite 4: Stage 2E.2.2 Mandatory Lifecycle & Concurrency Scenarios ---\n");
     RUN_TEST(test_scenario_1_open_release, "Scenario 1: Open followed by normal release");
@@ -1471,7 +1658,7 @@ int main(void)
     printf("\n--- Test Suite 5: UAPI Validation & Parameter Rejections ---\n");
     RUN_TEST(test_uapi_rejections, "IOCTL validation, version check, reserved fields, and -EOPNOTSUPP");
 
-    printf("\n--- Test Suite 6: Stage 2E.4 Minimal FT9362 Chip Identification Scenarios ---\n");
+    printf("\n--- Test Suite 6: Stage 2E.4.2 Chip Identification & Completion Semantics ---\n");
     RUN_TEST(test_id_scenario_1_valid_wake_response, "Scenario 1: Valid wake response (rx_c6[4] == 0x01)");
     RUN_TEST(test_id_scenario_2_invalid_wake_response, "Scenario 2: Invalid wake response (rx_c6[4] != 0x01)");
     RUN_TEST(test_id_scenario_3_valid_id_and_crc, "Scenario 3: Valid FT9362 ID and CRC (0x9362 and 0x1C53)");
@@ -1480,16 +1667,18 @@ int main(void)
     RUN_TEST(test_id_scenario_6_all_zero_response, "Scenario 6: All-zero response (0x0000)");
     RUN_TEST(test_id_scenario_7_all_ones_response, "Scenario 7: All-ones response (0xFFFF)");
     RUN_TEST(test_id_scenario_8_spi_transfer_error, "Scenario 8: SPI transfer error (-EIO)");
-    RUN_TEST(test_id_scenario_9_short_incomplete_transfer, "Scenario 9: Short/incomplete transfer (m.status != 0)");
+    RUN_TEST(test_id_scenario_9_short_incomplete_transfer, "Scenario 9: Short/incomplete transfer (m.status != 0, actual_length < len)");
     RUN_TEST(test_id_scenario_10_failure_after_wake_write, "Scenario 10: Failure after wake write");
-    RUN_TEST(test_id_scenario_11_invalid_state_init, "Scenario 11: INIT from invalid state (UNINIT, INITING, READY, UNKNOWN)");
+    RUN_TEST(test_id_scenario_11_invalid_state_init, "Scenario 11: INIT from invalid state (UNINIT, INITING, READY, IDENTIFIED, UNKNOWN)");
     RUN_TEST(test_id_scenario_12_init_while_offline, "Scenario 12: INIT while device offline (-ENODEV)");
     RUN_TEST(test_id_scenario_13_repeated_init_after_success, "Scenario 13: Repeated INIT after success (-EPERM)");
     RUN_TEST(test_id_scenario_14_concurrent_reset_init_mutex, "Scenario 14: Concurrent RESET and INIT serialization under mutex");
     RUN_TEST(test_id_scenario_15_removal_during_operation, "Scenario 15: Removal during an operation");
+    RUN_TEST(test_id_scenario_16_spi_completion_semantics, "Scenario 16: SPI completion semantics (actual_length == len, status, ret)");
+    RUN_TEST(test_id_scenario_17_semantic_boundary_capture_rejection, "Scenario 17: Semantic boundary (IDENTIFIED vs READY, CAPTURE rejection)");
 
     printf("\n===================================================================\n");
-    printf(" Stage 2E.4 Test Results: %u / %u Passed (%.1f%%)\n",
+    printf(" Stage 2E.4.2 Test Results: %u / %u Passed (%.1f%%)\n",
            passed_tests, total_tests, (float)passed_tests / total_tests * 100.0f);
     printf("===================================================================\n");
 

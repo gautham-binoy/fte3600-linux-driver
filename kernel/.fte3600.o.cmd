@@ -1268,17 +1268,71 @@ deps_fte3600.o := \
     $(wildcard include/config/HTE) \
     $(wildcard include/config/GPIO_SYSFS) \
   /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/gpio/defs.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/poll.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/uapi/linux/poll.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/generated/uapi/asm/poll.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/uapi/asm-generic/poll.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/uapi/linux/eventpoll.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/spi/spi.h \
-    $(wildcard include/config/SPI_SLAVE) \
-    $(wildcard include/config/SPI_MASTER) \
-    $(wildcard include/config/SPI) \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/kthread.h \
-  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/device-id/spi.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/miscdevice.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/uapi/linux/major.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/pci.h \
+    $(wildcard include/config/PCI_IOV) \
+    $(wildcard include/config/PCIEAER) \
+    $(wildcard include/config/PCIEPORTBUS) \
+    $(wildcard include/config/PCIEASPM) \
+    $(wildcard include/config/HOTPLUG_PCI_PCIE) \
+    $(wildcard include/config/PCIE_PTM) \
+    $(wildcard include/config/PCIE_DPC) \
+    $(wildcard include/config/PCI_ATS) \
+    $(wildcard include/config/PCI_PRI) \
+    $(wildcard include/config/PCI_PASID) \
+    $(wildcard include/config/PCI_P2PDMA) \
+    $(wildcard include/config/PCI_DOE) \
+    $(wildcard include/config/PCI_NPEM) \
+    $(wildcard include/config/PCI_IDE) \
+    $(wildcard include/config/PCI_TSM) \
+    $(wildcard include/config/PCIE_TPH) \
+    $(wildcard include/config/PCI_DOMAINS_GENERIC) \
+    $(wildcard include/config/CARDBUS) \
+    $(wildcard include/config/HOTPLUG_PCI) \
+    $(wildcard include/config/DEBUG_FS) \
+    $(wildcard include/config/PCI_DOMAINS) \
+    $(wildcard include/config/PCI_QUIRKS) \
+    $(wildcard include/config/ACPI_MCFG) \
+    $(wildcard include/config/EEH) \
+    $(wildcard include/config/S390) \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/device-id/pci.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/interrupt.h \
+    $(wildcard include/config/IRQ_FORCED_THREADING) \
+    $(wildcard include/config/GENERIC_IRQ_PROBE) \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/irqreturn.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/hardirq.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/context_tracking_state.h \
+    $(wildcard include/config/CONTEXT_TRACKING_USER) \
+    $(wildcard include/config/CONTEXT_TRACKING) \
+    $(wildcard include/config/RCU_DYNTICKS_TORTURE) \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/ftrace_irq.h \
+    $(wildcard include/config/HWLAT_TRACER) \
+    $(wildcard include/config/OSNOISE_TRACER) \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/vtime.h \
+    $(wildcard include/config/VIRT_CPU_ACCOUNTING) \
+    $(wildcard include/config/HAVE_VIRT_CPU_ACCOUNTING_IDLE) \
+    $(wildcard include/config/IRQ_TIME_ACCOUNTING) \
+  /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/hardirq.h \
+    $(wildcard include/config/X86_THERMAL_VECTOR) \
+    $(wildcard include/config/X86_MCE_THRESHOLD) \
+    $(wildcard include/config/X86_MCE_AMD) \
+    $(wildcard include/config/X86_HV_CALLBACK_VECTOR) \
+    $(wildcard include/config/KVM) \
+    $(wildcard include/config/GUEST_PERF_EVENTS) \
+    $(wildcard include/config/X86_POSTED_MSI) \
+    $(wildcard include/config/CPU_MITIGATIONS) \
+    $(wildcard include/config/KVM_INTEL) \
+  /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/irq.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/sections.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/asm-generic/sections.h \
+    $(wildcard include/config/HAVE_FUNCTION_DESCRIPTORS) \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/msi_api.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/uapi/linux/pci.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/uapi/linux/pci_regs.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/pci_ids.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/dmapool.h \
+    $(wildcard include/config/HAS_DMA) \
   /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/scatterlist.h \
     $(wildcard include/config/NEED_SG_DMA_LENGTH) \
     $(wildcard include/config/NEED_SG_DMA_FLAGS) \
@@ -1331,7 +1385,6 @@ deps_fte3600.o := \
     $(wildcard include/config/X86_ESPFIX64) \
   /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/memremap.h \
     $(wildcard include/config/DEVICE_PRIVATE) \
-    $(wildcard include/config/PCI_P2PDMA) \
   /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/cacheinfo.h \
     $(wildcard include/config/ARM) \
     $(wildcard include/config/ARCH_HAS_CPU_CACHE_ALIASING) \
@@ -1348,6 +1401,26 @@ deps_fte3600.o := \
   /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/vm_event_item.h \
     $(wildcard include/config/BALLOON) \
     $(wildcard include/config/BALLOON_MIGRATION) \
+  /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/pci.h \
+    $(wildcard include/config/VMD) \
+  /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/asm/memtype.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/dma-mapping.h \
+    $(wildcard include/config/DMA_API_DEBUG) \
+    $(wildcard include/config/IOMMU_DMA) \
+    $(wildcard include/config/DMA_NEED_SYNC) \
+    $(wildcard include/config/NEED_DMA_MAP_STATE) \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/dma-direction.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/poll.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/uapi/linux/poll.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/generated/uapi/asm/poll.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/uapi/asm-generic/poll.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/uapi/linux/eventpoll.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/spi/spi.h \
+    $(wildcard include/config/SPI_SLAVE) \
+    $(wildcard include/config/SPI_MASTER) \
+    $(wildcard include/config/SPI) \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/kthread.h \
+  /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/device-id/spi.h \
   /usr/lib/modules/7.2.8-9-omarchy/build/include/linux/u64_stats_sync.h \
   /usr/lib/modules/7.2.8-9-omarchy/build/arch/x86/include/generated/asm/local64.h \
   /usr/lib/modules/7.2.8-9-omarchy/build/include/asm-generic/local64.h \

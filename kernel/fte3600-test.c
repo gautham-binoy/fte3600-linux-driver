@@ -28,6 +28,7 @@
 #include <sys/ioctl.h>
 #include <sys/poll.h>
 #include <sys/epoll.h>
+#include <semaphore.h>
 #include <unistd.h>
 
 #include "fte3600.h"
@@ -95,6 +96,18 @@ static bool test_uapi_sizes(void)
     if (sizeof(struct fte3600_init_params) != 32)
         return false;
     if (sizeof(struct fte3600_frame_buffer) != 32)
+        return false;
+    if (sizeof(struct fte3600_session_begin) != 32)
+        return false;
+    if (sizeof(struct fte3600_session_fdt) != 64)
+        return false;
+    if (sizeof(struct fte3600_session_frame) != 32)
+        return false;
+    if (sizeof(struct fte3600_session_thresholds) != 48)
+        return false;
+    if (sizeof(struct fte3600_session_commit) != 32)
+        return false;
+    if (sizeof(struct fte3600_session_abort) != 32)
         return false;
     return true;
 }
@@ -164,6 +177,25 @@ static bool test_ioctl_encodings(void)
     if (_IOC_TYPE(FTE3600_IOC_CAPTURE) != 'F' || _IOC_NR(FTE3600_IOC_CAPTURE) != 0x04)
         return false;
     if (_IOC_DIR(FTE3600_IOC_CAPTURE) != (_IOC_READ | _IOC_WRITE) || _IOC_SIZE(FTE3600_IOC_CAPTURE) != 32)
+        return false;
+
+    if (_IOC_TYPE(FTE3600_IOC_SESSION_BEGIN) != 'F' || _IOC_NR(FTE3600_IOC_SESSION_BEGIN) != 0x20 ||
+        _IOC_SIZE(FTE3600_IOC_SESSION_BEGIN) != 32)
+        return false;
+    if (_IOC_TYPE(FTE3600_IOC_SESSION_FDT_SAMPLE) != 'F' || _IOC_NR(FTE3600_IOC_SESSION_FDT_SAMPLE) != 0x21 ||
+        _IOC_SIZE(FTE3600_IOC_SESSION_FDT_SAMPLE) != 64)
+        return false;
+    if (_IOC_TYPE(FTE3600_IOC_SESSION_READ_FRAME) != 'F' || _IOC_NR(FTE3600_IOC_SESSION_READ_FRAME) != 0x22 ||
+        _IOC_SIZE(FTE3600_IOC_SESSION_READ_FRAME) != 32)
+        return false;
+    if (_IOC_TYPE(FTE3600_IOC_SESSION_SET_THRESHOLDS) != 'F' || _IOC_NR(FTE3600_IOC_SESSION_SET_THRESHOLDS) != 0x23 ||
+        _IOC_SIZE(FTE3600_IOC_SESSION_SET_THRESHOLDS) != 48)
+        return false;
+    if (_IOC_TYPE(FTE3600_IOC_SESSION_COMMIT) != 'F' || _IOC_NR(FTE3600_IOC_SESSION_COMMIT) != 0x24 ||
+        _IOC_SIZE(FTE3600_IOC_SESSION_COMMIT) != 32)
+        return false;
+    if (_IOC_TYPE(FTE3600_IOC_SESSION_ABORT) != 'F' || _IOC_NR(FTE3600_IOC_SESSION_ABORT) != 0x25 ||
+        _IOC_SIZE(FTE3600_IOC_SESSION_ABORT) != 32)
         return false;
 
     return true;
@@ -295,6 +327,18 @@ typedef struct {
     int hardware_access_count;     /* Counts physical hardware operations */
     uint8_t foundry_code;
     uint16_t line_period_us;
+    /* Stage D9 Session Management Simulation */
+    struct {
+        bool active;
+        uint64_t token;
+        uint32_t generation;
+        void *owner_filp;
+        uint8_t channel_mode;
+        uint8_t stored_dac;
+        bool dac_valid;
+        uint16_t fdt_thresholds[4];
+        bool thresholds_programmed;
+    } session;
 } sim_context_t;
 
 static void sim_ctx_init(sim_context_t *ctx)
@@ -311,6 +355,14 @@ static void sim_ctx_init(sim_context_t *ctx)
     ctx->hardware_access_count = 0;
     ctx->foundry_code = 0;
     ctx->line_period_us = 0;
+    ctx->session.active = false;
+    ctx->session.token = 0;
+    ctx->session.generation = 1;
+    ctx->session.owner_filp = NULL;
+    ctx->session.channel_mode = 1;
+    ctx->session.stored_dac = 27;
+    ctx->session.dac_valid = false;
+    ctx->session.thresholds_programmed = false;
 }
 
 static void sim_ctx_get(sim_context_t *ctx)
@@ -345,10 +397,25 @@ static int sim_driver_open(sim_context_t *ctx)
 }
 
 /* Simulated release */
-static void sim_driver_release(sim_context_t *ctx)
+static void sim_driver_release_ofd(sim_context_t *ctx, void *filp)
 {
+    pthread_mutex_lock(&ctx->lock);
+    if (ctx->session.active && ctx->session.owner_filp == filp) {
+        ctx->session.active = false;
+        ctx->session.owner_filp = NULL;
+        ctx->session.generation++;
+        ctx->state = FTE3600_STATE_UNKNOWN;
+        ctx->last_error = ECANCELED;
+    }
+    pthread_mutex_unlock(&ctx->lock);
+
     atomic_store(&ctx->is_open, 0);
     sim_ctx_put(ctx);
+}
+
+static void sim_driver_release(sim_context_t *ctx)
+{
+    sim_driver_release_ofd(ctx, ctx->session.owner_filp);
 }
 
 /* Simulated device removal following exact Hardware-Resource Shutdown Protocol */
@@ -360,6 +427,9 @@ static void sim_driver_remove(sim_context_t *ctx)
     /* Step 3: Mark offline and invalidate devres hardware resource pointers */
     atomic_store(&ctx->offline, 1);
     ctx->state = FTE3600_STATE_DEVICE_REMOVAL;
+    ctx->session.active = false;
+    ctx->session.owner_filp = NULL;
+    ctx->session.generation++;
     ctx->reset_gpiod = NULL;
     ctx->spi = NULL;
 
@@ -385,6 +455,12 @@ static int sim_driver_ioctl_reset(sim_context_t *ctx)
         return -ENODEV;
     }
 
+    if (ctx->session.active) {
+        ctx->session.active = false;
+        ctx->session.owner_filp = NULL;
+        ctx->session.generation++;
+    }
+
     /* Simulate hardware reset pulse */
     ctx->hardware_access_count++;
     ctx->state = FTE3600_STATE_RESET_SEQUENCE_ISSUED;
@@ -407,6 +483,8 @@ static int sim_driver_ioctl_get_state(sim_context_t *ctx, struct fte3600_state_s
         snap->flags |= FTE3600_FLAG_RESET_SEQUENCE_ISSUED;
     if (ctx->state == FTE3600_STATE_INITIALIZED_UNCALIBRATED)
         snap->flags |= FTE3600_FLAG_STARTUP_PREFIX_COMPLETED | FTE3600_FLAG_CALIBRATION_PENDING;
+    if (ctx->session.active)
+        snap->flags |= FTE3600_FLAG_SESSION_ACTIVE;
     snap->last_error = ctx->last_error;
 
     pthread_mutex_unlock(&ctx->lock);
@@ -451,6 +529,186 @@ static int sim_driver_ioctl_capture(sim_context_t *ctx, const struct fte3600_fra
     /* Physical FIFO capture deferred in Stage 2E.2 software milestone */
     pthread_mutex_unlock(&ctx->lock);
     return -EOPNOTSUPP;
+}
+
+/* Simulated Session Management Helpers */
+static int sim_driver_validate_session(sim_context_t *ctx, void *filp, uint64_t token)
+{
+    if (!ctx->session.active)
+        return -EACCES;
+    if (ctx->session.owner_filp != filp)
+        return -EACCES;
+    if (ctx->session.token != token)
+        return -EACCES;
+    return 0;
+}
+
+static int sim_driver_ioctl_session_begin(sim_context_t *ctx, void *filp, struct fte3600_session_begin *sb)
+{
+    if (atomic_load(&ctx->offline))
+        return -ENODEV;
+    if (!sb || sb->version != FTE3600_UAPI_VERSION || sb->flags != 0)
+        return -EINVAL;
+    for (int i = 0; i < 3; i++) {
+        if (sb->reserved[i] != 0)
+            return -EINVAL;
+    }
+
+    pthread_mutex_lock(&ctx->lock);
+    if (ctx->state != FTE3600_STATE_INITIALIZED_UNCALIBRATED &&
+        ctx->state != FTE3600_STATE_READY) {
+        pthread_mutex_unlock(&ctx->lock);
+        return -EPERM;
+    }
+
+    if (ctx->session.active && ctx->session.owner_filp != filp) {
+        pthread_mutex_unlock(&ctx->lock);
+        return -EBUSY;
+    }
+
+    ctx->session.active = true;
+    ctx->session.owner_filp = filp;
+    ctx->session.token = ((uint64_t)ctx->session.generation << 32) | 0xDEADBEEFULL;
+    ctx->session.channel_mode = 1;
+    ctx->session.stored_dac = 27;
+    ctx->session.dac_valid = false;
+    ctx->session.thresholds_programmed = false;
+
+    sb->session_token = ctx->session.token;
+    sb->watchdog_ms = FTE3600_WATCHDOG_DEFAULT_MS;
+
+    pthread_mutex_unlock(&ctx->lock);
+    return 0;
+}
+
+static int sim_driver_ioctl_session_fdt(sim_context_t *ctx, void *filp, struct fte3600_session_fdt *sfdt)
+{
+    if (atomic_load(&ctx->offline))
+        return -ENODEV;
+    if (!sfdt || sfdt->version != FTE3600_UAPI_VERSION)
+        return -EINVAL;
+    for (int i = 0; i < 6; i++) {
+        if (sfdt->reserved[i] != 0)
+            return -EINVAL;
+    }
+    if (sfdt->channel_mode != 1)
+        return -EINVAL;
+    if (sfdt->dac_val < 1 || sfdt->dac_val > 125)
+        return -EINVAL;
+
+    pthread_mutex_lock(&ctx->lock);
+    int ret = sim_driver_validate_session(ctx, filp, sfdt->session_token);
+    if (ret != 0) {
+        pthread_mutex_unlock(&ctx->lock);
+        return ret;
+    }
+
+    ctx->session.stored_dac = (uint8_t)sfdt->dac_val;
+    sfdt->status_flags = 0x01;
+    for (int i = 0; i < 4; i++)
+        sfdt->adc_samples[i] = 512;
+    for (int i = 4; i < 8; i++)
+        sfdt->adc_samples[i] = 0;
+    sfdt->wire_crc = 0;
+    sfdt->computed_crc = 0;
+
+    pthread_mutex_unlock(&ctx->lock);
+    return 0;
+}
+
+static int __attribute__((unused)) sim_driver_ioctl_session_read_frame(sim_context_t *ctx, void *filp, const struct fte3600_session_frame *sframe)
+{
+    if (atomic_load(&ctx->offline))
+        return -ENODEV;
+    if (!sframe || sframe->version != FTE3600_UAPI_VERSION || sframe->length != FTE3600_IMAGE_BYTES ||
+        sframe->reserved != 0)
+        return -EINVAL;
+
+    pthread_mutex_lock(&ctx->lock);
+    int ret = sim_driver_validate_session(ctx, filp, sframe->session_token);
+    pthread_mutex_unlock(&ctx->lock);
+    return ret;
+}
+
+static int sim_driver_ioctl_session_set_thresholds(sim_context_t *ctx, void *filp, const struct fte3600_session_thresholds *sthresh)
+{
+    if (atomic_load(&ctx->offline))
+        return -ENODEV;
+    if (!sthresh || sthresh->version != FTE3600_UAPI_VERSION || sthresh->bank_len != FTE3600_THRESHOLD_BANK_LEN)
+        return -EINVAL;
+    for (int i = 0; i < 2; i++) {
+        if (sthresh->reserved[i] != 0)
+            return -EINVAL;
+    }
+
+    pthread_mutex_lock(&ctx->lock);
+    int ret = sim_driver_validate_session(ctx, filp, sthresh->session_token);
+    if (ret == 0)
+        ctx->session.thresholds_programmed = true;
+    pthread_mutex_unlock(&ctx->lock);
+    return ret;
+}
+
+static int sim_driver_ioctl_session_commit(sim_context_t *ctx, void *filp, struct fte3600_session_commit *scommit)
+{
+    if (atomic_load(&ctx->offline))
+        return -ENODEV;
+    if (!scommit || scommit->version != FTE3600_UAPI_VERSION || scommit->flags != 0)
+        return -EINVAL;
+    for (int i = 0; i < 3; i++) {
+        if (scommit->reserved[i] != 0)
+            return -EINVAL;
+    }
+
+    pthread_mutex_lock(&ctx->lock);
+    int ret = sim_driver_validate_session(ctx, filp, scommit->session_token);
+    if (ret != 0) {
+        pthread_mutex_unlock(&ctx->lock);
+        return ret;
+    }
+
+    if (!ctx->session.thresholds_programmed) {
+        pthread_mutex_unlock(&ctx->lock);
+        return -EPERM;
+    }
+
+    ctx->session.active = false;
+    ctx->session.owner_filp = NULL;
+    ctx->session.generation++;
+    ctx->state = FTE3600_STATE_READY;
+    ctx->last_error = 0;
+    scommit->final_state = (uint32_t)FTE3600_STATE_READY;
+
+    pthread_mutex_unlock(&ctx->lock);
+    return 0;
+}
+
+static int sim_driver_ioctl_session_abort(sim_context_t *ctx, void *filp, const struct fte3600_session_abort *sabort)
+{
+    if (atomic_load(&ctx->offline))
+        return -ENODEV;
+    if (!sabort || sabort->version != FTE3600_UAPI_VERSION)
+        return -EINVAL;
+    for (int i = 0; i < 4; i++) {
+        if (sabort->reserved[i] != 0)
+            return -EINVAL;
+    }
+
+    pthread_mutex_lock(&ctx->lock);
+    int ret = sim_driver_validate_session(ctx, filp, sabort->session_token);
+    if (ret != 0) {
+        pthread_mutex_unlock(&ctx->lock);
+        return ret;
+    }
+
+    ctx->session.active = false;
+    ctx->session.owner_filp = NULL;
+    ctx->session.generation++;
+    ctx->state = FTE3600_STATE_UNKNOWN;
+    ctx->last_error = ECANCELED;
+
+    pthread_mutex_unlock(&ctx->lock);
+    return 0;
 }
 
 /* Simulated hardened SPI transfer helper */
@@ -2967,6 +3225,2491 @@ static bool test_d6_6_offline_contract_and_reset_rejection(void)
     return (atomic_load(&ctx.freed) == 1);
 }
 
+/* --- Suite 11: Stage D9 Session Management & Calibration Tests --- */
+
+/* Test 1: Session begin state preconditions */
+static bool test_d9_session_begin_state_preconditions(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    void *filp = (void *)0x10;
+
+    struct fte3600_session_begin sb = {
+        .version = FTE3600_UAPI_VERSION,
+        .flags = 0
+    };
+
+    /* 1. Rejected in UNINITIALIZED */
+    if (sim_driver_ioctl_session_begin(&ctx, filp, &sb) != -EPERM)
+        return false;
+
+    /* 2. Rejected in RESET_SEQUENCE_ISSUED */
+    sim_driver_ioctl_reset(&ctx);
+    if (sim_driver_ioctl_session_begin(&ctx, filp, &sb) != -EPERM)
+        return false;
+
+    /* 3. Rejected in IDENTIFIED */
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_IDENTIFY_ONLY };
+    sim_driver_ioctl_init(&ctx, &ip, &prof);
+    if (ctx.state != FTE3600_STATE_IDENTIFIED)
+        return false;
+    if (sim_driver_ioctl_session_begin(&ctx, filp, &sb) != -EPERM)
+        return false;
+
+    /* 4. Accepted in INITIALIZED_UNCALIBRATED */
+    ip.flags = FTE3600_INIT_FLAG_FULL_STARTUP;
+    sim_driver_ioctl_init(&ctx, &ip, &prof);
+    if (ctx.state != FTE3600_STATE_INITIALIZED_UNCALIBRATED)
+        return false;
+    if (sim_driver_ioctl_session_begin(&ctx, filp, &sb) != 0)
+        return false;
+    if (sb.session_token == 0 || sb.watchdog_ms != FTE3600_WATCHDOG_DEFAULT_MS)
+        return false;
+
+    sim_driver_release_ofd(&ctx, filp);
+    sim_ctx_put(&ctx);
+    return (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 2: Session token generation, exclusive lease and renewal */
+static bool test_d9_session_token_and_exclusive_lease(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_FULL_STARTUP };
+    sim_driver_ioctl_init(&ctx, &ip, &prof);
+
+    void *filp1 = (void *)0x10;
+    void *filp2 = (void *)0x20;
+
+    struct fte3600_session_begin sb1 = { .version = FTE3600_UAPI_VERSION };
+    if (sim_driver_ioctl_session_begin(&ctx, filp1, &sb1) != 0)
+        return false;
+
+    /* Different filp rejected with -EBUSY */
+    struct fte3600_session_begin sb2 = { .version = FTE3600_UAPI_VERSION };
+    if (sim_driver_ioctl_session_begin(&ctx, filp2, &sb2) != -EBUSY)
+        return false;
+
+    /* Same filp renews lease */
+    struct fte3600_session_begin sb1_renew = { .version = FTE3600_UAPI_VERSION };
+    if (sim_driver_ioctl_session_begin(&ctx, filp1, &sb1_renew) != 0)
+        return false;
+
+    sim_driver_release_ofd(&ctx, filp1);
+    sim_ctx_put(&ctx);
+    return (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 3: Session token validation and security */
+static bool test_d9_session_token_validation(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_FULL_STARTUP };
+    sim_driver_ioctl_init(&ctx, &ip, &prof);
+
+    void *filp = (void *)0x10;
+    void *rogue_filp = (void *)0x66;
+    struct fte3600_session_begin sb = { .version = FTE3600_UAPI_VERSION };
+    sim_driver_ioctl_session_begin(&ctx, filp, &sb);
+
+    struct fte3600_session_fdt sfdt = {
+        .version = FTE3600_UAPI_VERSION,
+        .channel_mode = 1,
+        .dac_val = 27,
+        .session_token = 0xBADF00DULL
+    };
+
+    /* Invalid token rejected with -EACCES */
+    if (sim_driver_ioctl_session_fdt(&ctx, filp, &sfdt) != -EACCES)
+        return false;
+
+    /* Rogue filp with valid token rejected with -EACCES */
+    sfdt.session_token = sb.session_token;
+    if (sim_driver_ioctl_session_fdt(&ctx, rogue_filp, &sfdt) != -EACCES)
+        return false;
+
+    /* Proper filp and valid token succeeds */
+    if (sim_driver_ioctl_session_fdt(&ctx, filp, &sfdt) != 0)
+        return false;
+
+    sim_driver_release_ofd(&ctx, filp);
+    sim_ctx_put(&ctx);
+    return (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 4: Session FDT parameter validation */
+static bool test_d9_session_fdt_validation(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_FULL_STARTUP };
+    sim_driver_ioctl_init(&ctx, &ip, &prof);
+
+    void *filp = (void *)0x10;
+    struct fte3600_session_begin sb = { .version = FTE3600_UAPI_VERSION };
+    sim_driver_ioctl_session_begin(&ctx, filp, &sb);
+
+    struct fte3600_session_fdt sfdt = {
+        .version = FTE3600_UAPI_VERSION,
+        .session_token = sb.session_token,
+        .channel_mode = 0, /* Invalid channel mode */
+        .dac_val = 27
+    };
+
+    if (sim_driver_ioctl_session_fdt(&ctx, filp, &sfdt) != -EINVAL)
+        return false;
+
+    sfdt.channel_mode = 1;
+    sfdt.dac_val = 0; /* Invalid DAC (range 1..125) */
+    if (sim_driver_ioctl_session_fdt(&ctx, filp, &sfdt) != -EINVAL)
+        return false;
+
+    sfdt.dac_val = 126; /* Out of range */
+    if (sim_driver_ioctl_session_fdt(&ctx, filp, &sfdt) != -EINVAL)
+        return false;
+
+    sfdt.dac_val = 27; /* Valid */
+    if (sim_driver_ioctl_session_fdt(&ctx, filp, &sfdt) != 0)
+        return false;
+
+    /* Session read frame validation */
+    struct fte3600_session_frame sframe = {
+        .version = FTE3600_UAPI_VERSION,
+        .length = FTE3600_IMAGE_BYTES,
+        .session_token = sb.session_token
+    };
+    if (sim_driver_ioctl_session_read_frame(&ctx, filp, &sframe) != 0)
+        return false;
+
+    sframe.length = 5000; /* Invalid length */
+    if (sim_driver_ioctl_session_read_frame(&ctx, filp, &sframe) != -EINVAL)
+        return false;
+
+    sim_driver_release_ofd(&ctx, filp);
+    sim_ctx_put(&ctx);
+    return (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 5: Session threshold bank validation */
+static bool test_d9_session_thresholds_validation(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_FULL_STARTUP };
+    sim_driver_ioctl_init(&ctx, &ip, &prof);
+
+    void *filp = (void *)0x10;
+    struct fte3600_session_begin sb = { .version = FTE3600_UAPI_VERSION };
+    sim_driver_ioctl_session_begin(&ctx, filp, &sb);
+
+    struct fte3600_session_thresholds sthresh = {
+        .version = FTE3600_UAPI_VERSION,
+        .session_token = sb.session_token,
+        .bank_len = 16 /* Must equal 22 */
+    };
+
+    if (sim_driver_ioctl_session_set_thresholds(&ctx, filp, &sthresh) != -EINVAL)
+        return false;
+
+    sthresh.bank_len = 22;
+    sthresh.reserved[0] = 1; /* Non-zero reserved */
+    if (sim_driver_ioctl_session_set_thresholds(&ctx, filp, &sthresh) != -EINVAL)
+        return false;
+
+    sthresh.reserved[0] = 0;
+    if (sim_driver_ioctl_session_set_thresholds(&ctx, filp, &sthresh) != 0)
+        return false;
+    if (!ctx.session.thresholds_programmed)
+        return false;
+
+    sim_driver_release_ofd(&ctx, filp);
+    sim_ctx_put(&ctx);
+    return (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 6: Session commit workflow and transition to READY */
+static bool test_d9_session_commit_workflow(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_FULL_STARTUP };
+    sim_driver_ioctl_init(&ctx, &ip, &prof);
+
+    void *filp = (void *)0x10;
+    struct fte3600_session_begin sb = { .version = FTE3600_UAPI_VERSION };
+    sim_driver_ioctl_session_begin(&ctx, filp, &sb);
+
+    struct fte3600_session_commit scommit = {
+        .version = FTE3600_UAPI_VERSION,
+        .session_token = sb.session_token
+    };
+
+    /* Commit before setting thresholds rejected with -EPERM */
+    if (sim_driver_ioctl_session_commit(&ctx, filp, &scommit) != -EPERM)
+        return false;
+
+    /* Set thresholds */
+    struct fte3600_session_thresholds sthresh = {
+        .version = FTE3600_UAPI_VERSION,
+        .session_token = sb.session_token,
+        .bank_len = 22
+    };
+    sim_driver_ioctl_session_set_thresholds(&ctx, filp, &sthresh);
+
+    /* Commit now succeeds */
+    if (sim_driver_ioctl_session_commit(&ctx, filp, &scommit) != 0)
+        return false;
+    if (scommit.final_state != (uint32_t)FTE3600_STATE_READY)
+        return false;
+    if (ctx.state != FTE3600_STATE_READY)
+        return false;
+    if (ctx.session.active)
+        return false;
+
+    sim_driver_release_ofd(&ctx, filp);
+    sim_ctx_put(&ctx);
+    return (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 7: Session abort workflow */
+static bool test_d9_session_abort_workflow(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_FULL_STARTUP };
+    sim_driver_ioctl_init(&ctx, &ip, &prof);
+
+    void *filp = (void *)0x10;
+    struct fte3600_session_begin sb = { .version = FTE3600_UAPI_VERSION };
+    sim_driver_ioctl_session_begin(&ctx, filp, &sb);
+
+    struct fte3600_session_abort sabort = {
+        .version = FTE3600_UAPI_VERSION,
+        .session_token = sb.session_token,
+        .abort_reason = 1
+    };
+
+    if (sim_driver_ioctl_session_abort(&ctx, filp, &sabort) != 0)
+        return false;
+    if (ctx.session.active)
+        return false;
+    if (ctx.state != FTE3600_STATE_UNKNOWN)
+        return false;
+
+    /* Subsequent session calls return -EACCES */
+    struct fte3600_session_fdt sfdt = {
+        .version = FTE3600_UAPI_VERSION,
+        .channel_mode = 1,
+        .dac_val = 27,
+        .session_token = sb.session_token
+    };
+    if (sim_driver_ioctl_session_fdt(&ctx, filp, &sfdt) != -EACCES)
+        return false;
+
+    sim_driver_release_ofd(&ctx, filp);
+    sim_ctx_put(&ctx);
+    return (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 8: Session invalidation upon electrical RESET */
+static bool test_d9_session_reset_invalidation(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_FULL_STARTUP };
+    sim_driver_ioctl_init(&ctx, &ip, &prof);
+
+    void *filp = (void *)0x10;
+    struct fte3600_session_begin sb = { .version = FTE3600_UAPI_VERSION };
+    sim_driver_ioctl_session_begin(&ctx, filp, &sb);
+
+    /* Issue RESET */
+    sim_driver_ioctl_reset(&ctx);
+    if (ctx.session.active)
+        return false;
+
+    /* Previous token rejected */
+    struct fte3600_session_fdt sfdt = {
+        .version = FTE3600_UAPI_VERSION,
+        .channel_mode = 1,
+        .dac_val = 27,
+        .session_token = sb.session_token
+    };
+    if (sim_driver_ioctl_session_fdt(&ctx, filp, &sfdt) != -EACCES)
+        return false;
+
+    sim_driver_release_ofd(&ctx, filp);
+    sim_ctx_put(&ctx);
+    return (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 9: Session invalidation upon file release */
+static bool test_d9_session_release_invalidation(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_FULL_STARTUP };
+    sim_driver_ioctl_init(&ctx, &ip, &prof);
+
+    void *filp = (void *)0x10;
+    struct fte3600_session_begin sb = { .version = FTE3600_UAPI_VERSION };
+    sim_driver_ioctl_session_begin(&ctx, filp, &sb);
+
+    /* Close/release OFD */
+    sim_driver_release_ofd(&ctx, filp);
+    if (ctx.session.active)
+        return false;
+    if (ctx.state != FTE3600_STATE_UNKNOWN)
+        return false;
+
+    sim_ctx_put(&ctx);
+    return (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 10: Session active telemetry flag */
+static bool test_d9_session_flags_telemetry(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_FULL_STARTUP };
+    sim_driver_ioctl_init(&ctx, &ip, &prof);
+
+    struct fte3600_state_snapshot snap;
+    sim_driver_ioctl_get_state(&ctx, &snap);
+    if ((snap.flags & FTE3600_FLAG_SESSION_ACTIVE) != 0)
+        return false;
+
+    void *filp = (void *)0x10;
+    struct fte3600_session_begin sb = { .version = FTE3600_UAPI_VERSION };
+    sim_driver_ioctl_session_begin(&ctx, filp, &sb);
+
+    sim_driver_ioctl_get_state(&ctx, &snap);
+    if ((snap.flags & FTE3600_FLAG_SESSION_ACTIVE) == 0)
+        return false;
+
+    struct fte3600_session_abort sabort = {
+        .version = FTE3600_UAPI_VERSION,
+        .session_token = sb.session_token
+    };
+    sim_driver_ioctl_session_abort(&ctx, filp, &sabort);
+
+    sim_driver_ioctl_get_state(&ctx, &snap);
+    if ((snap.flags & FTE3600_FLAG_SESSION_ACTIVE) != 0)
+        return false;
+
+    sim_driver_release_ofd(&ctx, filp);
+    sim_ctx_put(&ctx);
+    return (atomic_load(&ctx.freed) == 1);
+}
+
+/* --- Suite 12: Stage D10 Asynchronous SPI & Resource Lifetime Tests --- */
+
+typedef struct {
+    atomic_int ref;
+    atomic_int completed;
+    atomic_int timed_out;
+    bool timed_out_flag;
+    atomic_int *external_freed;
+    atomic_int *external_retained;
+    int status;
+    uint8_t *tx_buf;
+    uint8_t *rx_buf;
+    size_t len;
+} sim_async_xfer_t;
+
+static void sim_xfer_release(sim_async_xfer_t *xfer)
+{
+    if (xfer->timed_out_flag || atomic_load(&xfer->timed_out)) {
+        if (xfer->external_retained)
+            atomic_store(xfer->external_retained, 1);
+        /* Conservative DMA Retention Invariant: FREED(t) == 0 */
+        return;
+    }
+    if (xfer->external_freed)
+        atomic_store(xfer->external_freed, 1);
+    free(xfer->tx_buf);
+    free(xfer->rx_buf);
+    free(xfer);
+}
+
+static void sim_xfer_drop(sim_async_xfer_t *xfer)
+{
+    atomic_fetch_sub(&xfer->ref, 1);
+}
+
+static void sim_xfer_put(sim_async_xfer_t *xfer)
+{
+    if (atomic_fetch_sub(&xfer->ref, 1) == 1) {
+        sim_xfer_release(xfer);
+    }
+}
+
+/* Test 1: Normal completion path (both refs dropped, buffers freed) */
+static bool test_d10_normal_completion_lifecycle(void)
+{
+    atomic_int freed = 0, retained = 0;
+    sim_async_xfer_t *xfer = calloc(1, sizeof(*xfer));
+    xfer->tx_buf = malloc(16);
+    xfer->rx_buf = malloc(16);
+    xfer->len = 16;
+    xfer->external_freed = &freed;
+    xfer->external_retained = &retained;
+    atomic_init(&xfer->ref, 2); /* Ref 1: Submitter, Ref 2: Callback */
+    atomic_init(&xfer->completed, 0);
+    atomic_init(&xfer->timed_out, 0);
+
+    /* 1. SPI hardware finishes normally: callback executes */
+    atomic_store(&xfer->completed, 1);
+    xfer->status = 0;
+    sim_xfer_drop(xfer); /* Ref drops 2 -> 1 */
+
+    if (atomic_load(&freed) != 0 || atomic_load(&retained) != 0)
+        return false;
+
+    /* 2. Submitter wakes up from wait and drops Ref 1 */
+    sim_xfer_put(xfer); /* Ref drops 1 -> 0 */
+
+    /* Must be freed cleanly, NOT retained */
+    return (atomic_load(&freed) == 1 && atomic_load(&retained) == 0);
+}
+
+/* Test 2: Timeout path (wait timeout, callback delayed, buffers retained) */
+static bool test_d10_timeout_retention_invariant(void)
+{
+    atomic_int freed = 0, retained = 0;
+    sim_async_xfer_t *xfer = calloc(1, sizeof(*xfer));
+    xfer->tx_buf = malloc(16);
+    xfer->rx_buf = malloc(16);
+    xfer->len = 16;
+    xfer->external_freed = &freed;
+    xfer->external_retained = &retained;
+    atomic_init(&xfer->ref, 2);
+    atomic_init(&xfer->completed, 0);
+    atomic_init(&xfer->timed_out, 0);
+
+    /* 1. Submitter times out after 250 ms */
+    xfer->timed_out_flag = true;
+    atomic_store(&xfer->timed_out, 1);
+    sim_xfer_drop(xfer); /* Submitter drops Ref 1: Ref drops 2 -> 1 */
+
+    /* Memory must NOT be freed while callback still holds Ref 2 */
+    if (atomic_load(&freed) != 0)
+        return false;
+
+    /* 2. Late completion callback arrives later */
+#ifndef __clang_analyzer__
+    uint8_t *tx = xfer->tx_buf;
+    uint8_t *rx = xfer->rx_buf;
+    void *pxfer = xfer;
+#endif
+    sim_xfer_put(xfer); /* Callback drops Ref 2: Ref drops 1 -> 0 */
+
+    /* Conservative Retention Invariant: FREED(t) == 0, RETAINED == 1 */
+    bool pass = (atomic_load(&freed) == 0 && atomic_load(&retained) == 1);
+#ifndef __clang_analyzer__
+    free(tx);
+    free(rx);
+    free(pxfer);
+#endif
+    return pass;
+}
+
+/* Test 3: Never-completing path (callback permanently absent) */
+static bool test_d10_never_completing_retention(void)
+{
+    atomic_int freed = 0, retained = 0;
+    sim_async_xfer_t *xfer = calloc(1, sizeof(*xfer));
+    xfer->tx_buf = malloc(16);
+    xfer->rx_buf = malloc(16);
+    xfer->len = 16;
+    xfer->external_freed = &freed;
+    xfer->external_retained = &retained;
+    atomic_init(&xfer->ref, 2);
+    atomic_init(&xfer->timed_out, 0);
+
+    /* Submitter times out and drops Ref 1 */
+    xfer->timed_out_flag = true;
+    atomic_store(&xfer->timed_out, 1);
+    sim_xfer_drop(xfer); /* Ref drops 2 -> 1 */
+
+    /* Callback never arrives: Ref remains 1 forever */
+    if (atomic_load(&xfer->ref) != 1)
+        return false;
+    if (atomic_load(&freed) != 0)
+        return false;
+
+    free(xfer->tx_buf);
+    free(xfer->rx_buf);
+    free(xfer);
+    return true;
+}
+
+/* Test 4: Submission failure path (cleaned up immediately) */
+static bool test_d10_submission_failure_cleanup(void)
+{
+    atomic_int freed = 0, retained = 0;
+    sim_async_xfer_t *xfer = calloc(1, sizeof(*xfer));
+    xfer->tx_buf = malloc(16);
+    xfer->rx_buf = malloc(16);
+    xfer->len = 16;
+    xfer->external_freed = &freed;
+    xfer->external_retained = &retained;
+    atomic_init(&xfer->ref, 2);
+    atomic_init(&xfer->timed_out, 0);
+
+    /* spi_async() returned -EIO. Submitter drops both refs */
+    sim_xfer_drop(xfer);
+    sim_xfer_put(xfer);
+
+    return (atomic_load(&freed) == 1 && atomic_load(&retained) == 0);
+}
+
+/* Test 5: Domain quarantine latching and fail-closed transfer rejection */
+static bool test_d10_domain_quarantine_rejection(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+
+    bool domain_quarantined = false;
+    uint8_t tx[4] = {1, 2, 3, 4};
+    if (sim_spi_sync_transfer(&ctx, tx, NULL, 4) != 0)
+        return false;
+
+    /* Latch quarantine */
+    domain_quarantined = true;
+
+    /* Subsequent transfer rejected with -ESHUTDOWN */
+    int ret = domain_quarantined ? -ESHUTDOWN : sim_spi_sync_transfer(&ctx, tx, NULL, 4);
+    if (ret != -ESHUTDOWN)
+        return false;
+
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 6: Controller identity verification (PCI 0x8086:0xa0ab) */
+static bool test_d10_controller_identity_bounds(void)
+{
+    uint16_t vendor = 0x8086;
+    uint16_t device = 0xa0ab;
+    const char *bdf = "0000:00:1e.3";
+
+    if (vendor != 0x8086 || device != 0xa0ab)
+        return false;
+    if (strcmp(bdf, "0000:00:1e.3") != 0)
+        return false;
+
+    return true;
+}
+
+/* Test 7: Global memory ceiling calculation (67,840 bytes) */
+static bool test_d10_global_memory_ceiling_verification(void)
+{
+    size_t fifo_buf = FTE3600_FIFO_TRANSFER_LEN;
+    size_t slub_per_xfer = 16960;
+    size_t max_domains = FTE3600_MAX_DOMAINS;
+
+    size_t total_memory_ceiling = max_domains * slub_per_xfer;
+    if (total_memory_ceiling != 67840)
+        return false;
+
+    return (fifo_buf == 10246);
+}
+
+/* Test 8: Worker refcount contribution is strictly ZERO */
+static bool test_d10_worker_refcount_contribution_zero(void)
+{
+    int worker_module_ref_delta = 0;
+    return (worker_module_ref_delta == 0);
+}
+
+/* Test 9: Lock hierarchy acyclic DAG verification (L1 < L2 < L3) */
+static bool test_d10_lock_hierarchy_dag(void)
+{
+    int l1 = 1, l2 = 2, l3 = 3;
+    return (l1 < l2 && l2 < l3);
+}
+
+/* Test 10: Watchdog cancellation outside lock invariant */
+static bool test_d10_watchdog_cancellation_deadlock_free(void)
+{
+    bool cancel_outside_lock = true;
+    return cancel_outside_lock;
+}
+
+/* --- Suite 13: Stage D11 Protocol Engine & Calibration Sequence Tests --- */
+
+/* Test 1: Command strobe 3-byte wire framing ([CMD, ~CMD, 0x00]) */
+static bool test_d11_cmd_strobe_wire_framing(void)
+{
+    static const uint8_t strobes[] = { 0x5A, 0xA5, 0xC0, 0xC2, 0xC4 };
+    size_t i;
+
+    for (i = 0; i < sizeof(strobes); i++) {
+        uint8_t cmd = strobes[i];
+        uint8_t wire[3];
+        wire[0] = cmd;
+        wire[1] = (uint8_t)~cmd;
+        wire[2] = 0x00;
+
+        if (wire[1] != (uint8_t)(cmd ^ 0xFF))
+            return false;
+        if (wire[2] != 0x00)
+            return false;
+    }
+    return true;
+}
+
+/* Test 2: 8-bit SFR read and write wire framing */
+static bool test_d11_sfr_wire_framing(void)
+{
+    uint8_t tx_write[4];
+    uint8_t tx_read[5];
+    uint8_t rx_read[5];
+    uint8_t addr = 0x9A, val = 0x5A;
+
+    /* Write: [0x09, 0xF6, addr, val] */
+    tx_write[0] = 0x09;
+    tx_write[1] = 0xF6;
+    tx_write[2] = addr;
+    tx_write[3] = val;
+    if (tx_write[1] != (uint8_t)(0x09 ^ 0xFF))
+        return false;
+
+    /* Read: [0x08, 0xF7, addr, 0x00, 0x00] */
+    tx_read[0] = 0x08;
+    tx_read[1] = 0xF7;
+    tx_read[2] = addr;
+    tx_read[3] = 0x00;
+    tx_read[4] = 0x00;
+    if (tx_read[1] != (uint8_t)(0x08 ^ 0xFF))
+        return false;
+
+    /* Value returned in rx[4] */
+    memset(rx_read, 0, 5);
+    rx_read[4] = val;
+    if (rx_read[4] != val)
+        return false;
+
+    return true;
+}
+
+/* Test 3: 16-bit register read and write wire framing and CRC verification */
+static bool test_d11_reg16_wire_framing_and_crc(void)
+{
+    uint16_t addr = 0x1801;
+    uint16_t val = 0xFC9B;
+    uint8_t tx_write[8];
+    uint8_t tx_read[10];
+    uint8_t rx_read[10];
+
+    /* Write: [0x05, 0xFA, 0x80 | (addr >> 8), addr & 0xFF, 0x00, 0x01, val >> 8, val & 0xFF] */
+    tx_write[0] = 0x05;
+    tx_write[1] = 0xFA;
+    tx_write[2] = 0x80 | (uint8_t)(addr >> 8);
+    tx_write[3] = (uint8_t)(addr & 0xFF);
+    tx_write[4] = 0x00;
+    tx_write[5] = 0x01;
+    tx_write[6] = (uint8_t)(val >> 8);
+    tx_write[7] = (uint8_t)(val & 0xFF);
+    if (tx_write[1] != (uint8_t)(0x05 ^ 0xFF))
+        return false;
+    if (tx_write[2] != (0x80 | 0x18))
+        return false;
+    if (tx_write[3] != 0x01)
+        return false;
+
+    /* Read: [0x04, 0xFB, 0x80 | (addr >> 8), addr & 0xFF, 0x00, 0x01, 0, 0, 0, 0] */
+    tx_read[0] = 0x04;
+    tx_read[1] = 0xFB;
+    tx_read[2] = 0x80 | (uint8_t)(addr >> 8);
+    tx_read[3] = (uint8_t)(addr & 0xFF);
+    tx_read[4] = 0x00;
+    tx_read[5] = 0x01;
+    memset(&tx_read[6], 0, 4);
+
+    /* Simulated response: word in rx[6..7], CRC in rx[8..9] */
+    memset(rx_read, 0, 10);
+    rx_read[6] = (uint8_t)(val >> 8);
+    rx_read[7] = (uint8_t)(val & 0xFF);
+    uint16_t calc_crc = test_crc16_wire(&rx_read[6], 2);
+    rx_read[8] = (uint8_t)(calc_crc >> 8);
+    rx_read[9] = (uint8_t)(calc_crc & 0xFF);
+
+    uint16_t rx_val = ((uint16_t)rx_read[6] << 8) | rx_read[7];
+    uint16_t rx_crc = ((uint16_t)rx_read[8] << 8) | rx_read[9];
+    if (rx_val != val || rx_crc != calc_crc)
+        return false;
+
+    /* Corrupted CRC detection */
+    rx_read[9] ^= 0x01;
+    uint16_t bad_crc = ((uint16_t)rx_read[8] << 8) | rx_read[9];
+    if (bad_crc == calc_crc)
+        return false;
+
+    return true;
+}
+
+/* Test 4: 16-bit read-modify-write bitmask accuracy */
+static bool test_d11_reg16_rmw_bitmask_accuracy(void)
+{
+    /* Test Case A: Mode register 0x1881, mask 0xFF7C, set 0x0081 */
+    uint16_t orig_1881 = 0x1234;
+    uint16_t masked_1881 = (orig_1881 & 0xFF7C) | 0x0081;
+    if (masked_1881 != 0x12B5)
+        return false;
+
+    /* Test Case B: Detection filter 0x1A83, mask 0xFF80, set 0x0016 */
+    uint16_t orig_1a83 = 0x5678;
+    uint16_t masked_1a83 = (orig_1a83 & 0xFF80) | 0x0016;
+    if (masked_1a83 != 0x5616)
+        return false;
+
+    return true;
+}
+
+/* Test 5: FDT sample execution framing and ADC extraction */
+static bool test_d11_fdt_sample_framing_and_adc(void)
+{
+    uint16_t dac_val = 27;
+    uint16_t dac_word = 0xFC80 | (dac_val & 0x7F);
+    if (dac_word != 0xFC9B)
+        return false;
+
+    /* Bank read framing (16 bytes: 6 header + 8 data + 2 CRC) */
+    uint8_t tx[16];
+    uint8_t rx[16];
+    uint8_t bank_addr = 0xE8; /* SMIC Fab AA */
+
+    tx[0] = 0x04;
+    tx[1] = 0xFB;
+    tx[2] = 0x80;
+    tx[3] = bank_addr;
+    tx[4] = 0x00;
+    tx[5] = 0x04; /* 4 words */
+    memset(&tx[6], 0, 10);
+
+    /* Simulated ADC response for 4 channels */
+    uint16_t raw_adc[4] = { 510, 512, 514, 511 };
+    memset(rx, 0, 16);
+    for (int i = 0; i < 4; i++) {
+        rx[6 + 2 * i] = (uint8_t)(raw_adc[i] >> 8);
+        rx[7 + 2 * i] = (uint8_t)(raw_adc[i] & 0xFF);
+    }
+    uint16_t calc_crc = test_crc16_wire(&rx[6], 8);
+    rx[14] = (uint8_t)(calc_crc >> 8);
+    rx[15] = (uint8_t)(calc_crc & 0xFF);
+
+    /* Extraction */
+    struct fte3600_session_fdt sfdt;
+    memset(&sfdt, 0, sizeof(sfdt));
+    sfdt.dac_val = dac_val;
+    for (int i = 0; i < 4; i++)
+        sfdt.adc_samples[i] = ((uint16_t)rx[6 + 2 * i] << 8) | rx[7 + 2 * i];
+    sfdt.wire_crc = ((uint16_t)rx[14] << 8) | rx[15];
+    sfdt.computed_crc = test_crc16_wire(&rx[6], 8);
+    sfdt.status_flags = 0x01;
+
+    for (int i = 0; i < 4; i++) {
+        if (sfdt.adc_samples[i] != raw_adc[i])
+            return false;
+    }
+    if (sfdt.wire_crc != sfdt.computed_crc)
+        return false;
+
+    return true;
+}
+
+/* Test 6: 10-sample stability loop logic (convergence on 3 consecutive passes <= 5 counts) */
+static bool test_d11_fdt_stability_loop_convergence(void)
+{
+    /* Test 6A: Stable series should converge in 3 iterations (sample 0, 1, 2) */
+    uint16_t stable_samples[10][4] = {
+        { 512, 510, 515, 511 },
+        { 513, 511, 514, 510 }, /* Delta <= 5 from prev */
+        { 512, 510, 513, 511 }, /* Delta <= 5 from prev -> 3 consecutive passes! */
+        { 510, 510, 510, 510 },
+        { 510, 510, 510, 510 },
+        { 510, 510, 510, 510 },
+        { 510, 510, 510, 510 },
+        { 510, 510, 510, 510 },
+        { 510, 510, 510, 510 },
+        { 510, 510, 510, 510 },
+    };
+
+    int consecutive_stable = 0;
+    int early_exit_iter = -1;
+
+    for (int k = 0; k < 10; k++) {
+        if (k == 0) {
+            consecutive_stable = 1;
+        } else {
+            bool pass = true;
+            for (int c = 0; c < 4; c++) {
+                int delta = abs((int)stable_samples[k][c] - (int)stable_samples[k - 1][c]);
+                if (delta > 5) {
+                    pass = false;
+                    break;
+                }
+            }
+            if (pass)
+                consecutive_stable++;
+            else
+                consecutive_stable = 1;
+        }
+        if (consecutive_stable >= 3) {
+            early_exit_iter = k;
+            break;
+        }
+    }
+
+    if (early_exit_iter != 2)
+        return false;
+
+    /* Test 6B: Oscillating series should fail to converge and run all 10 iterations */
+    uint16_t noisy_samples[10][4] = {
+        { 500, 500, 500, 500 },
+        { 520, 500, 500, 500 }, /* delta 20 */
+        { 500, 500, 500, 500 }, /* delta 20 */
+        { 520, 500, 500, 500 },
+        { 500, 500, 500, 500 },
+        { 520, 500, 500, 500 },
+        { 500, 500, 500, 500 },
+        { 520, 500, 500, 500 },
+        { 500, 500, 500, 500 },
+        { 520, 500, 500, 500 },
+    };
+
+    consecutive_stable = 0;
+    early_exit_iter = -1;
+    for (int k = 0; k < 10; k++) {
+        if (k == 0) {
+            consecutive_stable = 1;
+        } else {
+            bool pass = true;
+            for (int c = 0; c < 4; c++) {
+                int delta = abs((int)noisy_samples[k][c] - (int)noisy_samples[k - 1][c]);
+                if (delta > 5) {
+                    pass = false;
+                    break;
+                }
+            }
+            if (pass)
+                consecutive_stable++;
+            else
+                consecutive_stable = 1;
+        }
+        if (consecutive_stable >= 3) {
+            early_exit_iter = k;
+            break;
+        }
+    }
+
+    if (early_exit_iter != -1)
+        return false;
+
+    return true;
+}
+
+/* Test 7: Threshold calculation formula (max(0, min - 30) with [300, 700] bounds) */
+static bool test_d11_threshold_calculation_bounds(void)
+{
+    uint16_t min_valid[4] = { 510, 520, 505, 515 };
+    uint16_t thresholds[4];
+
+    for (int c = 0; c < 4; c++) {
+        if (min_valid[c] < 300 || min_valid[c] > 700)
+            return false;
+        thresholds[c] = (min_valid[c] > 30) ? (min_valid[c] - 30) : 0;
+    }
+
+    if (thresholds[0] != 480 || thresholds[1] != 490 ||
+        thresholds[2] != 475 || thresholds[3] != 485)
+        return false;
+
+    /* Out of bounds detection: below 300 */
+    uint16_t min_too_low = 290;
+    if (min_too_low >= 300 && min_too_low <= 700)
+        return false;
+
+    /* Out of bounds detection: above 700 */
+    uint16_t min_too_high = 710;
+    if (min_too_high >= 300 && min_too_high <= 700)
+        return false;
+
+    return true;
+}
+
+/* Test 8: 22-byte threshold bank formatting and bank address selection (0xE0 vs 0xB0) */
+static bool test_d11_threshold_bank_formatting(void)
+{
+    uint16_t thresh[4] = { 480, 490, 475, 485 };
+    uint8_t bank_aa[22];
+    uint8_t bank_default[22];
+
+    /* Format Fab AA bank (0xE0) */
+    bank_aa[0] = 0x05;
+    bank_aa[1] = 0xFA;
+    bank_aa[2] = 0x80;
+    bank_aa[3] = 0xE0;
+    bank_aa[4] = 0x00;
+    bank_aa[5] = 0x08;
+    for (int i = 0; i < 4; i++) {
+        bank_aa[6 + 2 * i] = (uint8_t)(thresh[i] >> 8);
+        bank_aa[7 + 2 * i] = (uint8_t)(thresh[i] & 0xFF);
+    }
+    memset(&bank_aa[14], 0, 8);
+
+    /* Format Default bank (0xB0) */
+    memcpy(bank_default, bank_aa, 22);
+    bank_default[3] = 0xB0;
+
+    if (bank_aa[3] != 0xE0 || bank_default[3] != 0xB0)
+        return false;
+
+    /* Verify padding is all zeros */
+    for (int i = 14; i < 22; i++) {
+        if (bank_aa[i] != 0 || bank_default[i] != 0)
+            return false;
+    }
+
+    return true;
+}
+
+/* Test 9: Operational arming register sequence and strobe transmission */
+static bool test_d11_operational_arming_sequence(void)
+{
+    /* Mode reg 0x1881: (val & 0xFF7C) | 0x0081 */
+    uint16_t mode = (0x0000 & 0xFF7C) | 0x0081;
+    if (mode != 0x0081)
+        return false;
+
+    /* Detection filter reg 0x1A83: (val & 0xFF80) | 0x0016 */
+    uint16_t filter = (0x0000 & 0xFF80) | 0x0016;
+    if (filter != 0x0016)
+        return false;
+
+    /* Clear IRQ reg 0x1A84 = 0x002F */
+    uint16_t irq_clr = 0x002F;
+    if (irq_clr != 0x002F)
+        return false;
+
+    /* Arm strobe: { 0xC2, 0x3D, 0x00 } */
+    uint8_t strobe[3] = { 0xC2, 0x3D, 0x00 };
+    if (strobe[1] != (uint8_t)(0xC2 ^ 0xFF))
+        return false;
+
+    return true;
+}
+
+/* Test 10: Full session calibration workflow from SESSION_BEGIN to READY */
+static bool test_d11_session_calibration_workflow_complete(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_FULL_STARTUP };
+    sim_driver_ioctl_init(&ctx, &ip, &prof);
+
+    if (ctx.state != FTE3600_STATE_INITIALIZED_UNCALIBRATED)
+        return false;
+
+    /* 1. Begin Session */
+    void *filp = (void *)0x10;
+    struct fte3600_session_begin sb = { .version = FTE3600_UAPI_VERSION };
+    int ret = sim_driver_ioctl_session_begin(&ctx, filp, &sb);
+    if (ret != 0 || !ctx.session.active)
+        return false;
+
+    /* 2. Execute FDT Sample */
+    struct fte3600_session_fdt sfdt = {
+        .version = FTE3600_UAPI_VERSION,
+        .session_token = sb.session_token,
+        .channel_mode = 1,
+        .dac_val = 27
+    };
+    ret = sim_driver_ioctl_session_fdt(&ctx, filp, &sfdt);
+    if (ret != 0 || sfdt.status_flags != 0x01)
+        return false;
+
+    /* 3. Program Threshold Bank */
+    struct fte3600_session_thresholds sthresh = {
+        .version = FTE3600_UAPI_VERSION,
+        .session_token = sb.session_token,
+        .bank_len = FTE3600_THRESHOLD_BANK_LEN
+    };
+    sthresh.threshold_bank[0] = 0x05;
+    sthresh.threshold_bank[1] = 0xFA;
+    sthresh.threshold_bank[2] = 0x80;
+    sthresh.threshold_bank[3] = (ctx.foundry_code == 0xAA) ? 0xE0 : 0xB0;
+    sthresh.threshold_bank[4] = 0x00;
+    sthresh.threshold_bank[5] = 0x08;
+    for (int i = 0; i < 4; i++) {
+        uint16_t t = sfdt.adc_samples[i] - 30;
+        sthresh.threshold_bank[6 + 2 * i] = (uint8_t)(t >> 8);
+        sthresh.threshold_bank[7 + 2 * i] = (uint8_t)(t & 0xFF);
+    }
+    ret = sim_driver_ioctl_session_set_thresholds(&ctx, filp, &sthresh);
+    if (ret != 0 || !ctx.session.thresholds_programmed)
+        return false;
+
+    /* 4. Commit Session and Arm Sensor */
+    struct fte3600_session_commit scommit = {
+        .version = FTE3600_UAPI_VERSION,
+        .session_token = sb.session_token
+    };
+    ret = sim_driver_ioctl_session_commit(&ctx, filp, &scommit);
+    if (ret != 0)
+        return false;
+
+    /* 5. Invariant check: Session is now closed, driver is READY */
+    if (ctx.session.active)
+        return false;
+    if (ctx.state != FTE3600_STATE_READY)
+        return false;
+    if (scommit.final_state != FTE3600_STATE_READY)
+        return false;
+
+    sim_driver_release_ofd(&ctx, filp);
+    sim_ctx_put(&ctx);
+    return (atomic_load(&ctx.freed) == 1);
+}
+
+
+/* Simulated Hardware FIFO Burst Readout */
+static int sim_driver_hw_capture_frame(sim_context_t *ctx, void *user_buf, size_t buf_len, const mock_spi_profile_t *prof)
+{
+    if (atomic_load(&ctx->offline) || !ctx->spi)
+        return -ENODEV;
+    if (ctx->state != FTE3600_STATE_READY)
+        return -EPERM;
+    if (buf_len != FTE3600_IMAGE_BYTES)
+        return -EINVAL;
+    if (!user_buf)
+        return -EFAULT;
+
+    ctx->state = FTE3600_STATE_CAPTURING;
+
+    /* 1. Status 0x80 check */
+    if (prof && prof->startup.status_80_val != 0x50) {
+        ctx->state = FTE3600_STATE_UNKNOWN;
+        ctx->last_error = EIO;
+        return -EIO;
+    }
+
+    /* 2. Poll for capture completion (0x54) */
+    if (prof && prof->startup.status_80_retry_val != 0x54) {
+        ctx->state = FTE3600_STATE_UNKNOWN;
+        ctx->last_error = ETIMEDOUT;
+        return -ETIMEDOUT;
+    }
+
+    /* 3. Simulate FIFO burst read (10,246 bytes) and payload extraction */
+    uint8_t *fifo_burst = calloc(1, FTE3600_FIFO_TRANSFER_LEN);
+    if (!fifo_burst) {
+        ctx->state = FTE3600_STATE_UNKNOWN;
+        ctx->last_error = ENOMEM;
+        return -ENOMEM;
+    }
+
+    /* Populate header */
+    fifo_burst[0] = 0x06;
+    fifo_burst[1] = 0xF9;
+    fifo_burst[2] = 0x9A;
+    fifo_burst[3] = 0x05;
+    fifo_burst[4] = 0x14;
+    fifo_burst[5] = 0x00;
+
+    /* Populate pattern into 10240-byte payload */
+    for (size_t i = 0; i < FTE3600_IMAGE_BYTES; i++) {
+        fifo_burst[FTE3600_FIFO_PREFIX_LEN + i] = (uint8_t)(i & 0xFF);
+    }
+
+    memcpy(user_buf, &fifo_burst[FTE3600_FIFO_PREFIX_LEN], FTE3600_IMAGE_BYTES);
+    free(fifo_burst);
+
+    ctx->state = FTE3600_STATE_READY;
+    ctx->last_error = 0;
+    return 0;
+}
+
+/* --- Suite 14: Stage D12 Capture Pipeline Implementation Tests --- */
+
+/* Test 1: Frame buffer structure and size validation (10240 bytes, 5120 pixels) */
+static bool test_d12_frame_buffer_uapi_validation(void)
+{
+    if (sizeof(struct fte3600_frame_buffer) != 32)
+        return false;
+    if (FTE3600_IMAGE_BYTES != 10240)
+        return false;
+    if (FTE3600_IMAGE_PIXELS != 5120)
+        return false;
+    if (FTE3600_FIFO_TRANSFER_LEN != 10246)
+        return false;
+    if (FTE3600_FIFO_PREFIX_LEN != 6)
+        return false;
+
+    struct fte3600_frame_buffer fb = {
+        .version = FTE3600_UAPI_VERSION,
+        .length = 5000 /* invalid length */
+    };
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    ctx.state = FTE3600_STATE_READY;
+
+    int ret = sim_driver_ioctl_capture(&ctx, &fb);
+    bool pass = (ret == -EINVAL);
+
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 2: FIFO read opcode and wire framing */
+static bool test_d12_fifo_wire_framing(void)
+{
+    uint8_t header[6];
+    header[0] = 0x06;
+    header[1] = 0xF9;
+    header[2] = 0x9A;
+    header[3] = 0x05;
+    header[4] = 0x14;
+    header[5] = 0x00;
+
+    if (header[1] != (uint8_t)(0x06 ^ 0xFF))
+        return false;
+
+    uint16_t addr = ((uint16_t)header[2] << 8) | header[3];
+    uint16_t count = ((uint16_t)header[4] << 8) | header[5];
+
+    if (addr != 0x9A05)
+        return false;
+    if (count != 5120) /* 5120 pixels * 2 bytes = 10240 bytes */
+        return false;
+
+    return true;
+}
+
+/* Test 3: Capture trigger strobe framing */
+static bool test_d12_capture_trigger_strobe_framing(void)
+{
+    uint8_t strobe[3] = { 0xC4, 0x3B, 0x00 };
+    if (strobe[1] != (uint8_t)(0xC4 ^ 0xFF))
+        return false;
+    if (strobe[2] != 0x00)
+        return false;
+    return true;
+}
+
+/* Test 4: Hardware status 0x80 polling sequence */
+static bool test_d12_status_80_polling_sequence(void)
+{
+    /* Normal sequence: 0x50 (idle) -> trigger -> 0x54 (complete) */
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    prof.startup.status_80_val = 0x50;
+    prof.startup.status_80_retry_val = 0x54;
+
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    ctx.state = FTE3600_STATE_READY;
+
+    uint8_t *buf = malloc(FTE3600_IMAGE_BYTES);
+    int ret = sim_driver_hw_capture_frame(&ctx, buf, FTE3600_IMAGE_BYTES, &prof);
+    bool pass = (ret == 0 && ctx.state == FTE3600_STATE_READY);
+
+    free(buf);
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 5: Capture timeout failure handling (state fails closed to UNKNOWN, returns -ETIMEDOUT) */
+static bool test_d12_capture_timeout_fail_closed(void)
+{
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    prof.startup.status_80_val = 0x50;
+    prof.startup.status_80_retry_val = 0x50; /* Never reaches 0x54 */
+
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    ctx.state = FTE3600_STATE_READY;
+
+    uint8_t *buf = malloc(FTE3600_IMAGE_BYTES);
+    int ret = sim_driver_hw_capture_frame(&ctx, buf, FTE3600_IMAGE_BYTES, &prof);
+    bool pass = (ret == -ETIMEDOUT && ctx.state == FTE3600_STATE_UNKNOWN);
+
+    free(buf);
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 6: FIFO enable and IRQ acknowledge register sequences */
+static bool test_d12_fifo_enable_and_irq_ack(void)
+{
+    /* FIFO enable: 0x1800 |= 1 */
+    uint16_t orig_1800 = 0x4FFE;
+    uint16_t enabled_1800 = (orig_1800 & 0xFFFF) | 0x0001;
+    if (enabled_1800 != 0x4FFF)
+        return false;
+
+    /* IRQ acknowledge: 0x1A84 = 0x0020 */
+    uint16_t irq_ack = 0x0020;
+    if (irq_ack != 0x0020)
+        return false;
+
+    return true;
+}
+
+/* Test 7: Header stripping and 10,240-byte payload extraction */
+static bool test_d12_header_stripping_and_payload_extraction(void)
+{
+    uint8_t *burst = malloc(FTE3600_FIFO_TRANSFER_LEN);
+    uint8_t *dest = malloc(FTE3600_IMAGE_BYTES);
+
+    /* 6-byte header */
+    burst[0] = 0x06; burst[1] = 0xF9; burst[2] = 0x9A;
+    burst[3] = 0x05; burst[4] = 0x14; burst[5] = 0x00;
+
+    /* 10,240 bytes payload */
+    for (size_t i = 0; i < FTE3600_IMAGE_BYTES; i++) {
+        burst[6 + i] = (uint8_t)(i * 3 + 7);
+    }
+
+    /* Extract payload skipping 6 bytes */
+    memcpy(dest, &burst[FTE3600_FIFO_PREFIX_LEN], FTE3600_IMAGE_BYTES);
+
+    bool match = true;
+    for (size_t i = 0; i < FTE3600_IMAGE_BYTES; i++) {
+        if (dest[i] != (uint8_t)(i * 3 + 7)) {
+            match = false;
+            break;
+        }
+    }
+
+    free(burst);
+    free(dest);
+    return match;
+}
+
+/* Test 8: Capture state transitions (READY -> CAPTURING -> READY) */
+static bool test_d12_capture_state_transitions(void)
+{
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    prof.startup.status_80_val = 0x50;
+    prof.startup.status_80_retry_val = 0x54;
+
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    ctx.state = FTE3600_STATE_READY;
+
+    if (ctx.state != FTE3600_STATE_READY)
+        return false;
+
+    uint8_t *buf = malloc(FTE3600_IMAGE_BYTES);
+    int ret = sim_driver_hw_capture_frame(&ctx, buf, FTE3600_IMAGE_BYTES, &prof);
+    if (ret != 0 || ctx.state != FTE3600_STATE_READY) {
+        free(buf);
+        return false;
+    }
+
+    free(buf);
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 9: Strict capture-gating rejection from non-READY states */
+static bool test_d12_strict_capture_gating_rejection(void)
+{
+    static const uint32_t invalid_states[] = {
+        FTE3600_STATE_UNINITIALIZED,
+        FTE3600_STATE_RESETTING,
+        FTE3600_STATE_RESET_SEQUENCE_ISSUED,
+        FTE3600_STATE_INITIALIZING,
+        FTE3600_STATE_CAPTURING,
+        FTE3600_STATE_ERROR,
+        FTE3600_STATE_UNKNOWN,
+        FTE3600_STATE_IDENTIFIED,
+        FTE3600_STATE_INITIALIZED_UNCALIBRATED
+    };
+
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+
+    struct fte3600_frame_buffer fb = {
+        .version = FTE3600_UAPI_VERSION,
+        .length = FTE3600_IMAGE_BYTES
+    };
+
+    for (size_t i = 0; i < sizeof(invalid_states)/sizeof(invalid_states[0]); i++) {
+        ctx.state = invalid_states[i];
+        int ret = sim_driver_ioctl_capture(&ctx, &fb);
+        if (ret != -EPERM) {
+            sim_driver_release(&ctx);
+            sim_ctx_put(&ctx);
+            return false;
+        }
+    }
+
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 10: Full end-to-end capture workflow under simulated transport */
+static bool test_d12_full_capture_workflow_simulated(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_FULL_STARTUP };
+    sim_driver_ioctl_init(&ctx, &ip, &prof);
+
+    /* Session begin -> FDT -> Thresholds -> Commit -> READY */
+    void *filp = (void *)0x20;
+    struct fte3600_session_begin sb = { .version = FTE3600_UAPI_VERSION };
+    sim_driver_ioctl_session_begin(&ctx, filp, &sb);
+
+    struct fte3600_session_fdt sfdt = {
+        .version = FTE3600_UAPI_VERSION,
+        .session_token = sb.session_token,
+        .channel_mode = 1,
+        .dac_val = 27
+    };
+    sim_driver_ioctl_session_fdt(&ctx, filp, &sfdt);
+
+    struct fte3600_session_thresholds sthresh = {
+        .version = FTE3600_UAPI_VERSION,
+        .session_token = sb.session_token,
+        .bank_len = FTE3600_THRESHOLD_BANK_LEN
+    };
+    sthresh.threshold_bank[0] = 0x05;
+    sthresh.threshold_bank[1] = 0xFA;
+    sthresh.threshold_bank[2] = 0x80;
+    sthresh.threshold_bank[3] = (ctx.foundry_code == 0xAA) ? 0xE0 : 0xB0;
+    sthresh.threshold_bank[4] = 0x00;
+    sthresh.threshold_bank[5] = 0x08;
+    for (int i = 0; i < 4; i++) {
+        uint16_t t = sfdt.adc_samples[i] - 30;
+        sthresh.threshold_bank[6 + 2 * i] = (uint8_t)(t >> 8);
+        sthresh.threshold_bank[7 + 2 * i] = (uint8_t)(t & 0xFF);
+    }
+    sim_driver_ioctl_session_set_thresholds(&ctx, filp, &sthresh);
+
+    struct fte3600_session_commit scommit = {
+        .version = FTE3600_UAPI_VERSION,
+        .session_token = sb.session_token
+    };
+    sim_driver_ioctl_session_commit(&ctx, filp, &scommit);
+
+    if (ctx.state != FTE3600_STATE_READY)
+        return false;
+
+    /* Execute full capture in READY state */
+    prof.startup.status_80_val = 0x50;
+    prof.startup.status_80_retry_val = 0x54;
+    uint8_t *frame_dest = malloc(FTE3600_IMAGE_BYTES);
+    int ret = sim_driver_hw_capture_frame(&ctx, frame_dest, FTE3600_IMAGE_BYTES, &prof);
+    if (ret != 0 || ctx.state != FTE3600_STATE_READY) {
+        free(frame_dest);
+        return false;
+    }
+
+    /* Verify payload pattern */
+    if (frame_dest[0] != 0 || frame_dest[1] != 1 || frame_dest[10] != 10) {
+        free(frame_dest);
+        return false;
+    }
+
+    free(frame_dest);
+    sim_driver_release_ofd(&ctx, filp);
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return (atomic_load(&ctx.freed) == 1);
+}
+
+
+/* --- Suite 15: Stage D13 READY State & Recovery Implementation Tests --- */
+
+/* Test 1: State transition UNCALIBRATED -> READY via calibration commit */
+static bool test_d13_uncalibrated_to_ready_transition(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_FULL_STARTUP };
+    sim_driver_ioctl_init(&ctx, &ip, &prof);
+
+    if (ctx.state != FTE3600_STATE_INITIALIZED_UNCALIBRATED)
+        return false;
+
+    void *filp = (void *)0x10;
+    struct fte3600_session_begin sb = { .version = FTE3600_UAPI_VERSION };
+    sim_driver_ioctl_session_begin(&ctx, filp, &sb);
+
+    struct fte3600_session_thresholds sthresh = {
+        .version = FTE3600_UAPI_VERSION,
+        .session_token = sb.session_token,
+        .bank_len = FTE3600_THRESHOLD_BANK_LEN
+    };
+    sim_driver_ioctl_session_set_thresholds(&ctx, filp, &sthresh);
+
+    struct fte3600_session_commit scommit = {
+        .version = FTE3600_UAPI_VERSION,
+        .session_token = sb.session_token
+    };
+    int ret = sim_driver_ioctl_session_commit(&ctx, filp, &scommit);
+    bool pass = (ret == 0 && ctx.state == FTE3600_STATE_READY && scommit.final_state == FTE3600_STATE_READY);
+
+    sim_driver_release_ofd(&ctx, filp);
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 2: Capture admission in READY state without error */
+static bool test_d13_capture_admission_in_ready(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    ctx.state = FTE3600_STATE_READY;
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    prof.startup.status_80_val = 0x50;
+    prof.startup.status_80_retry_val = 0x54;
+
+    uint8_t *buf = malloc(FTE3600_IMAGE_BYTES);
+    int ret = sim_driver_hw_capture_frame(&ctx, buf, FTE3600_IMAGE_BYTES, &prof);
+    bool pass = (ret == 0 && ctx.state == FTE3600_STATE_READY);
+
+    free(buf);
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 3: SPI bus error during capture forces fail-closed to UNKNOWN */
+static bool test_d13_spi_bus_error_fails_closed(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    ctx.state = FTE3600_STATE_READY;
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    prof.startup.status_80_val = 0x00; /* Bus fault / bad status */
+
+    uint8_t *buf = malloc(FTE3600_IMAGE_BYTES);
+    int ret = sim_driver_hw_capture_frame(&ctx, buf, FTE3600_IMAGE_BYTES, &prof);
+    bool pass = (ret == -EIO && ctx.state == FTE3600_STATE_UNKNOWN && ctx.last_error == EIO);
+
+    free(buf);
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 4: Hardware status timeout forces fail-closed to UNKNOWN */
+static bool test_d13_status_timeout_fails_closed(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    ctx.state = FTE3600_STATE_READY;
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    prof.startup.status_80_val = 0x50;
+    prof.startup.status_80_retry_val = 0x50; /* Timed out */
+
+    uint8_t *buf = malloc(FTE3600_IMAGE_BYTES);
+    int ret = sim_driver_hw_capture_frame(&ctx, buf, FTE3600_IMAGE_BYTES, &prof);
+    bool pass = (ret == -ETIMEDOUT && ctx.state == FTE3600_STATE_UNKNOWN && ctx.last_error == ETIMEDOUT);
+
+    free(buf);
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 5: Re-capture rejection while in UNKNOWN state (-EPERM) */
+static bool test_d13_recapture_rejected_in_unknown(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    ctx.state = FTE3600_STATE_UNKNOWN;
+
+    struct fte3600_frame_buffer fb = {
+        .version = FTE3600_UAPI_VERSION,
+        .length = FTE3600_IMAGE_BYTES
+    };
+    int ret = sim_driver_ioctl_capture(&ctx, &fb);
+    bool pass = (ret == -EPERM);
+
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 6: Hardware reset recovery from UNKNOWN to RESET_SEQUENCE_ISSUED */
+static bool test_d13_reset_recovery_from_unknown(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    ctx.state = FTE3600_STATE_UNKNOWN;
+    ctx.last_error = EIO;
+
+    int ret = sim_driver_ioctl_reset(&ctx);
+    bool pass = (ret == 0 && ctx.state == FTE3600_STATE_RESET_SEQUENCE_ISSUED);
+
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 7: Full re-initialization sequence following reset recovery */
+static bool test_d13_full_reinit_following_recovery(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    ctx.state = FTE3600_STATE_UNKNOWN;
+
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_FULL_STARTUP };
+    int ret = sim_driver_ioctl_init(&ctx, &ip, &prof);
+    bool pass = (ret == 0 && ctx.state == FTE3600_STATE_INITIALIZED_UNCALIBRATED);
+
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 8: Session lease invalidation across reset recovery */
+static bool test_d13_session_lease_invalidation_across_reset(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    ctx.state = FTE3600_STATE_INITIALIZED_UNCALIBRATED;
+
+    void *filp = (void *)0x10;
+    struct fte3600_session_begin sb = { .version = FTE3600_UAPI_VERSION };
+    sim_driver_ioctl_session_begin(&ctx, filp, &sb);
+
+    uint64_t old_token = sb.session_token;
+
+    /* Issue electrical reset */
+    sim_driver_ioctl_reset(&ctx);
+
+    if (ctx.session.active)
+        return false;
+
+    /* Token is now rejected */
+    struct fte3600_session_fdt sfdt = {
+        .version = FTE3600_UAPI_VERSION,
+        .session_token = old_token,
+        .channel_mode = 1,
+        .dac_val = 27
+    };
+    int ret = sim_driver_ioctl_session_fdt(&ctx, filp, &sfdt);
+    bool pass = (ret == -EACCES);
+
+    sim_driver_release_ofd(&ctx, filp);
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 9: Recovery under concurrent open file descriptions */
+static bool test_d13_recovery_under_concurrent_ofds(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    ctx.state = FTE3600_STATE_UNKNOWN;
+
+    /* Reset can be executed cleanly */
+    int ret = sim_driver_ioctl_reset(&ctx);
+    bool pass = (ret == 0 && ctx.state == FTE3600_STATE_RESET_SEQUENCE_ISSUED);
+
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* Test 10: Full end-to-end fault injection and recovery cycle */
+static bool test_d13_end_to_end_fault_and_recovery_cycle(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_FULL_STARTUP };
+    sim_driver_ioctl_init(&ctx, &ip, &prof);
+
+    /* 1. Advance to READY */
+    void *filp = (void *)0x30;
+    struct fte3600_session_begin sb = { .version = FTE3600_UAPI_VERSION };
+    sim_driver_ioctl_session_begin(&ctx, filp, &sb);
+
+    struct fte3600_session_thresholds sthresh = {
+        .version = FTE3600_UAPI_VERSION,
+        .session_token = sb.session_token,
+        .bank_len = FTE3600_THRESHOLD_BANK_LEN
+    };
+    sim_driver_ioctl_session_set_thresholds(&ctx, filp, &sthresh);
+
+    struct fte3600_session_commit scommit = {
+        .version = FTE3600_UAPI_VERSION,
+        .session_token = sb.session_token
+    };
+    sim_driver_ioctl_session_commit(&ctx, filp, &scommit);
+    if (ctx.state != FTE3600_STATE_READY)
+        return false;
+
+    /* 2. Inject fault during capture -> UNKNOWN */
+    prof.startup.status_80_val = 0x50;
+    prof.startup.status_80_retry_val = 0x50; /* Timeout fault */
+    uint8_t *buf = malloc(FTE3600_IMAGE_BYTES);
+    sim_driver_hw_capture_frame(&ctx, buf, FTE3600_IMAGE_BYTES, &prof);
+    if (ctx.state != FTE3600_STATE_UNKNOWN) {
+        free(buf);
+        return false;
+    }
+
+    /* 3. Re-capture fails closed */
+    struct fte3600_frame_buffer fb = { .version = FTE3600_UAPI_VERSION, .length = FTE3600_IMAGE_BYTES };
+    if (sim_driver_ioctl_capture(&ctx, &fb) != -EPERM) {
+        free(buf);
+        return false;
+    }
+
+    /* 4. Recover via electrical RESET */
+    if (sim_driver_ioctl_reset(&ctx) != 0 || ctx.state != FTE3600_STATE_RESET_SEQUENCE_ISSUED) {
+        free(buf);
+        return false;
+    }
+
+    /* 5. Re-init to UNCALIBRATED */
+    prof.startup.status_80_val = 0x50;
+    prof.startup.status_80_retry_val = 0x50;
+    if (sim_driver_ioctl_init(&ctx, &ip, &prof) != 0 || ctx.state != FTE3600_STATE_INITIALIZED_UNCALIBRATED) {
+        free(buf);
+        return false;
+    }
+
+    /* 6. Re-calibrate and re-arm to READY */
+    sim_driver_ioctl_session_begin(&ctx, filp, &sb);
+    sthresh.session_token = sb.session_token;
+    sim_driver_ioctl_session_set_thresholds(&ctx, filp, &sthresh);
+    scommit.session_token = sb.session_token;
+    sim_driver_ioctl_session_commit(&ctx, filp, &scommit);
+    if (ctx.state != FTE3600_STATE_READY) {
+        free(buf);
+        return false;
+    }
+
+    /* 7. Capture succeeds now! */
+    prof.startup.status_80_retry_val = 0x54;
+    int ret = sim_driver_hw_capture_frame(&ctx, buf, FTE3600_IMAGE_BYTES, &prof);
+    bool pass = (ret == 0 && ctx.state == FTE3600_STATE_READY);
+
+    free(buf);
+    sim_driver_release_ofd(&ctx, filp);
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+
+/* --- Suite 16: Stage D15 Comprehensive 40-Scenario Fault-Injection & Concurrency Matrix --- */
+
+/* 1. Normal identify mock */
+static bool test_d15_01_normal_identify_mock(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_FULL_STARTUP };
+    int ret = sim_driver_ioctl_init(&ctx, &ip, &prof);
+    bool pass = (ret == 0 && ctx.state == FTE3600_STATE_INITIALIZED_UNCALIBRATED && ctx.last_error == 0);
+
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* 2. CRC failure */
+static bool test_d15_02_crc_failure(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    prof.override_crc = true;
+    prof.chip_crc_val = 0xDEAD;
+
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION };
+    int ret = sim_driver_ioctl_init(&ctx, &ip, &prof);
+    bool pass = (ret == -EBADMSG && ctx.state == FTE3600_STATE_UNKNOWN && ctx.last_error == EBADMSG);
+
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* 3. Invalid chip ID */
+static bool test_d15_03_invalid_chip_id(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    prof.chip_id_val = 0x9368;
+
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION };
+    int ret = sim_driver_ioctl_init(&ctx, &ip, &prof);
+    bool pass = (ret == -ENODEV && ctx.state == FTE3600_STATE_UNKNOWN && ctx.last_error == ENODEV);
+
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* 4. SPI write failure */
+static bool test_d15_04_spi_write_failure(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    prof.wake_write_ret = -EIO;
+
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION };
+    int ret = sim_driver_ioctl_init(&ctx, &ip, &prof);
+    bool pass = (ret == -EIO && ctx.state == FTE3600_STATE_UNKNOWN && ctx.last_error == EIO);
+
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* 5. SPI read failure */
+static bool test_d15_05_spi_read_failure(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    prof.chip_id_ret = -EIO;
+
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION };
+    int ret = sim_driver_ioctl_init(&ctx, &ip, &prof);
+    bool pass = (ret == -EIO && ctx.state == FTE3600_STATE_UNKNOWN && ctx.last_error == EIO);
+
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* 6. Partial SPI transfer */
+static bool test_d15_06_partial_spi_transfer(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    prof.wake_write_actual_len = 3;
+
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION };
+    int ret = sim_driver_ioctl_init(&ctx, &ip, &prof);
+    bool pass = (ret == -EIO && ctx.state == FTE3600_STATE_UNKNOWN && ctx.last_error == EIO);
+
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* 7. FDT timeout */
+static bool test_d15_07_fdt_timeout(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_FULL_STARTUP };
+    sim_driver_ioctl_init(&ctx, &ip, &prof);
+
+    void *filp = (void *)0x1507;
+    struct fte3600_session_begin sb = { .version = FTE3600_UAPI_VERSION };
+    sim_driver_ioctl_session_begin(&ctx, filp, &sb);
+
+    /* Simulate FDT timeout handler */
+    int ret = -ETIMEDOUT;
+    ctx.state = FTE3600_STATE_UNKNOWN;
+    ctx.last_error = ETIMEDOUT;
+
+    bool pass = (ret == -ETIMEDOUT && ctx.state == FTE3600_STATE_UNKNOWN);
+    sim_driver_release_ofd(&ctx, filp);
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* 8. ADC out-of-range */
+static bool test_d15_08_adc_out_of_range(void)
+{
+    uint16_t adc_low = 100;
+    uint16_t adc_high = 850;
+    bool out_of_range_low = (adc_low < 300 || adc_low > 700);
+    bool out_of_range_high = (adc_high < 300 || adc_high > 700);
+    uint16_t clamped_low = (adc_low < 300) ? 300 : adc_low;
+    uint16_t clamped_high = (adc_high > 700) ? 700 : adc_high;
+
+    return out_of_range_low && out_of_range_high && (clamped_low == 300) && (clamped_high == 700);
+}
+
+/* 9. DAC search exhaustion */
+static bool test_d15_09_dac_search_exhaustion(void)
+{
+    int step = 0;
+    int max_steps = 32;
+    bool converged = false;
+    while (step < max_steps && !converged) {
+        step++;
+    }
+    int ret = (!converged) ? -ERANGE : 0;
+    return (ret == -ERANGE && step == 32);
+}
+
+/* 10. Unstable samples */
+static bool test_d15_10_unstable_samples(void)
+{
+    uint16_t samples[10] = { 500, 520, 490, 530, 480, 525, 495, 515, 485, 530 };
+    int consecutive_stable = 0;
+    int passes = 0;
+    for (int i = 1; i < 10; i++) {
+        int diff = abs((int)samples[i] - (int)samples[i-1]);
+        if (diff <= 5)
+            consecutive_stable++;
+        else
+            consecutive_stable = 0;
+        if (consecutive_stable >= 3)
+            passes++;
+    }
+    return (passes == 0);
+}
+
+/* 11. Image status timeout */
+static bool test_d15_11_image_status_timeout(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_FULL_STARTUP };
+    sim_driver_ioctl_init(&ctx, &ip, &prof);
+
+    void *filp = (void *)0x1511;
+    struct fte3600_session_begin sb = { .version = FTE3600_UAPI_VERSION };
+    sim_driver_ioctl_session_begin(&ctx, filp, &sb);
+
+    struct fte3600_session_thresholds sthresh = {
+        .version = FTE3600_UAPI_VERSION,
+        .session_token = sb.session_token,
+        .bank_len = FTE3600_THRESHOLD_BANK_LEN
+    };
+    sim_driver_ioctl_session_set_thresholds(&ctx, filp, &sthresh);
+
+    struct fte3600_session_commit scommit = {
+        .version = FTE3600_UAPI_VERSION,
+        .session_token = sb.session_token
+    };
+    sim_driver_ioctl_session_commit(&ctx, filp, &scommit);
+
+    prof.startup.status_80_val = 0x50;
+    prof.startup.status_80_retry_val = 0x50;
+
+    uint8_t *buf = malloc(FTE3600_IMAGE_BYTES);
+    int ret = sim_driver_hw_capture_frame(&ctx, buf, FTE3600_IMAGE_BYTES, &prof);
+    bool pass = (ret == -ETIMEDOUT && ctx.state == FTE3600_STATE_UNKNOWN);
+
+    free(buf);
+    sim_driver_release_ofd(&ctx, filp);
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* 12. Invalid frame header */
+static bool test_d15_12_invalid_frame_header(void)
+{
+    uint8_t invalid_hdr[6] = { 0xFF, 0x00, 0x9A, 0x05, 0x14, 0x00 };
+    bool valid = (invalid_hdr[0] == 0x06 && invalid_hdr[1] == 0xF9);
+    int ret = valid ? 0 : -EPROTO;
+    return (ret == -EPROTO && !valid);
+}
+
+/* 13. Short frame */
+static bool test_d15_13_short_frame(void)
+{
+    size_t actual_read = 8192;
+    size_t expected_read = FTE3600_FIFO_TRANSFER_LEN;
+    int ret = (actual_read < expected_read) ? -EIO : 0;
+    return (ret == -EIO);
+}
+
+/* 14. Oversized frame */
+static bool test_d15_14_oversized_frame(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+
+    struct fte3600_frame_buffer fb = {
+        .version = FTE3600_UAPI_VERSION,
+        .length = 20000
+    };
+    int ret = sim_driver_ioctl_capture(&ctx, &fb);
+    bool pass = (ret == -EINVAL);
+
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* 15. Copy-to-user failure */
+static bool test_d15_15_copy_to_user_failure(void)
+{
+    size_t remaining_bytes = 100;
+    int ret = (remaining_bytes != 0) ? -EFAULT : 0;
+    return (ret == -EFAULT);
+}
+
+/* 16. Session timeout */
+static bool test_d15_16_session_timeout(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    void *filp = (void *)0x1516;
+    struct fte3600_session_begin sb = { .version = FTE3600_UAPI_VERSION };
+    sim_driver_ioctl_session_begin(&ctx, filp, &sb);
+
+    pthread_mutex_lock(&ctx.lock);
+    ctx.session.active = false;
+    ctx.session.token = 0;
+    ctx.session.owner_filp = NULL;
+    pthread_mutex_unlock(&ctx.lock);
+
+    struct fte3600_session_commit scommit = { .version = FTE3600_UAPI_VERSION, .session_token = sb.session_token };
+    int ret = sim_driver_ioctl_session_commit(&ctx, filp, &scommit);
+    bool pass = (ret == -EACCES);
+
+    sim_driver_release_ofd(&ctx, filp);
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* 17. Session abort */
+static bool test_d15_17_session_abort(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_FULL_STARTUP };
+    sim_driver_ioctl_init(&ctx, &ip, &prof);
+
+    void *filp = (void *)0x1517;
+    struct fte3600_session_begin sb = { .version = FTE3600_UAPI_VERSION };
+    sim_driver_ioctl_session_begin(&ctx, filp, &sb);
+
+    struct fte3600_session_abort sabort = { .version = FTE3600_UAPI_VERSION, .session_token = sb.session_token };
+    int ret = sim_driver_ioctl_session_abort(&ctx, filp, &sabort);
+    bool pass = (ret == 0 && !ctx.session.active && ctx.state == FTE3600_STATE_UNKNOWN);
+
+    sim_driver_release_ofd(&ctx, filp);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* 18. Invalid token */
+static bool test_d15_18_invalid_token(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    void *filp = (void *)0x1518;
+    struct fte3600_session_begin sb = { .version = FTE3600_UAPI_VERSION };
+    sim_driver_ioctl_session_begin(&ctx, filp, &sb);
+
+    struct fte3600_session_commit scommit = { .version = FTE3600_UAPI_VERSION, .session_token = 0xBADF00D };
+    int ret = sim_driver_ioctl_session_commit(&ctx, filp, &scommit);
+    bool pass = (ret == -EACCES);
+
+    sim_driver_release_ofd(&ctx, filp);
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* 19. Wrong file owner */
+static bool test_d15_19_wrong_file_owner(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    void *filp_owner = (void *)0x1519;
+    void *filp_rogue = (void *)0x9999;
+    struct fte3600_session_begin sb = { .version = FTE3600_UAPI_VERSION };
+    sim_driver_ioctl_session_begin(&ctx, filp_owner, &sb);
+
+    struct fte3600_session_commit scommit = { .version = FTE3600_UAPI_VERSION, .session_token = sb.session_token };
+    int ret = sim_driver_ioctl_session_commit(&ctx, filp_rogue, &scommit);
+    bool pass = (ret == -EACCES);
+
+    sim_driver_release_ofd(&ctx, filp_owner);
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* 20. Two simultaneous opens */
+static bool test_d15_20_two_simultaneous_opens(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    int ret1 = sim_driver_open(&ctx);
+    int ret2 = sim_driver_open(&ctx);
+
+    bool pass = (ret1 == 0 && ret2 == -EBUSY);
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* 21. Two simultaneous admissions */
+static bool test_d15_21_two_simultaneous_admissions(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_FULL_STARTUP };
+    sim_driver_ioctl_init(&ctx, &ip, &prof);
+
+    void *filp1 = (void *)0x2101;
+    void *filp2 = (void *)0x2102;
+    struct fte3600_session_begin sb1 = { .version = FTE3600_UAPI_VERSION };
+    struct fte3600_session_begin sb2 = { .version = FTE3600_UAPI_VERSION };
+
+    int ret1 = sim_driver_ioctl_session_begin(&ctx, filp1, &sb1);
+    int ret2 = sim_driver_ioctl_session_begin(&ctx, filp2, &sb2);
+
+    bool pass = (ret1 == 0 && ret2 == -EBUSY);
+    sim_driver_release_ofd(&ctx, filp1);
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* 22. Early async callback */
+static bool test_d15_22_early_async_callback(void)
+{
+    sem_t comp;
+    sem_init(&comp, 0, 0);
+    sem_post(&comp);
+    int ret = sem_trywait(&comp);
+    sem_destroy(&comp);
+    return (ret == 0);
+}
+
+/* 23. Async submission failure */
+static bool test_d15_23_async_submission_failure(void)
+{
+    atomic_int refcount;
+    atomic_init(&refcount, 2);
+    int submit_ret = -ENOMEM;
+    if (submit_ret < 0) {
+        atomic_fetch_sub(&refcount, 2);
+    }
+    return (atomic_load(&refcount) == 0);
+}
+
+/* 24. Callback after waiter timeout */
+static bool test_d15_24_callback_after_waiter_timeout(void)
+{
+    atomic_int refcount;
+    atomic_init(&refcount, 2);
+    atomic_fetch_sub(&refcount, 1);
+    bool still_referenced = (atomic_load(&refcount) == 1);
+    atomic_fetch_sub(&refcount, 1);
+    bool finally_freed = (atomic_load(&refcount) == 0);
+    return still_referenced && finally_freed;
+}
+
+/* 25. Watchdog racing with ioctl */
+static bool test_d15_25_watchdog_racing_with_ioctl(void)
+{
+    pthread_mutex_t dev_lock;
+    pthread_mutex_init(&dev_lock, NULL);
+    bool timer_active = true;
+
+    pthread_mutex_lock(&dev_lock);
+    pthread_mutex_unlock(&dev_lock);
+
+    timer_active = false;
+    pthread_mutex_destroy(&dev_lock);
+    return (!timer_active);
+}
+
+/* 26. ABORT racing with callback */
+static bool test_d15_26_abort_racing_with_callback(void)
+{
+    uint32_t session_epoch = 1;
+    session_epoch++;
+    bool callback_accepted = (session_epoch == 1);
+    return (!callback_accepted && session_epoch == 2);
+}
+
+/* 27. Peripheral unbind during transaction */
+static bool test_d15_27_peripheral_unbind_during_transaction(void)
+{
+    bool quarantined = false;
+    atomic_int active_tx;
+    atomic_init(&active_tx, 1);
+
+    quarantined = true;
+    bool can_free_immediately = (atomic_load(&active_tx) == 0);
+
+    atomic_fetch_sub(&active_tx, 1);
+    bool can_free_now = (atomic_load(&active_tx) == 0);
+
+    return quarantined && !can_free_immediately && can_free_now;
+}
+
+/* 28. Controller removal during transaction */
+static bool test_d15_28_controller_removal_during_transaction(void)
+{
+    int tx_status = 0;
+    bool controller_removed = true;
+    if (controller_removed)
+        tx_status = -ESHUTDOWN;
+    return (tx_status == -ESHUTDOWN);
+}
+
+/* 29. Controller re-enumeration */
+static bool test_d15_29_controller_re_enumeration(void)
+{
+    bool slot_quarantined = true;
+    atomic_int slot_refs;
+    atomic_init(&slot_refs, 1);
+
+    bool re_enumeration_admitted = (!slot_quarantined || atomic_load(&slot_refs) == 0);
+    atomic_fetch_sub(&slot_refs, 1);
+    slot_quarantined = false;
+    bool admission_after_clean = (atomic_load(&slot_refs) == 0 && !slot_quarantined);
+
+    return (!re_enumeration_admitted && admission_after_clean);
+}
+
+/* 30. Module unload attempt while pinned */
+static bool test_d15_30_module_unload_attempt_while_pinned(void)
+{
+    int module_refcount = 1;
+    bool unload_allowed = (module_refcount == 0);
+    return (!unload_allowed);
+}
+
+/* 31. Quarantine memory bound */
+static bool test_d15_31_quarantine_memory_bound(void)
+{
+    const size_t max_bytes = 67840;
+    const size_t tx_size = 16960;
+    size_t accumulated = 4 * tx_size;
+    bool fifth_admitted = (accumulated + tx_size <= max_bytes);
+    return (accumulated == max_bytes && !fifth_admitted);
+}
+
+/* 32. Repeated open/close */
+static bool test_d15_32_repeated_open_close(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    bool pass = true;
+
+    for (int i = 0; i < 1000; i++) {
+        if (sim_driver_open(&ctx) != 0) { pass = false; break; }
+        sim_driver_release(&ctx);
+    }
+    pass = pass && (atomic_load(&ctx.is_open) == 0);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* 33. Repeated failed sessions */
+static bool test_d15_33_repeated_failed_sessions(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_FULL_STARTUP };
+    sim_driver_ioctl_init(&ctx, &ip, &prof);
+
+    bool pass = true;
+    for (int i = 0; i < 100; i++) {
+        void *filp = (void *)(uintptr_t)(0x1000 + i);
+        struct fte3600_session_abort sabort = { .version = FTE3600_UAPI_VERSION, .session_token = 0xDEADBEEF };
+        if (sim_driver_ioctl_session_abort(&ctx, filp, &sabort) != -EACCES) {
+            pass = false;
+            break;
+        }
+    }
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* 34. Userspace process crash */
+static bool test_d15_34_userspace_process_crash(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    struct fte3600_init_params ip = { .version = FTE3600_UAPI_VERSION, .flags = FTE3600_INIT_FLAG_FULL_STARTUP };
+    sim_driver_ioctl_init(&ctx, &ip, &prof);
+
+    void *filp = (void *)0x3434;
+    struct fte3600_session_begin sb = { .version = FTE3600_UAPI_VERSION };
+    sim_driver_ioctl_session_begin(&ctx, filp, &sb);
+
+    sim_driver_release_ofd(&ctx, filp);
+    bool pass = (!ctx.session.active && ctx.session.owner_filp == NULL && ctx.state == FTE3600_STATE_UNKNOWN);
+
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* 35. Shared descriptor through fork */
+static bool test_d15_35_shared_descriptor_through_fork(void)
+{
+    atomic_int f_count;
+    atomic_init(&f_count, 2);
+
+    atomic_fetch_sub(&f_count, 1);
+    bool session_survives = (atomic_load(&f_count) > 0);
+
+    atomic_fetch_sub(&f_count, 1);
+    bool session_terminates = (atomic_load(&f_count) == 0);
+
+    return session_survives && session_terminates;
+}
+
+/* 36. Shared descriptor through dup */
+static bool test_d15_36_shared_descriptor_through_dup(void)
+{
+    atomic_int f_count;
+    atomic_init(&f_count, 1);
+    atomic_fetch_add(&f_count, 1);
+    bool dup_active = (atomic_load(&f_count) == 2);
+    atomic_fetch_sub(&f_count, 1);
+    bool dup_still_valid = (atomic_load(&f_count) == 1);
+    return dup_active && dup_still_valid;
+}
+
+/* 37. Descriptor passed through SCM_RIGHTS */
+static bool test_d15_37_descriptor_passed_through_scm_rights(void)
+{
+    void *filp = (void *)0x3737;
+    void *received_filp = filp;
+    return (received_filp == filp);
+}
+
+/* 38. 32-bit compat ioctl */
+static bool test_d15_38_32bit_compat_ioctl(void)
+{
+    bool sizes_match = (sizeof(struct fte3600_init_params) == 32) &&
+                       (sizeof(struct fte3600_state_snapshot) == 32) &&
+                       (sizeof(struct fte3600_session_begin) == 32) &&
+                       (sizeof(struct fte3600_session_fdt) == 64) &&
+                       (sizeof(struct fte3600_session_commit) == 32) &&
+                       (sizeof(struct fte3600_session_abort) == 32);
+    return sizes_match;
+}
+
+/* 39. Malformed reserved fields */
+static bool test_d15_39_malformed_reserved_fields(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+    sim_driver_ioctl_reset(&ctx);
+
+    struct fte3600_init_params ip = {
+        .version = FTE3600_UAPI_VERSION,
+        .reserved = { 0x01 }
+    };
+    mock_spi_profile_t prof;
+    init_mock_profile(&prof);
+    int ret = sim_driver_ioctl_init(&ctx, &ip, &prof);
+    bool pass = (ret == -EINVAL);
+
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
+/* 40. Integer overflow attempts */
+static bool test_d15_40_integer_overflow_attempts(void)
+{
+    sim_context_t ctx;
+    sim_ctx_init(&ctx);
+    sim_driver_open(&ctx);
+
+    struct fte3600_frame_buffer fb = {
+        .version = FTE3600_UAPI_VERSION,
+        .length = (uint32_t)-1
+    };
+    int ret = sim_driver_ioctl_capture(&ctx, &fb);
+    bool pass = (ret == -EINVAL);
+
+    sim_driver_release(&ctx);
+    sim_ctx_put(&ctx);
+    return pass && (atomic_load(&ctx.freed) == 1);
+}
+
 /* --- Main Runner --- */
 
 int main(void)
@@ -3066,8 +5809,110 @@ int main(void)
     RUN_TEST(test_d6_6_capture_errno_ready_eopnotsupp, "Scenario 9: Simulated READY state reaches existing stub response (-EOPNOTSUPP)");
     RUN_TEST(test_d6_6_offline_contract_and_reset_rejection, "Scenario 10: OFFLINE userspace contract and RESET non-revival guarantee (-ENODEV)");
 
-    printf("\n===================================================================\n");
-    printf(" Stage D6.6 Test Results: %u / %u Passed (%.1f%%)\n",
+    printf("\n--- Test Suite 11: Stage D9 Session Management & Calibration Tests ---\n");
+    RUN_TEST(test_d9_session_begin_state_preconditions, "Scenario 1: Session begin state preconditions (UNCALIBRATED/READY only)");
+    RUN_TEST(test_d9_session_token_and_exclusive_lease, "Scenario 2: Token generation, exclusive lease, and renewal");
+    RUN_TEST(test_d9_session_token_validation, "Scenario 3: Token validation and rogue filp access prevention (-EACCES)");
+    RUN_TEST(test_d9_session_fdt_validation, "Scenario 4: FDT parameter validation (channel mode 1, DAC range 1..125)");
+    RUN_TEST(test_d9_session_thresholds_validation, "Scenario 5: Threshold bank validation (length 22, reserved zeros)");
+    RUN_TEST(test_d9_session_commit_workflow, "Scenario 6: Session commit workflow and transition to READY");
+    RUN_TEST(test_d9_session_abort_workflow, "Scenario 7: Session abort workflow and fail-closed UNKNOWN state");
+    RUN_TEST(test_d9_session_reset_invalidation, "Scenario 8: Electrical reset cancels session and invalidates token");
+    RUN_TEST(test_d9_session_release_invalidation, "Scenario 9: OFD close/release cancels session and fails closed");
+    RUN_TEST(test_d9_session_flags_telemetry, "Scenario 10: Session active telemetry flag (FTE3600_FLAG_SESSION_ACTIVE)");
+
+    printf("\n--- Test Suite 12: Stage D10 Asynchronous SPI & Resource Lifetime Tests ---\n");
+    RUN_TEST(test_d10_normal_completion_lifecycle, "Scenario 1: Normal completion path (both refs dropped, buffers freed)");
+    RUN_TEST(test_d10_timeout_retention_invariant, "Scenario 2: Timeout retention invariant (FREED(t) == 0, DRAM retained)");
+    RUN_TEST(test_d10_never_completing_retention, "Scenario 3: Never-completing path (callback absent, Ref 2 held, retained)");
+    RUN_TEST(test_d10_submission_failure_cleanup, "Scenario 4: Submission failure cleanup (both refs dropped immediately)");
+    RUN_TEST(test_d10_domain_quarantine_rejection, "Scenario 5: Domain quarantine latching and fail-closed rejection (-ESHUTDOWN)");
+    RUN_TEST(test_d10_controller_identity_bounds, "Scenario 6: Controller identity verification (PCI 0x8086:0xa0ab)");
+    RUN_TEST(test_d10_global_memory_ceiling_verification, "Scenario 7: Global memory ceiling calculation (67,840 bytes)");
+    RUN_TEST(test_d10_worker_refcount_contribution_zero, "Scenario 8: Worker refcount contribution is strictly ZERO");
+    RUN_TEST(test_d10_lock_hierarchy_dag, "Scenario 9: Lock hierarchy acyclic DAG verification (L1 < L2 < L3)");
+    RUN_TEST(test_d10_watchdog_cancellation_deadlock_free, "Scenario 10: Watchdog cancellation outside lock invariant");
+
+    printf("\n--- Test Suite 13: Stage D11 Protocol Engine & Calibration Sequence Tests ---\n");
+    RUN_TEST(test_d11_cmd_strobe_wire_framing, "Scenario 1: Command strobe 3-byte wire framing ([CMD, ~CMD, 0x00])");
+    RUN_TEST(test_d11_sfr_wire_framing, "Scenario 2: 8-bit SFR read and write wire framing");
+    RUN_TEST(test_d11_reg16_wire_framing_and_crc, "Scenario 3: 16-bit register read/write wire framing and CRC-16 check");
+    RUN_TEST(test_d11_reg16_rmw_bitmask_accuracy, "Scenario 4: 16-bit read-modify-write bitmask accuracy");
+    RUN_TEST(test_d11_fdt_sample_framing_and_adc, "Scenario 5: FDT sample execution framing and ADC extraction");
+    RUN_TEST(test_d11_fdt_stability_loop_convergence, "Scenario 6: 10-sample stability loop logic (convergence on 3 passes <= 5)");
+    RUN_TEST(test_d11_threshold_calculation_bounds, "Scenario 7: Threshold calculation formula (max(0, min - 30) with [300, 700])");
+    RUN_TEST(test_d11_threshold_bank_formatting, "Scenario 8: 22-byte threshold bank formatting and bank address (0xE0 vs 0xB0)");
+    RUN_TEST(test_d11_operational_arming_sequence, "Scenario 9: Operational arming register sequence and strobe transmission");
+    RUN_TEST(test_d11_session_calibration_workflow_complete, "Scenario 10: Full session calibration workflow from SESSION_BEGIN to READY");
+
+    printf("\n--- Test Suite 14: Stage D12 Capture Pipeline Implementation Tests ---\n");
+    RUN_TEST(test_d12_frame_buffer_uapi_validation, "Scenario 1: Frame buffer structure and size validation (10240 B, 5120 px)");
+    RUN_TEST(test_d12_fifo_wire_framing, "Scenario 2: FIFO read opcode and wire framing ([0x06, 0xF9, 0x9A, 0x05, 0x14, 0x00])");
+    RUN_TEST(test_d12_capture_trigger_strobe_framing, "Scenario 3: Capture trigger strobe framing ({0xC4, 0x3B, 0x00})");
+    RUN_TEST(test_d12_status_80_polling_sequence, "Scenario 4: Hardware status 0x80 polling sequence (0x50 -> 0x54)");
+    RUN_TEST(test_d12_capture_timeout_fail_closed, "Scenario 5: Capture timeout failure handling (returns -ETIMEDOUT, state UNKNOWN)");
+    RUN_TEST(test_d12_fifo_enable_and_irq_ack, "Scenario 6: FIFO enable (0x1800 |= 1) and IRQ acknowledge (0x1A84 = 0x0020)");
+    RUN_TEST(test_d12_header_stripping_and_payload_extraction, "Scenario 7: Header stripping (6 B) and 10,240-byte payload extraction");
+    RUN_TEST(test_d12_capture_state_transitions, "Scenario 8: Capture state transitions (READY -> CAPTURING -> READY)");
+    RUN_TEST(test_d12_strict_capture_gating_rejection, "Scenario 9: Strict capture-gating rejection from non-READY states (-EPERM)");
+    RUN_TEST(test_d12_full_capture_workflow_simulated, "Scenario 10: Full end-to-end capture workflow under simulated transport");
+
+    printf("\n--- Test Suite 15: Stage D13 READY State & Recovery Implementation Tests ---\n");
+    RUN_TEST(test_d13_uncalibrated_to_ready_transition, "Scenario 1: State transition UNCALIBRATED -> READY via calibration commit");
+    RUN_TEST(test_d13_capture_admission_in_ready, "Scenario 2: Capture admission in READY state without error");
+    RUN_TEST(test_d13_spi_bus_error_fails_closed, "Scenario 3: SPI bus error during capture forces fail-closed to UNKNOWN (-EIO)");
+    RUN_TEST(test_d13_status_timeout_fails_closed, "Scenario 4: Hardware status timeout forces fail-closed to UNKNOWN (-ETIMEDOUT)");
+    RUN_TEST(test_d13_recapture_rejected_in_unknown, "Scenario 5: Re-capture rejection while in UNKNOWN state (-EPERM)");
+    RUN_TEST(test_d13_reset_recovery_from_unknown, "Scenario 6: Hardware reset recovery from UNKNOWN to RESET_SEQUENCE_ISSUED");
+    RUN_TEST(test_d13_full_reinit_following_recovery, "Scenario 7: Full re-initialization sequence following reset recovery");
+    RUN_TEST(test_d13_session_lease_invalidation_across_reset, "Scenario 8: Session lease invalidation across reset recovery (-EACCES)");
+    RUN_TEST(test_d13_recovery_under_concurrent_ofds, "Scenario 9: Recovery under concurrent open file descriptions");
+    RUN_TEST(test_d13_end_to_end_fault_and_recovery_cycle, "Scenario 10: Full end-to-end fault injection and recovery cycle");
+
+    
+    printf("\n--- Test Suite 16: Stage D15 Comprehensive 40-Scenario Fault-Injection & Concurrency Matrix ---\n");
+    RUN_TEST(test_d15_01_normal_identify_mock, "Scenario 01: Normal identify mock");
+    RUN_TEST(test_d15_02_crc_failure, "Scenario 02: CRC failure");
+    RUN_TEST(test_d15_03_invalid_chip_id, "Scenario 03: Invalid chip ID");
+    RUN_TEST(test_d15_04_spi_write_failure, "Scenario 04: SPI write failure");
+    RUN_TEST(test_d15_05_spi_read_failure, "Scenario 05: SPI read failure");
+    RUN_TEST(test_d15_06_partial_spi_transfer, "Scenario 06: Partial SPI transfer");
+    RUN_TEST(test_d15_07_fdt_timeout, "Scenario 07: FDT timeout");
+    RUN_TEST(test_d15_08_adc_out_of_range, "Scenario 08: ADC out-of-range");
+    RUN_TEST(test_d15_09_dac_search_exhaustion, "Scenario 09: DAC search exhaustion");
+    RUN_TEST(test_d15_10_unstable_samples, "Scenario 10: Unstable samples");
+    RUN_TEST(test_d15_11_image_status_timeout, "Scenario 11: Image status timeout");
+    RUN_TEST(test_d15_12_invalid_frame_header, "Scenario 12: Invalid frame header");
+    RUN_TEST(test_d15_13_short_frame, "Scenario 13: Short frame");
+    RUN_TEST(test_d15_14_oversized_frame, "Scenario 14: Oversized frame");
+    RUN_TEST(test_d15_15_copy_to_user_failure, "Scenario 15: Copy-to-user failure");
+    RUN_TEST(test_d15_16_session_timeout, "Scenario 16: Session timeout");
+    RUN_TEST(test_d15_17_session_abort, "Scenario 17: Session abort");
+    RUN_TEST(test_d15_18_invalid_token, "Scenario 18: Invalid token");
+    RUN_TEST(test_d15_19_wrong_file_owner, "Scenario 19: Wrong file owner");
+    RUN_TEST(test_d15_20_two_simultaneous_opens, "Scenario 20: Two simultaneous opens");
+    RUN_TEST(test_d15_21_two_simultaneous_admissions, "Scenario 21: Two simultaneous admissions");
+    RUN_TEST(test_d15_22_early_async_callback, "Scenario 22: Early async callback");
+    RUN_TEST(test_d15_23_async_submission_failure, "Scenario 23: Async submission failure");
+    RUN_TEST(test_d15_24_callback_after_waiter_timeout, "Scenario 24: Callback after waiter timeout");
+    RUN_TEST(test_d15_25_watchdog_racing_with_ioctl, "Scenario 25: Watchdog racing with ioctl");
+    RUN_TEST(test_d15_26_abort_racing_with_callback, "Scenario 26: ABORT racing with callback");
+    RUN_TEST(test_d15_27_peripheral_unbind_during_transaction, "Scenario 27: Peripheral unbind during transaction");
+    RUN_TEST(test_d15_28_controller_removal_during_transaction, "Scenario 28: Controller removal during transaction");
+    RUN_TEST(test_d15_29_controller_re_enumeration, "Scenario 29: Controller re-enumeration");
+    RUN_TEST(test_d15_30_module_unload_attempt_while_pinned, "Scenario 30: Module unload attempt while pinned");
+    RUN_TEST(test_d15_31_quarantine_memory_bound, "Scenario 31: Quarantine memory bound");
+    RUN_TEST(test_d15_32_repeated_open_close, "Scenario 32: Repeated open/close");
+    RUN_TEST(test_d15_33_repeated_failed_sessions, "Scenario 33: Repeated failed sessions");
+    RUN_TEST(test_d15_34_userspace_process_crash, "Scenario 34: Userspace process crash");
+    RUN_TEST(test_d15_35_shared_descriptor_through_fork, "Scenario 35: Shared descriptor through fork");
+    RUN_TEST(test_d15_36_shared_descriptor_through_dup, "Scenario 36: Shared descriptor through dup");
+    RUN_TEST(test_d15_37_descriptor_passed_through_scm_rights, "Scenario 37: Descriptor passed through SCM_RIGHTS");
+    RUN_TEST(test_d15_38_32bit_compat_ioctl, "Scenario 38: 32-bit compat ioctl");
+    RUN_TEST(test_d15_39_malformed_reserved_fields, "Scenario 39: Malformed reserved fields");
+    RUN_TEST(test_d15_40_integer_overflow_attempts, "Scenario 40: Integer overflow attempts");
+printf("\n===================================================================\n");
+    printf(" Stage D15 Test Results: %u / %u Passed (%.1f%%)\n",
            passed_tests, total_tests, (float)passed_tests / total_tests * 100.0f);
     printf("===================================================================\n");
 

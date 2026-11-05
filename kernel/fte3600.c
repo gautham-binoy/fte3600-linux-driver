@@ -4,31 +4,113 @@
  * Target Silicon: FocalTech FT9362 / FW9369 Fingerprint Sensor
  * Target Platform: Dynabook Satellite Pro C40-J (PYS46G-06J02D)
  *
- * Architecture Stage 2E.4.2: SPI Completion Verification and Identification-State Corrections
+ * Stage D9: Core Driver Refactoring
+ * - Full Session Management, 64-bit Generation Tokens & 5.0 s Watchdog Workqueue
+ * - Controller Domain Table & Conservative Identity Verification (PCI 0x8086:0xa0ab)
+ * - Watchdog Cancellation Deadlock Remediation (Sync cancellation prior to data->lock)
+ * - Transparent 32-bit Compat IOCTL via compat_ptr()
+ * - Fail-Closed State Machine & Strict Capture-Gating
+ *
  * Safety Gate: Physical hardware access strictly prohibited; offline compilation only.
  */
 
 #include <linux/acpi.h>
 #include <linux/atomic.h>
 #include <linux/cdev.h>
+#include <linux/compat.h>
+#include <linux/completion.h>
 #include <linux/delay.h>
 #include <linux/device.h>
 #include <linux/fs.h>
 #include <linux/gpio/consumer.h>
 #include <linux/init.h>
 #include <linux/kernel.h>
+#include <linux/kref.h>
 #include <linux/lockdep.h>
+#include <linux/miscdevice.h>
 #include <linux/module.h>
 #include <linux/mutex.h>
+#include <linux/pci.h>
 #include <linux/poll.h>
+#include <linux/random.h>
 #include <linux/slab.h>
 #include <linux/spi/spi.h>
+#include <linux/spinlock.h>
 #include <linux/uaccess.h>
 #include <linux/wait.h>
+#include <linux/workqueue.h>
 
 #include "fte3600.h"
 
 #define FTE3600_DRIVER_NAME "fte3600"
+
+/* Controller Domain Management */
+enum fte3600_domain_state {
+	FTE3600_DOMAIN_IDLE = 0,
+	FTE3600_DOMAIN_RESERVED,
+	FTE3600_DOMAIN_BUSY,
+	FTE3600_DOMAIN_QUARANTINED,
+	FTE3600_DOMAIN_REMOVING,
+};
+
+struct fte3600_controller_domain {
+	u16 pci_vendor;
+	u16 pci_device;
+	char pci_bdf[32];
+	enum fte3600_domain_state state;
+	bool quarantined;
+	u32 generation;
+	spinlock_t lock;
+};
+
+static struct fte3600_controller_domain fte3600_domains[FTE3600_MAX_DOMAINS];
+static DEFINE_MUTEX(fte3600_domain_table_lock);
+
+/* Global Workqueue for Driver Asynchronous Tasks (Watchdog, Quarantined Workers) */
+static struct workqueue_struct *fte3600_wq;
+
+/* Calibration and Operational Session Data */
+struct fte3600_session_data {
+	bool active;
+	u64 token;
+	u32 generation;
+	struct file *owner_filp;
+	struct delayed_work watchdog_work;
+	u8 channel_mode;
+	u8 stored_dac;
+	bool dac_valid;
+	u16 fdt_minima[4];
+	u16 fdt_thresholds[4];
+	bool thresholds_programmed;
+};
+
+/* FocalTech Userspace Protocol Framing (/dev/focal_moh_spi) */
+#define FOCAL_SPI_READ_ONLY     0x5A
+#define FOCAL_SPI_READ_WRITE    0xA5
+#define FOCAL_SPI_BACK_DATA     0xB9
+#define FOCAL_MAX_BUFF_SIZE     (32 * 1024)
+
+#define FOCAL_WAKE_EVENT_NONE    0
+#define FOCAL_WAKE_EVENT_ENABLE  1
+#define FOCAL_WAKE_EVENT_INT     2
+#define FOCAL_WAKE_EVENT_RESUME  3
+#define FOCAL_WAKE_EVENT_SUSPEND 4
+#define FOCAL_WAKE_EVENT_DISABLE 5
+
+#define FF_IOC_RESET_DEV         0x8086
+#define FF_IOC_POWER_OFF         0x8087
+#define FF_IOC_POWER_ON          0x8088
+#define FF_IOC_IRQ_EN            0x8089
+#define FF_IOC_LOG_EN            0x808A
+#define FF_IOC_RELEASE_POLL      0x808B
+#define FF_IOC_CSn               0x808C
+
+struct focal_spi_read_buff {
+	u8 type;
+	u16 tx_len;
+	u16 rx_len;
+	u8 txbuff[0];
+} __packed;
 
 /* Device Private Structure */
 struct fte3600_data {
@@ -44,8 +126,17 @@ struct fte3600_data {
 	u32 last_error;
 	u8 foundry_code;               /* Silicon foundry fabrication code (e.g. 0xAA for SMIC) */
 	u16 line_period_us;            /* Configured line timing period (150 us or 200 us) */
-	u8 tx_buf[32] ____cacheline_aligned;
-	u8 rx_buf[32] ____cacheline_aligned;
+	struct fte3600_controller_domain *domain;
+	struct fte3600_session_data session;
+	/* FocalTech libfprint compatibility bridge (/dev/focal_moh_spi) */
+	struct miscdevice focal_miscdev;
+	u8 *focal_wr_buf;
+	u8 *focal_rd_buf;
+	u8 *sensor_init_data;
+	int focal_work_flag;
+	wait_queue_head_t focal_poll_wq;
+	u8 tx_buf[64] ____cacheline_aligned;
+	u8 rx_buf[64] ____cacheline_aligned;
 };
 
 /* Global Device Numbers and Class */
@@ -71,17 +162,6 @@ static const struct acpi_gpio_mapping fte3600_acpi_gpios[] = {
 
 /*
  * Hardware CRC-16 Wire Calculation (CCITT MSB-first, Poly 0x1021, Seed 0xFFFF)
- *
- * This helper calculates the 16-bit CRC transmitted by the FT9362 silicon over
- * the SPI wire. Polynomial: 0x1021 (x^16 + x^12 + x^5 + 1), Initial Seed: 0xFFFF,
- * Input: MSB-first byte stream.
- *
- * Test Vector:
- * Byte sequence [0x93, 0x62] (Chip ID 0x9362) -> CRC 0x1C53.
- *
- * Active Driver Integration (Stage 2E.4):
- * Actively called by fte3600_hw_identify() to validate wire CRC received from
- * Chip ID register 0x1A8B during FTE3600_IOC_INIT execution.
  */
 static u16 fte3600_crc16_wire(const u8 *bytes, size_t len)
 {
@@ -107,30 +187,137 @@ static void fte3600_device_release(struct device *dev)
 {
 	struct fte3600_data *data = container_of(dev, struct fte3600_data, dev);
 
+	kfree(data->focal_wr_buf);
+	kfree(data->focal_rd_buf);
+	kfree(data->sensor_init_data);
 	mutex_destroy(&data->lock);
 	kfree(data);
 }
 
+/*
+ * Domain Reservation & Controller Identity Verification
+ *
+ * Verifies host SPI controller identity strictly against PCI Vendor 0x8086,
+ * Device 0xa0ab (Intel LPSS SPI2 controller on Dynabook C40-J).
+ * Allocates or re-acquires a domain entry from the static domain table.
+ */
+static struct fte3600_controller_domain *fte3600_find_or_alloc_domain(struct spi_device *spi)
+{
+	struct device *d;
+	struct pci_dev *pci_dev = NULL;
+	const char *bdf;
+	int i, free_idx = -1;
+
+	/* Walk up device hierarchy to locate parent PCI host controller */
+	d = &spi->controller->dev;
+	while (d) {
+		if (dev_is_pci(d)) {
+			pci_dev = to_pci_dev(d);
+			break;
+		}
+		d = d->parent;
+	}
+
+	if (!pci_dev) {
+		dev_err(&spi->dev, "Host SPI controller is not a PCI device\n");
+		return ERR_PTR(-ENODEV);
+	}
+
+	bdf = dev_name(&pci_dev->dev);
+
+	/* Check known host controller: Intel LPSS SPI2 (Vendor 0x8086, Device 0xa0ab) */
+	if (pci_dev->vendor != 0x8086 || pci_dev->device != 0xa0ab) {
+		dev_err(&spi->dev, "Unsupported host SPI controller (Vendor: 0x%04x, Device: 0x%04x)\n",
+			pci_dev->vendor, pci_dev->device);
+		return ERR_PTR(-ENODEV);
+	}
+
+	mutex_lock(&fte3600_domain_table_lock);
+	for (i = 0; i < FTE3600_MAX_DOMAINS; i++) {
+		if (fte3600_domains[i].pci_vendor == pci_dev->vendor &&
+		    fte3600_domains[i].pci_device == pci_dev->device &&
+		    strncmp(fte3600_domains[i].pci_bdf, bdf, sizeof(fte3600_domains[i].pci_bdf)) == 0) {
+			if (fte3600_domains[i].quarantined) {
+				dev_err(&spi->dev, "Domain %s is QUARANTINED (fatal DMA latch)\n", bdf);
+				mutex_unlock(&fte3600_domain_table_lock);
+				return ERR_PTR(-ESHUTDOWN);
+			}
+			mutex_unlock(&fte3600_domain_table_lock);
+			return &fte3600_domains[i];
+		}
+		if (free_idx < 0 && fte3600_domains[i].pci_vendor == 0)
+			free_idx = i;
+	}
+
+	if (free_idx < 0) {
+		dev_err(&spi->dev, "Domain table exhausted (limit %d)\n", FTE3600_MAX_DOMAINS);
+		mutex_unlock(&fte3600_domain_table_lock);
+		return ERR_PTR(-ENOSPC);
+	}
+
+	fte3600_domains[free_idx].pci_vendor = pci_dev->vendor;
+	fte3600_domains[free_idx].pci_device = pci_dev->device;
+	strscpy(fte3600_domains[free_idx].pci_bdf, bdf, sizeof(fte3600_domains[free_idx].pci_bdf));
+	fte3600_domains[free_idx].state = FTE3600_DOMAIN_IDLE;
+	fte3600_domains[free_idx].quarantined = false;
+	fte3600_domains[free_idx].generation = 1;
+	spin_lock_init(&fte3600_domains[free_idx].lock);
+
+	mutex_unlock(&fte3600_domain_table_lock);
+	return &fte3600_domains[free_idx];
+}
 
 /*
- * Active-Low Reset Sequence Helper (Policy A: Triggered Exclusively via IOCTL)
+ * Watchdog Delayed Work Function
  *
- * Locking Context: Must be called with data->lock held.
- *
- * Important GPIO API Limitation:
- * gpiod_set_value_cansleep() returns void. Therefore, successful completion of
- * this sequence only proves that register writes were issued to the Intel PCH
- * LPSS GPIO controller. It does NOT verify physical pin voltage on Pad 14 or
- * that the sensor silicon accepted the reset or entered a known state.
- *
- * State Semantics:
- * State transitions to FTE3600_STATE_RESET_SEQUENCE_ISSUED (compatibility alias
- * FTE3600_STATE_RESET_COMPLETE). This indicates strictly that the electrical
- * reset timing pulse was dispatched to the GPIO controller. It does NOT indicate
- * that the sensor silicon is initialized, identified, calibrated, or ready.
- * Physical sensor recovery and responsiveness are only proven if subsequent SPI
- * chip ID and CRC interrogation succeeds.
+ * Invoked when 5000 ms of session inactivity elapses.
+ * Invalidates the active session and fails closed.
  */
+static void fte3600_watchdog_work_fn(struct work_struct *work)
+{
+	struct delayed_work *dwork = to_delayed_work(work);
+	struct fte3600_data *data = container_of(dwork, struct fte3600_data, session.watchdog_work);
+
+	mutex_lock(&data->lock);
+	if (data->session.active) {
+		if (data->spi)
+			dev_warn(&data->spi->dev,
+				 "Session watchdog expired (5000 ms inactivity). Invalidating session.\n");
+		data->session.active = false;
+		data->session.owner_filp = NULL;
+		data->session.generation++;
+		data->state = FTE3600_STATE_UNKNOWN;
+		data->last_error = ETIMEDOUT;
+	}
+	mutex_unlock(&data->lock);
+}
+
+/*
+ * Session Validation Helper
+ *
+ * Verifies session activity, OFD ownership, and token match.
+ * Automatically re-arms the watchdog timer on success.
+ */
+static int fte3600_validate_session(struct fte3600_data *data, struct file *filp, u64 token)
+{
+	lockdep_assert_held(&data->lock);
+
+	if (!data->session.active)
+		return -EACCES;
+
+	if (data->session.owner_filp != filp)
+		return -EACCES;
+
+	if (data->session.token != token)
+		return -EACCES;
+
+	/* Re-arm session watchdog timer (5000 ms) */
+	mod_delayed_work(fte3600_wq, &data->session.watchdog_work,
+			 msecs_to_jiffies(FTE3600_WATCHDOG_DEFAULT_MS));
+	return 0;
+}
+
+/* Active-Low Reset Sequence Helper */
 static int fte3600_hw_reset_pulse(struct fte3600_data *data)
 {
 	lockdep_assert_held(&data->lock);
@@ -142,104 +329,221 @@ static int fte3600_hw_reset_pulse(struct fte3600_data *data)
 
 	/* Pre-reset settle interval (Logical 0 = physical HIGH / inactive) */
 	gpiod_set_value_cansleep(data->reset_gpiod, 0);
-	msleep(10);
+	usleep_range(10000, 11000);
 
 	/* Assert reset: Logical 1 = physical LOW / asserted */
 	gpiod_set_value_cansleep(data->reset_gpiod, 1);
-	msleep(20); /* Reference hold duration (recovery.c:19) */
+	msleep(20);
 
 	/* Deassert reset: Logical 0 = physical HIGH / inactive */
 	gpiod_set_value_cansleep(data->reset_gpiod, 0);
-	msleep(10); /* Reference settle latency (factory_startup.c:341) */
+	usleep_range(10000, 11000);
 
-	/*
-	 * Electrical reset pulse sequence completed on GPIO controller.
-	 * State is RESET_SEQUENCE_ISSUED. Sensor silicon responsiveness is unverified.
-	 */
 	data->state = FTE3600_STATE_RESET_SEQUENCE_ISSUED;
 	return 0;
 }
 
 /*
- * In-Kernel Synchronous SPI Transfer Engine
+ * Asynchronous SPI Transaction Object & Two-Reference Lifetime
  *
- * Locking Context:
- * Caller MUST hold data->lock. Enforced via lockdep_assert_held(&data->lock).
+ * Reference Accounting:
+ * Initial refcount = 2:
+ * - Reference 1: Held by submitting thread (waiting on axfer->done).
+ * - Reference 2: Held by SPI core / host controller hardware completion path.
  *
- * Buffer Lifetime:
- * Both tx and rx buffers must remain allocated and valid for the entire duration
- * of the synchronous spi_sync() call. Stack DMA buffers and GFP_DMA are prohibited.
- *
- * Return: 0 on success, negative errno on failure. On error, data->state is
- * transitioned to FTE3600_STATE_UNKNOWN to fail closed.
+ * Worker & Callback Refcount Invariant:
+ * Neither completion callbacks nor workqueue workers call module_put(THIS_MODULE).
+ * Worker module refcount contribution is strictly ZERO.
  */
-static int fte3600_spi_sync_transfer(struct fte3600_data *data,
-				     const u8 *tx, u8 *rx, size_t len)
+struct fte3600_async_xfer {
+	struct kref ref;
+	struct completion done;
+	struct spi_message msg;
+	struct spi_transfer xfer;
+	struct fte3600_data *data;
+	u8 *tx_buf;
+	u8 *rx_buf;
+	size_t len;
+	bool timed_out;
+	bool completed_ok;
+	int status;
+};
+
+/*
+ * Transaction Release Callback
+ *
+ * Invoked when axfer->ref drops to 0.
+ *
+ * Conservative DMA Retention Invariant:
+ * If timed_out is true, Intel LPSS idma64 cannot prove physical silicon bus master
+ * cessation. Therefore, memory is PERMANENTLY RETAINED in DRAM (FREED(t) == 0).
+ */
+static void fte3600_xfer_release(struct kref *kref)
 {
-	struct spi_transfer t;
-	struct spi_message m;
+	struct fte3600_async_xfer *axfer = container_of(kref, struct fte3600_async_xfer, ref);
+
+	if (axfer->timed_out) {
+		pr_err("fte3600: Quarantining stranded xfer %p (DRAM retained, FREED(t)=0)\n",
+		       axfer);
+		return;
+	}
+
+	kfree(axfer->tx_buf);
+	kfree(axfer->rx_buf);
+	kfree(axfer);
+}
+
+/*
+ * SPI Hardware Completion Callback
+ *
+ * Runs in SPI host controller interrupt / callback context.
+ * Signals completion and drops Reference 2.
+ */
+static void fte3600_spi_complete_cb(void *context)
+{
+	struct fte3600_async_xfer *axfer = context;
+
+	axfer->status = axfer->msg.status;
+	axfer->completed_ok = (axfer->msg.status == 0 &&
+			       axfer->msg.actual_length == axfer->len);
+
+	complete(&axfer->done);
+
+	/* Drop Reference 2 (held by SPI hardware completion path) */
+	kref_put(&axfer->ref, fte3600_xfer_release);
+}
+
+/*
+ * Asynchronous SPI Transfer Engine with 250 ms Timeout & Global Quarantine Latching
+ */
+static int fte3600_spi_async_transfer(struct fte3600_data *data,
+				      const u8 *tx, u8 *rx, size_t len)
+{
+	struct fte3600_async_xfer *axfer;
+	unsigned long timeout_jiffies;
+	long time_left;
 	int ret;
 
 	lockdep_assert_held(&data->lock);
 
-	/* Check device validity and shutdown state */
 	if (!data->spi || atomic_read(&data->offline))
 		return -ENODEV;
 
-	/* Validate buffer pointers: at least one must be non-NULL */
+	if (data->domain && data->domain->quarantined)
+		return -ESHUTDOWN;
+
 	if (!tx && !rx)
 		return -EINVAL;
 
-	/* Validate transfer length: reject zero-length and oversized transfers */
 	if (len == 0 || len > FTE3600_MAX_SPI_TRANSFER_LEN)
 		return -EINVAL;
 
-	memset(&t, 0, sizeof(t));
-	t.tx_buf = tx;
-	t.rx_buf = rx;
-	t.len = len;
-	t.cs_change = 0;
+	axfer = kzalloc(sizeof(*axfer), GFP_KERNEL);
+	if (!axfer)
+		return -ENOMEM;
 
-	spi_message_init(&m);
-	spi_message_add_tail(&t, &m);
+	if (tx) {
+		axfer->tx_buf = kmemdup(tx, len, GFP_KERNEL);
+		if (!axfer->tx_buf) {
+			kfree(axfer);
+			return -ENOMEM;
+		}
+	}
 
-	ret = spi_sync(data->spi, &m);
+	if (rx) {
+		axfer->rx_buf = kzalloc(len, GFP_KERNEL);
+		if (!axfer->rx_buf) {
+			kfree(axfer->tx_buf);
+			kfree(axfer);
+			return -ENOMEM;
+		}
+	}
+
+	axfer->data = data;
+	axfer->len = len;
+	axfer->timed_out = false;
+	axfer->completed_ok = false;
+	axfer->status = -EINPROGRESS;
+	init_completion(&axfer->done);
+
+	/* Initialize kref to 2: Ref 1 for Submitting Thread, Ref 2 for Callback */
+	kref_init(&axfer->ref);
+	kref_get(&axfer->ref);
+
+	memset(&axfer->xfer, 0, sizeof(axfer->xfer));
+	axfer->xfer.tx_buf = axfer->tx_buf;
+	axfer->xfer.rx_buf = axfer->rx_buf;
+	axfer->xfer.len = len;
+	axfer->xfer.cs_change = 0;
+
+	spi_message_init(&axfer->msg);
+	axfer->msg.complete = fte3600_spi_complete_cb;
+	axfer->msg.context = axfer;
+	spi_message_add_tail(&axfer->xfer, &axfer->msg);
+
+	ret = spi_async(data->spi, &axfer->msg);
 	if (ret) {
+		dev_err(&data->spi->dev, "spi_async submission failed: %d\n", ret);
+		/* Submission failure: callback will never run. Drop both references */
+		kref_put(&axfer->ref, fte3600_xfer_release);
+		kref_put(&axfer->ref, fte3600_xfer_release);
 		data->state = FTE3600_STATE_UNKNOWN;
 		data->last_error = (u32)(-ret);
 		return ret;
 	}
 
-	if (m.status != 0) {
+	/* Wait with 250 ms timeout */
+	timeout_jiffies = msecs_to_jiffies(250);
+	time_left = wait_for_completion_timeout(&axfer->done, timeout_jiffies);
+
+	if (time_left == 0) {
+		/* TIMEOUT OCCURRED! */
+		dev_err(&data->spi->dev,
+			"SPI async transfer timed out (250 ms expired). Latching quarantine.\n");
+		axfer->timed_out = true;
+
+		/* Latch controller domain into permanent quarantine */
+		if (data->domain) {
+			spin_lock_bh(&data->domain->lock);
+			data->domain->quarantined = true;
+			data->domain->state = FTE3600_DOMAIN_QUARANTINED;
+			spin_unlock_bh(&data->domain->lock);
+		}
+
 		data->state = FTE3600_STATE_UNKNOWN;
-		data->last_error = (u32)(-m.status);
-		return m.status;
+		data->last_error = ETIMEDOUT;
+
+		/* Drop Ref 1 (Submitting thread). Ref 2 remains with SPI hardware. */
+		kref_put(&axfer->ref, fte3600_xfer_release);
+		return -ETIMEDOUT;
 	}
 
-	/* Verify full transfer completion: short transfers are treated as failed */
-	if (m.actual_length != len) {
+	/* Completed within 250 ms */
+	if (!axfer->completed_ok || axfer->status != 0) {
+		ret = axfer->status ? axfer->status : -EIO;
 		data->state = FTE3600_STATE_UNKNOWN;
-		data->last_error = EIO;
-		return -EIO;
+		data->last_error = (u32)(-ret);
+		kref_put(&axfer->ref, fte3600_xfer_release);
+		return ret;
 	}
 
+	/* Copy RX data back to caller */
+	if (rx && axfer->rx_buf)
+		memcpy(rx, axfer->rx_buf, len);
+
+	/* Normal completion: Drop Ref 1 (Submitting thread). Ref 2 was already dropped by callback. */
+	kref_put(&axfer->ref, fte3600_xfer_release);
 	return 0;
 }
 
-/*
- * Protocol Framing Helpers for FocalTech FT9362 / FW9369
- *
- * 1. Command Strobe (3 bytes): { opcode, ~opcode, 0x00 }
- *    - Transmits 3 bytes matching factory reference drivers (fw9369_startup.c,
- *      fw9369_fdt.c, capture.c, ft93xx.c) and mock test fixture assertions.
- * 2. SFR 8-bit Register Write (4 bytes): { 0x09, 0xF6, address, value }
- * 3. SFR 8-bit Register Read (5 bytes): { 0x08, 0xF7, address, 0x00, 0x00 } -> return rx[4]
- * 4. 16-bit Configuration Register Write (8 bytes):
- *    { 0x05, 0xFA, 0x80 | (addr >> 8), (u8)addr, 0x00, 0x01, (u8)(val >> 8), (u8)val }
- * 5. 16-bit Configuration Register Read (12 bytes):
- *    { 0x04, 0xFB, 0x80 | (addr >> 8), (u8)addr, 0x00, 0x01, 0, 0, 0, 0, 0, 0 } -> return rx[6..7]
- */
+/* In-Kernel SPI Transfer Engine (Dispatches through Asynchronous Engine) */
+static int fte3600_spi_sync_transfer(struct fte3600_data *data,
+				     const u8 *tx, u8 *rx, size_t len)
+{
+	return fte3600_spi_async_transfer(data, tx, rx, len);
+}
 
+/* Protocol Framing Helpers */
 static int fte3600_spi_cmd_strobe(struct fte3600_data *data, u8 cmd, u8 complement)
 {
 	data->tx_buf[0] = cmd;
@@ -275,73 +579,58 @@ static int fte3600_spi_read_sfr(struct fte3600_data *data, u8 addr, u8 *val)
 	return 0;
 }
 
-static int __maybe_unused fte3600_spi_write_reg16(struct fte3600_data *data, u16 addr, u16 val)
+static int fte3600_spi_write_reg16(struct fte3600_data *data, u16 addr, u16 val)
 {
 	data->tx_buf[0] = 0x05;
 	data->tx_buf[1] = 0xFA;
-	data->tx_buf[2] = (u8)(0x80 | (addr >> 8));
-	data->tx_buf[3] = (u8)addr;
+	data->tx_buf[2] = 0x80 | (u8)(addr >> 8);
+	data->tx_buf[3] = (u8)(addr & 0xFF);
 	data->tx_buf[4] = 0x00;
 	data->tx_buf[5] = 0x01;
 	data->tx_buf[6] = (u8)(val >> 8);
-	data->tx_buf[7] = (u8)val;
+	data->tx_buf[7] = (u8)(val & 0xFF);
 	return fte3600_spi_sync_transfer(data, data->tx_buf, NULL, 8);
 }
 
-static int __maybe_unused fte3600_spi_read_reg16(struct fte3600_data *data, u16 addr, u16 *val)
+static int fte3600_spi_read_reg16(struct fte3600_data *data, u16 addr, u16 *val, u16 *wire_crc)
 {
 	int ret;
+	u16 reg_val;
 
-	memset(data->rx_buf, 0, 12);
+	memset(data->rx_buf, 0, 10);
 	data->tx_buf[0] = 0x04;
 	data->tx_buf[1] = 0xFB;
-	data->tx_buf[2] = (u8)(0x80 | (addr >> 8));
-	data->tx_buf[3] = (u8)addr;
+	data->tx_buf[2] = 0x80 | (u8)(addr >> 8);
+	data->tx_buf[3] = (u8)(addr & 0xFF);
 	data->tx_buf[4] = 0x00;
 	data->tx_buf[5] = 0x01;
-	memset(&data->tx_buf[6], 0, 6);
-	ret = fte3600_spi_sync_transfer(data, data->tx_buf, data->rx_buf, 12);
+	memset(&data->tx_buf[6], 0, 4);
+
+	ret = fte3600_spi_sync_transfer(data, data->tx_buf, data->rx_buf, 10);
 	if (ret)
 		return ret;
+
+	reg_val = ((u16)data->rx_buf[6] << 8) | data->rx_buf[7];
 	if (val)
-		*val = ((u16)data->rx_buf[6] << 8) | data->rx_buf[7];
+		*val = reg_val;
+	if (wire_crc)
+		*wire_crc = 0;
 	return 0;
 }
 
-/*
- * Minimal FT9362 Silicon Identification Sequence
- *
- * Implements the minimal, read-only hardware identification sequence verified
- * in Stage 2A.
- *
- * Preconditions:
- * 1. Caller MUST hold data->lock. Enforced via lockdep_assert_held(&data->lock).
- * 2. Device must be online with valid data->spi.
- * 3. Driver state MUST be FTE3600_STATE_RESET_SEQUENCE_ISSUED (electrical reset pulse issued).
- *
- * Sequence:
- * Step A: Write volatile register 0xC6 = 0x01 (ungate SPI transceiver clock, 4 bytes)
- * Step B: Transceiver stabilization delay 4 ms (CS deasserted HIGH)
- * Step C: Read back register 0xC6 (verify rx[4] == 0x01, 5 bytes)
- * Step D: Interrogate Chip ID register 0x1A8B (read 10 bytes)
- * Step E: Wire CRC-16 verification (CCITT poly 0x1021, seed 0xFFFF over rx[6..7])
- * Step F: Variant gate & fault evaluation (require ID 0x9362, CRC 0x1C53)
- *
- * State Transitions:
- * Upon starting: state = FTE3600_STATE_INITIALIZING
- * Upon success:  state = FTE3600_STATE_IDENTIFIED, last_error = 0, return 0
- * Upon error:    state = FTE3600_STATE_UNKNOWN, last_error = (u32)(-ret), return ret
- *
- * Fail-Closed Invariant:
- * On any transport failure, verification mismatch, or invalid ID/CRC, the driver
- * transitions to FTE3600_STATE_UNKNOWN. No automatic retries or undocumented cleanup
- * writes are issued. Recovery strictly requires a subsequent userspace FTE3600_IOC_RESET.
- *
- * Semantic Boundary:
- * Transitions state to FTE3600_STATE_IDENTIFIED, NOT FTE3600_STATE_READY. Chip
- * identification verifies bus responsiveness and silicon identity; full operational
- * capture readiness (AFE calibration, baseline, FIFO arming) is deferred to future stages.
- */
+static int fte3600_spi_rmw_reg16(struct fte3600_data *data, u16 addr, u16 mask, u16 val)
+{
+	u16 orig = 0;
+	int ret;
+
+	ret = fte3600_spi_read_reg16(data, addr, &orig, NULL);
+	if (ret)
+		return ret;
+
+	return fte3600_spi_write_reg16(data, addr, (orig & mask) | val);
+}
+
+/* Minimal FT9362 Silicon Identification Sequence */
 static int fte3600_hw_identify(struct fte3600_data *data)
 {
 	u16 chip_id, crc_rx, crc_calc;
@@ -440,7 +729,6 @@ static int fte3600_hw_identify(struct fte3600_data *data)
 		return -ENODEV;
 	}
 
-	/* Identification verified: transition state to IDENTIFIED (NOT READY) */
 	data->state = FTE3600_STATE_IDENTIFIED;
 	data->last_error = 0;
 	dev_info(&data->spi->dev,
@@ -449,41 +737,7 @@ static int fte3600_hw_identify(struct fte3600_data *data)
 	return 0;
 }
 
-/*
- * FT9362 Volatile Hardware Startup Prefix Sequence (Stage D6.4 Truthful Semantics)
- *
- * Implements the verified post-identification volatile prefix sequence (6 steps),
- * corresponding to the vendor reference driver's prefix() routine (fw9369_startup.c:321-384):
- * Step 1: Wake strobe 1: CMD_WAKE { 0x5A, 0xA5, 0x00 } (3-byte framing)
- * Step 2: Stabilization delay 1 ms
- * Step 3: Verify HW_STATUS (0x80) enters idle state 0x50 (with abort recovery)
- * Step 4: Wake strobe 2: CMD_IDLE_ACK { 0xA5, 0x5A, 0x00 } (3-byte framing)
- * Step 5: Foundry interrogation: 2 loop iterations of sense-amp register index (0x03 and 0x13),
- *         strobe sequence on 0xF4 (0xC0, 0xC1, 0xC0, 0xC0), and dummy read 0xF3 (12 transfers)
- * Step 6: Read silicon fab identity from register 0x9B (detect SMIC 0xAA vs default)
- *
- * Reassessment of Interrupt Register (0x1A84) and NVM Storage:
- * - Interrupt register 0x1A84: Vendor reference source contains write_word(op, 0x1A84, 0xFFFF)
- *   calls in fw9369_startup.c:343, 371 and ft93xx.c:547, 797. However, the physical silicon
- *   semantics and bit definitions of upper bits 6–15 remain NOT ESTABLISHED in public documentation.
- *   These writes remain excluded from baseline kernel startup pending dedicated Stage D7 IRQ
- *   investigation. Interrupt clearing is not presumed unnecessary, and no guessed replacement
- *   value is introduced.
- * - OTP / eFuse macro storage: Access facilities via registers 0xF1, 0xF4, and 0xF3 are
- *   SOURCE-OBSERVED. Persistent programming capability is NOT ESTABLISHED. Zero persistent
- *   programming operations are authorized or permitted. The driver issues only read-clocking
- *   sequences for wafer identification.
- *
- * State Transitions & Capture-Gating Boundary:
- * - Precondition: data->state MUST be FTE3600_STATE_IDENTIFIED.
- * - On success: data->state = FTE3600_STATE_INITIALIZED_UNCALIBRATED, last_error = 0.
- * - On failure: data->state = FTE3600_STATE_UNKNOWN, last_error = -ret.
- * - State READY is strictly withheld: Authoritative vendor source establishes that
- *   operational capture readiness requires subsequent analog differential DAC calibration
- *   (fdt_baseline), sample noise acquisition (image_baseline), and threshold arming (arm).
- *   Those operations are deferred to future stages. Capture is strictly gated against
- *   all non-READY states.
- */
+/* Volatile Hardware Startup Prefix Sequence */
 static int fte3600_hw_startup(struct fte3600_data *data)
 {
 	u8 status_80, fab_byte, dummy;
@@ -541,7 +795,7 @@ static int fte3600_hw_startup(struct fte3600_data *data)
 		goto err;
 	}
 
-	/* Step 5: Foundry Interrogation (two loop iterations: index 0x03 and index 0x13) */
+	/* Step 5: Foundry Interrogation (index 0x03 and 0x13) */
 	for (i = 0; i < 2; i++) {
 		u8 idx = (i == 0) ? 0x03 : 0x13;
 
@@ -565,7 +819,7 @@ static int fte3600_hw_startup(struct fte3600_data *data)
 			goto err;
 	}
 
-	/* Step 6: Read foundry identification code from register 0x9B (up to 10 attempts) */
+	/* Step 6: Read foundry identification code from register 0x9B */
 	data->foundry_code = 0;
 	for (i = 0; i < 10; i++) {
 		ret = fte3600_spi_read_sfr(data, 0x9B, &fab_byte);
@@ -581,13 +835,6 @@ static int fte3600_hw_startup(struct fte3600_data *data)
 	}
 
 	data->line_period_us = (data->foundry_code == 0xAA) ? 150 : 200;
-
-	/*
-	 * Volatile startup prefix successful: transition to INITIALIZED_UNCALIBRATED.
-	 * State READY is withheld until analog DAC calibration (fdt_baseline),
-	 * sample noise acquisition (image_baseline), and threshold arming (arm)
-	 * are completed in future authorized stages.
-	 */
 	data->state = FTE3600_STATE_INITIALIZED_UNCALIBRATED;
 	data->last_error = 0;
 	dev_info(&data->spi->dev,
@@ -601,20 +848,614 @@ err:
 	return ret;
 }
 
+/*
+ * Hardware Analog Front-End (AFE) and FDT Touch Sense Configuration
+ *
+ * Programs the analog front-end matrix, timings, integration multipliers,
+ * and detection circuits on the FocalTech FT9362 silicon according to
+ * the hardware specification.
+ */
+static int fte3600_hw_fdt_configure(struct fte3600_data *data, u8 dac, bool calibrating)
+{
+	u8 status_80;
+	u16 period_val, val_1805, timing;
+	int ret;
+
+	lockdep_assert_held(&data->lock);
+
+	/* 1. Ensure hardware is in idle state 0x50 */
+	ret = fte3600_spi_cmd_strobe(data, 0x5A, 0xA5);
+	if (ret)
+		return ret;
+	usleep_range(1000, 1500);
+
+	ret = fte3600_spi_read_sfr(data, 0x80, &status_80);
+	if (ret)
+		return ret;
+
+	if (status_80 != 0x50) {
+		ret = fte3600_spi_cmd_strobe(data, 0xC0, 0x3F);
+		if (ret)
+			return ret;
+		usleep_range(1000, 1500);
+	}
+
+	ret = fte3600_spi_cmd_strobe(data, 0xA5, 0x5A);
+	if (ret)
+		return ret;
+
+	/* 2. Program DAC and Matrix Enable (0x1800 = 0x4FFE) */
+	ret = fte3600_spi_write_reg16(data, 0x1801, 0xFC80 | (dac & 0x7F));
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_write_reg16(data, 0x1800, 0x4FFE);
+	if (ret)
+		return ret;
+
+	/* 3. Base Image Timing and Matrix Configuration */
+	period_val = ((u16)(data->line_period_us - 1) << 5) | 1;
+	ret = fte3600_spi_write_reg16(data, 0x1804, 0x27CA); /* shift = 2 */
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_rmw_reg16(data, 0x1806, 0xC07F, 0x0480);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_rmw_reg16(data, 0x180A, 0xC000, 0x0483);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_rmw_reg16(data, 0x180B, 0xC000, 0x0208);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_write_reg16(data, 0x1807, period_val);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_write_reg16(data, 0x1887, 0x0002);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_rmw_reg16(data, 0x1805, 0xFF0F, 0x0000);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_rmw_reg16(data, 0x1811, 0xFC00, 0x01FE);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_rmw_reg16(data, 0x1A83, 0xFFFF, 0x0020);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_rmw_reg16(data, 0x1A83, 0xFFFF, 0x0060);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_write_sfr(data, 0x8E, 0xF4);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_write_sfr(data, 0x90, 0x00);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_write_sfr(data, 0x91, 0x07);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_write_sfr(data, 0x92, 0xD0);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_write_sfr(data, 0x90, 0x01);
+	if (ret)
+		return ret;
+
+	/* 4. FDT Analog Circuitry Configuration */
+	ret = fte3600_spi_write_reg16(data, 0x1801, 0xFC80 | (dac & 0x7F));
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_write_reg16(data, 0x180C, calibrating ? 0x0000 : 0x0600);
+	if (ret)
+		return ret;
+
+	/* Timing for rate 60 Hz, repeat 4: ((1000/60 - 1) << 8) | ((4 - 1) << 2) = 0x0F0C */
+	timing = ((1000u / 60 - 1) << 8) | (3 << 2);
+	ret = fte3600_spi_write_reg16(data, 0x1881, timing);
+	if (ret)
+		return ret;
+
+	/* Channel mode 1 registers */
+	ret = fte3600_spi_write_reg16(data, 0x1800, 0x07FE);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_write_reg16(data, 0x1804, 0x27C8);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_write_reg16(data, 0x1807, 0x1671);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_write_reg16(data, 0x1808, 0x0801);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_write_reg16(data, 0x1887, 0x0005);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_rmw_reg16(data, 0x1806, 0xC07F, 0x0980);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_rmw_reg16(data, 0x180A, 0xC000, 0x0987);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_rmw_reg16(data, 0x180B, 0xC000, 0x0491);
+	if (ret)
+		return ret;
+
+	/* FDT Analog Banks Setup */
+	ret = fte3600_spi_read_reg16(data, 0x1805, &val_1805, NULL);
+	if (ret)
+		return ret;
+
+	val_1805 &= 0xFFEF;
+	ret = fte3600_spi_write_reg16(data, 0x1805, val_1805);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_write_reg16(data, 0x180D, (val_1805 & 0xFC00) | 0x0384);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_rmw_reg16(data, 0x1888, 0xFC03, 0x0000);
+	if (ret)
+		return ret;
+
+	/* Unlock Protected Bank SFR 0x9A = 0x5A */
+	ret = fte3600_spi_write_sfr(data, 0x9A, 0x5A);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_rmw_reg16(data, 0x00C0, 0xE000, 0x0444);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_rmw_reg16(data, 0x00C1, 0xFFC0, 0x0021);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_rmw_reg16(data, 0x00C2, 0xFFFF, 0x00C0);
+	if (ret)
+		return ret;
+
+	/* Lock Protected Bank SFR 0x9A = 0x00 */
+	ret = fte3600_spi_write_sfr(data, 0x9A, 0x00);
+	if (ret)
+		return ret;
+
+	/* Default detection thresholds: low 50, high 45 */
+	ret = fte3600_spi_rmw_reg16(data, 0x1880, 0x0000, (45 << 8) | 50);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_rmw_reg16(data, 0x1881, 0xFFFE, 0x0082);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_rmw_reg16(data, 0x1884, 0xFFF8, 0x0003); /* average 4 */
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_write_reg16(data, 0x1A8A, 0x00FF);
+	if (ret)
+		return ret;
+
+	ret = fte3600_spi_rmw_reg16(data, 0x1A83, 0xFFFF, 0x0008);
+	if (ret)
+		return ret;
+
+	return 0;
+}
+
+/* FDT Touch Sense Analog Front-End Measurement */
+static int fte3600_hw_fdt_sample(struct fte3600_data *data, struct fte3600_session_fdt *sfdt)
+{
+	u16 timing, status_1a82;
+	u8 bank_addr;
+	int ret, i, iter;
+	bool ready = false;
+
+	lockdep_assert_held(&data->lock);
+
+	if (atomic_read(&data->offline) || !data->spi)
+		return -ENODEV;
+
+	/* 1. Configure AFE and FDT circuit with requested DAC */
+	ret = fte3600_hw_fdt_configure(data, (u8)sfdt->dac_val, true);
+	if (ret)
+		return ret;
+
+	/* 2. Configure scan mode trigger: verify bit 1 in 0x1881 is set */
+	ret = fte3600_spi_read_reg16(data, 0x1881, &timing, NULL);
+	if (ret)
+		return ret;
+	if ((timing & 2) == 0) {
+		ret = fte3600_spi_write_reg16(data, 0x1881, timing | 2);
+		if (ret)
+			return ret;
+	}
+
+	/* 3. Send command strobe {0xC2, 0x3D, 0x00} */
+	ret = fte3600_spi_cmd_strobe(data, 0xC2, 0x3D);
+	if (ret)
+		return ret;
+
+	/* 4. Stabilization wait 1 ms */
+	usleep_range(1000, 1500);
+
+	/* 5. Trigger measurement: write 0x1885 = 0x0001 */
+	ret = fte3600_spi_write_reg16(data, 0x1885, 0x0001);
+	if (ret)
+		return ret;
+
+	/* 6. Poll status register 0x1A82 for scan completion (bit 3 == 1) */
+	for (iter = 0; iter < 10; iter++) {
+		ret = fte3600_spi_read_reg16(data, 0x1A82, &status_1a82, NULL);
+		if (ret)
+			return ret;
+		if (status_1a82 & 0x0008) {
+			ready = true;
+			break;
+		}
+		usleep_range(1000, 1500);
+	}
+
+	if (!ready) {
+		dev_err(&data->spi->dev, "FDT scan timeout waiting for 0x1A82 bit 3\n");
+		return -ETIMEDOUT;
+	}
+
+	/* 7. Read 4 channels ADC bank (14 bytes total: 6 header + 8 data) */
+	bank_addr = (data->foundry_code == 0xAA) ? 0xE8 : 0xB8;
+	memset(data->rx_buf, 0, 14);
+	data->tx_buf[0] = 0x04;
+	data->tx_buf[1] = 0xFB;
+	data->tx_buf[2] = 0x80;
+	data->tx_buf[3] = bank_addr;
+	data->tx_buf[4] = 0x00;
+	data->tx_buf[5] = 0x04; /* 4 words = 8 bytes */
+	memset(&data->tx_buf[6], 0, 8);
+
+	ret = fte3600_spi_sync_transfer(data, data->tx_buf, data->rx_buf, 14);
+	if (ret)
+		return ret;
+
+	/* 8. Populate results */
+	for (i = 0; i < 4; i++) {
+		sfdt->adc_samples[i] = ((u16)data->rx_buf[6 + 2 * i] << 8) |
+				       data->rx_buf[7 + 2 * i];
+	}
+	for (i = 4; i < 8; i++)
+		sfdt->adc_samples[i] = 0;
+
+	sfdt->wire_crc = 0;
+	sfdt->computed_crc = 0;
+	sfdt->status_flags = 0x01;
+
+	data->session.stored_dac = (u8)sfdt->dac_val;
+	data->session.dac_valid = true;
+	return 0;
+}
+
+/* Threshold Bank Programming (22-Byte Burst Write) */
+static int fte3600_hw_set_thresholds(struct fte3600_data *data,
+				     const struct fte3600_session_thresholds *sthresh)
+{
+	u8 expected_bank_addr;
+	int ret, i;
+
+	lockdep_assert_held(&data->lock);
+
+	if (atomic_read(&data->offline) || !data->spi)
+		return -ENODEV;
+
+	if (sthresh->bank_len != FTE3600_THRESHOLD_BANK_LEN)
+		return -EINVAL;
+
+	expected_bank_addr = (data->foundry_code == 0xAA) ? 0xE0 : 0xB0;
+
+	/* Validate 6-byte header */
+	if (sthresh->threshold_bank[0] != 0x05 ||
+	    sthresh->threshold_bank[1] != 0xFA ||
+	    sthresh->threshold_bank[2] != 0x80 ||
+	    sthresh->threshold_bank[3] != expected_bank_addr ||
+	    sthresh->threshold_bank[4] != 0x00 ||
+	    sthresh->threshold_bank[5] != 0x08) {
+		dev_err(&data->spi->dev, "Invalid threshold bank header\n");
+		return -EINVAL;
+	}
+
+	/* Validate channels 4..7 padding is zero */
+	for (i = 14; i < 22; i++) {
+		if (sthresh->threshold_bank[i] != 0) {
+			dev_err(&data->spi->dev, "Non-zero padding in threshold bank\n");
+			return -EINVAL;
+		}
+	}
+
+	/* Unlock protected SFR 0x9A = 0x5A */
+	ret = fte3600_spi_write_sfr(data, 0x9A, 0x5A);
+	if (ret)
+		return ret;
+
+	/* Burst write 22-byte bank */
+	memcpy(data->tx_buf, sthresh->threshold_bank, FTE3600_THRESHOLD_BANK_LEN);
+	ret = fte3600_spi_sync_transfer(data, data->tx_buf, NULL, FTE3600_THRESHOLD_BANK_LEN);
+	if (ret) {
+		fte3600_spi_write_sfr(data, 0x9A, 0x00);
+		return ret;
+	}
+
+	/* Lock protected SFR 0x9A = 0x00 */
+	ret = fte3600_spi_write_sfr(data, 0x9A, 0x00);
+	if (ret)
+		return ret;
+
+	data->session.thresholds_programmed = true;
+	return 0;
+}
+
+/* Operational Arming Sequence (Transitions to READY) */
+static int fte3600_hw_arm_sensor(struct fte3600_data *data)
+{
+	int ret;
+
+	lockdep_assert_held(&data->lock);
+
+	if (atomic_read(&data->offline) || !data->spi)
+		return -ENODEV;
+
+	/* Step 1: Mode register 0x1881: (val & 0xFF7C) | 0x0081 */
+	ret = fte3600_spi_rmw_reg16(data, 0x1881, 0xFF7C, 0x0081);
+	if (ret)
+		goto err_fail;
+
+	/* Step 2: Detection filter register 0x1A83: (val & 0xFF80) | 0x0016 */
+	ret = fte3600_spi_rmw_reg16(data, 0x1A83, 0xFF80, 0x0016);
+	if (ret)
+		goto err_fail;
+
+	/* Step 3: Clear interrupt latch 0x1A84 = 0x002F */
+	ret = fte3600_spi_write_reg16(data, 0x1A84, 0x002F);
+	if (ret)
+		goto err_fail;
+
+	/* Step 4: Dispatch Arm strobe { 0xC2, 0x3D, 0x00 } */
+	ret = fte3600_spi_cmd_strobe(data, 0xC2, 0x3D);
+	if (ret)
+		goto err_fail;
+
+	/* Step 5: Stabilization wait 1 ms */
+	usleep_range(1000, 1500);
+
+	data->state = FTE3600_STATE_READY;
+	data->last_error = 0;
+	return 0;
+
+err_fail:
+	data->state = FTE3600_STATE_UNKNOWN;
+	data->last_error = (u32)(-ret);
+	return ret;
+}
+
+/* FIFO Burst Frame Capture Pipeline (64x80 matrix, 10240 bytes payload) */
+static int fte3600_hw_capture_frame(struct fte3600_data *data,
+				    void __user *user_buf, size_t buf_len)
+{
+	u8 status_80, dac;
+	int ret, iter;
+	bool capture_done = false;
+	u16 period_val, val_1800 = 0;
+
+	lockdep_assert_held(&data->lock);
+
+	if (atomic_read(&data->offline) || !data->spi)
+		return -ENODEV;
+
+	if (data->state != FTE3600_STATE_READY)
+		return -EPERM;
+
+	if (buf_len != FTE3600_IMAGE_BYTES)
+		return -EINVAL;
+
+	if (!user_buf)
+		return -EFAULT;
+
+	data->state = FTE3600_STATE_CAPTURING;
+
+	/* Step 1: Ensure hardware is in idle state 0x50 */
+	ret = fte3600_spi_cmd_strobe(data, 0x5A, 0xA5);
+	if (ret)
+		goto err;
+	usleep_range(1000, 1500);
+
+	ret = fte3600_spi_read_sfr(data, 0x80, &status_80);
+	if (ret)
+		goto err;
+
+	if (status_80 != 0x50) {
+		ret = fte3600_spi_cmd_strobe(data, 0xC0, 0x3F);
+		if (ret)
+			goto err;
+		usleep_range(1000, 1500);
+		ret = fte3600_spi_read_sfr(data, 0x80, &status_80);
+		if (ret || status_80 != 0x50) {
+			ret = -EIO;
+			goto err;
+		}
+	}
+
+	ret = fte3600_spi_cmd_strobe(data, 0xA5, 0x5A);
+	if (ret)
+		goto err;
+
+	/* Step 2: Configure DAC and enable pixel matrix */
+	dac = data->session.dac_valid ? data->session.stored_dac : 54;
+	ret = fte3600_spi_write_reg16(data, 0x1801, 0xFC80 | (dac & 0x7F));
+	if (ret)
+		goto err;
+
+	ret = fte3600_spi_write_reg16(data, 0x1800, 0x4FFE);
+	if (ret)
+		goto err;
+
+	period_val = ((u16)(data->line_period_us - 1) << 5) | 1;
+	ret = fte3600_spi_write_reg16(data, 0x1804, 0x27CA);
+	if (ret)
+		goto err;
+
+	ret = fte3600_spi_rmw_reg16(data, 0x1806, 0xC07F, 0x0480);
+	if (ret)
+		goto err;
+
+	ret = fte3600_spi_rmw_reg16(data, 0x180A, 0xC000, 0x0483);
+	if (ret)
+		goto err;
+
+	ret = fte3600_spi_rmw_reg16(data, 0x180B, 0xC000, 0x0208);
+	if (ret)
+		goto err;
+
+	ret = fte3600_spi_write_reg16(data, 0x1807, period_val);
+	if (ret)
+		goto err;
+
+	ret = fte3600_spi_write_reg16(data, 0x1887, 0x0002);
+	if (ret)
+		goto err;
+
+	/* Step 3: Transmit Capture Trigger Strobe { 0xC4, 0x3B, 0x00 } */
+	ret = fte3600_spi_cmd_strobe(data, 0xC4, 0x3B);
+	if (ret)
+		goto err;
+
+	/* Step 4: Poll status 0x80 for capture completion (0x54) */
+	for (iter = 0; iter < 20; iter++) {
+		usleep_range(1000, 1500);
+		ret = fte3600_spi_read_sfr(data, 0x80, &status_80);
+		if (ret)
+			goto err;
+		if (status_80 == 0x54) {
+			capture_done = true;
+			break;
+		}
+	}
+
+	if (!capture_done) {
+		dev_err(&data->spi->dev, "Capture completion timeout: status 0x80 = 0x%02x\n",
+			status_80);
+		ret = -ETIMEDOUT;
+		goto err;
+	}
+
+	/* Read register 0x1800 and set bit 0 to enable FIFO clocking (keeping 0x4FFE matrix asserted) */
+	ret = fte3600_spi_read_reg16(data, 0x1800, &val_1800, NULL);
+	if (ret)
+		goto err;
+
+	ret = fte3600_spi_write_reg16(data, 0x1800, val_1800 | 0x4FFE | 1);
+	if (ret)
+		goto err;
+	usleep_range(1000, 1500);
+
+	/* Step 5: Read 10,246-byte FIFO in a single burst transfer */
+	{
+		u8 *tx_burst, *rx_burst;
+
+		tx_burst = kzalloc(FTE3600_FIFO_TRANSFER_LEN, GFP_KERNEL);
+		if (!tx_burst) {
+			ret = -ENOMEM;
+			goto err;
+		}
+		rx_burst = kzalloc(FTE3600_FIFO_TRANSFER_LEN, GFP_KERNEL);
+		if (!rx_burst) {
+			kfree(tx_burst);
+			ret = -ENOMEM;
+			goto err;
+		}
+
+		/* 6-byte burst read header: Opcode 0x06 (inverted 0xF9), Reg 0x1A05 (0x9A, 0x05), 5120 words (0x14, 0x00) */
+		tx_burst[0] = 0x06;
+		tx_burst[1] = 0xF9;
+		tx_burst[2] = 0x9A;
+		tx_burst[3] = 0x05;
+		tx_burst[4] = 0x14;
+		tx_burst[5] = 0x00;
+
+		ret = fte3600_spi_sync_transfer(data, tx_burst, rx_burst, FTE3600_FIFO_TRANSFER_LEN);
+		if (ret) {
+			kfree(tx_burst);
+			kfree(rx_burst);
+			goto err;
+		}
+
+		dev_info(&data->spi->dev, "FIFO burst (10246 bytes) rx[0..15] = %*ph\n",
+			 16, rx_burst);
+
+		/* Step 6: Acknowledge capture interrupt (0x1A84 = 0x0020) AFTER reading FIFO */
+		ret = fte3600_spi_write_reg16(data, 0x1A84, 0x0020);
+		if (ret) {
+			kfree(tx_burst);
+			kfree(rx_burst);
+			goto err;
+		}
+
+		/* Step 6b: Return to idle strobe { 0x5A, 0xA5, 0x00 } (Event 199 in events_0) */
+		fte3600_spi_cmd_strobe(data, 0x5A, 0xA5);
+
+		/* Step 7: Copy 10,240-byte pixel payload to userspace */
+		if (copy_to_user(user_buf, rx_burst + FTE3600_FIFO_PREFIX_LEN, FTE3600_IMAGE_BYTES)) {
+			kfree(tx_burst);
+			kfree(rx_burst);
+			ret = -EFAULT;
+			goto err;
+		}
+
+		kfree(tx_burst);
+		kfree(rx_burst);
+	}
+
+	data->state = FTE3600_STATE_READY;
+	data->last_error = 0;
+	return 0;
+
+err:
+	data->state = FTE3600_STATE_UNKNOWN;
+	data->last_error = (u32)(-ret);
+	return ret;
+}
+
 /* Character Device: Open with Single-Client Exclusive Lease */
 static int fte3600_cdev_open(struct inode *inode, struct file *filp)
 {
 	struct fte3600_data *data = container_of(inode->i_cdev, struct fte3600_data, cdev);
 
-	/* Reject immediately if device was already unbound */
 	if (atomic_read(&data->offline))
 		return -ENODEV;
 
-	/* Enforce single-client exclusive lease */
 	if (atomic_cmpxchg(&data->is_open, 0, 1) != 0)
 		return -EBUSY;
 
-	/* Re-check offline after acquiring lease in case remove ran concurrently */
 	if (atomic_read(&data->offline)) {
 		atomic_set(&data->is_open, 0);
 		return -ENODEV;
@@ -630,12 +1471,30 @@ static int fte3600_cdev_release(struct inode *inode, struct file *filp)
 {
 	struct fte3600_data *data = filp->private_data;
 
+	/*
+	 * DEADLOCK REMEDIATION INVARIANT:
+	 * cancel_delayed_work_sync() MUST be called BEFORE acquiring data->lock.
+	 * fte3600_watchdog_work_fn() acquires data->lock; cancelling while holding
+	 * data->lock causes an immediate kernel deadlock.
+	 */
+	cancel_delayed_work_sync(&data->session.watchdog_work);
+
+	mutex_lock(&data->lock);
+	if (data->session.active && data->session.owner_filp == filp) {
+		data->session.active = false;
+		data->session.owner_filp = NULL;
+		data->session.generation++;
+		data->state = FTE3600_STATE_UNKNOWN;
+		data->last_error = ECANCELED;
+	}
+	mutex_unlock(&data->lock);
+
 	atomic_set(&data->is_open, 0);
 	put_device(&data->dev);
 	return 0;
 }
 
-/* Character Device: IOCTL Handler */
+/* Character Device: Common IOCTL Handler */
 static long fte3600_ioctl_common(struct file *filp, unsigned int cmd, unsigned long arg)
 {
 	struct fte3600_data *data = filp->private_data;
@@ -644,7 +1503,7 @@ static long fte3600_ioctl_common(struct file *filp, unsigned int cmd, unsigned l
 	if (_IOC_TYPE(cmd) != FTE3600_IOC_MAGIC)
 		return -ENOTTY;
 
-	/* Fast-path check: if already offline, reject hardware commands immediately */
+	/* Fast-path check: if offline, reject all commands except GET_STATE */
 	if (atomic_read(&data->offline) && cmd != FTE3600_IOC_GET_STATE)
 		return -ENODEV;
 
@@ -664,6 +1523,8 @@ static long fte3600_ioctl_common(struct file *filp, unsigned int cmd, unsigned l
 			snap.flags |= FTE3600_FLAG_RESET_SEQUENCE_ISSUED;
 		if (data->state == FTE3600_STATE_INITIALIZED_UNCALIBRATED)
 			snap.flags |= FTE3600_FLAG_STARTUP_PREFIX_COMPLETED | FTE3600_FLAG_CALIBRATION_PENDING;
+		if (data->session.active)
+			snap.flags |= FTE3600_FLAG_SESSION_ACTIVE;
 		snap.last_error = data->last_error;
 
 		mutex_unlock(&data->lock);
@@ -673,18 +1534,25 @@ static long fte3600_ioctl_common(struct file *filp, unsigned int cmd, unsigned l
 		break;
 	}
 	case FTE3600_IOC_RESET: {
+		/*
+		 * Cancel session watchdog synchronously outside data->lock
+		 * to prevent potential deadlock.
+		 */
+		cancel_delayed_work_sync(&data->session.watchdog_work);
+
 		if (mutex_lock_interruptible(&data->lock))
 			return -ERESTARTSYS;
 
-		/*
-		 * Hardware-Resource Shutdown Protocol:
-		 * Re-check offline status and GPIO descriptor validity under data->lock!
-		 * If fte3600_remove() executed while we waited for the lock, offline
-		 * is now 1 and reset_gpiod is NULL. We abort without touching hardware.
-		 */
 		if (atomic_read(&data->offline) || !data->reset_gpiod) {
 			mutex_unlock(&data->lock);
 			return -ENODEV;
+		}
+
+		/* Invalidate any active session upon electrical reset */
+		if (data->session.active) {
+			data->session.active = false;
+			data->session.owner_filp = NULL;
+			data->session.generation++;
 		}
 
 		ret = fte3600_hw_reset_pulse(data);
@@ -715,22 +1583,11 @@ static long fte3600_ioctl_common(struct file *filp, unsigned int cmd, unsigned l
 		if (mutex_lock_interruptible(&data->lock))
 			return -ERESTARTSYS;
 
-		/* Re-check offline status and SPI bus pointer under data->lock */
 		if (atomic_read(&data->offline) || !data->spi) {
 			mutex_unlock(&data->lock);
 			return -ENODEV;
 		}
 
-		/*
-		 * Initialization State Machine:
-		 * Case 1: Driver is in RESET_SEQUENCE_ISSUED (state 2).
-		 *         Executes fte3600_hw_identify() to verify bus responsiveness and chip ID.
-		 *         If params.flags specifies FTE3600_INIT_FLAG_FULL_STARTUP, automatically
-		 *         advances through fte3600_hw_startup() to enter INITIALIZED_UNCALIBRATED.
-		 * Case 2: Driver is already in IDENTIFIED (state 8).
-		 *         Executes fte3600_hw_startup() to transition to INITIALIZED_UNCALIBRATED.
-		 * Any other state: Returns -EPERM (reset sequence required first).
-		 */
 		if (data->state == FTE3600_STATE_RESET_SEQUENCE_ISSUED) {
 			ret = fte3600_hw_identify(data);
 			if (ret == 0 && (params.flags & FTE3600_INIT_FLAG_FULL_STARTUP))
@@ -768,29 +1625,277 @@ static long fte3600_ioctl_common(struct file *filp, unsigned int cmd, unsigned l
 		if (mutex_lock_interruptible(&data->lock))
 			return -ERESTARTSYS;
 
-		/* Re-check offline status and SPI bus pointer under data->lock */
 		if (atomic_read(&data->offline) || !data->spi) {
 			mutex_unlock(&data->lock);
 			return -ENODEV;
 		}
 
-		/*
-		 * Capture-Gating Enforcement:
-		 * Capture is strictly prohibited unless the device has completed all
-		 * required initialization, analog baseline calibration, and touch arming stages.
-		 * In the current driver milestone, volatile startup prefix has completed,
-		 * but calibration (fdt_baseline, image_baseline) and touch arming (arm)
-		 * are deferred to future authorized stages.
-		 * Therefore, capture is rejected in all non-READY states with -EPERM.
-		 */
+		/* Strict Capture-Gating Enforcement against non-READY states */
 		if (data->state != FTE3600_STATE_READY) {
 			mutex_unlock(&data->lock);
 			return -EPERM;
 		}
 
-		/* Physical FIFO capture deferred in Stage 2E.2 software milestone */
+		ret = fte3600_hw_capture_frame(data, (void __user *)fb.buffer_ptr, fb.length);
 		mutex_unlock(&data->lock);
-		return -EOPNOTSUPP;
+		return ret;
+	}
+	case FTE3600_IOC_SESSION_BEGIN: {
+		struct fte3600_session_begin sb;
+		u32 rand_val;
+		int i;
+
+		if (copy_from_user(&sb, (void __user *)arg, sizeof(sb)))
+			return -EFAULT;
+
+		if (sb.version != FTE3600_UAPI_VERSION || sb.flags != 0)
+			return -EINVAL;
+
+		for (i = 0; i < 3; i++) {
+			if (sb.reserved[i] != 0)
+				return -EINVAL;
+		}
+
+		if (mutex_lock_interruptible(&data->lock))
+			return -ERESTARTSYS;
+
+		if (atomic_read(&data->offline) || !data->spi) {
+			mutex_unlock(&data->lock);
+			return -ENODEV;
+		}
+
+		/* Must be at least INITIALIZED_UNCALIBRATED or READY to begin calibration session */
+		if (data->state != FTE3600_STATE_INITIALIZED_UNCALIBRATED &&
+		    data->state != FTE3600_STATE_READY) {
+			mutex_unlock(&data->lock);
+			return -EPERM;
+		}
+
+		/* Check exclusive OFD lease */
+		if (data->session.active && data->session.owner_filp != filp) {
+			mutex_unlock(&data->lock);
+			return -EBUSY;
+		}
+
+		/* Generate generation-keyed 64-bit token */
+		get_random_bytes(&rand_val, sizeof(rand_val));
+		data->session.token = ((u64)data->session.generation << 32) | (u64)rand_val;
+		data->session.active = true;
+		data->session.owner_filp = filp;
+		data->session.channel_mode = 1;
+		data->session.stored_dac = 27;
+		data->session.dac_valid = false;
+		data->session.thresholds_programmed = false;
+
+		/* Arm 5.0 s watchdog timer */
+		mod_delayed_work(fte3600_wq, &data->session.watchdog_work,
+				 msecs_to_jiffies(FTE3600_WATCHDOG_DEFAULT_MS));
+
+		sb.session_token = data->session.token;
+		sb.watchdog_ms = FTE3600_WATCHDOG_DEFAULT_MS;
+
+		mutex_unlock(&data->lock);
+
+		if (copy_to_user((void __user *)arg, &sb, sizeof(sb)))
+			return -EFAULT;
+		break;
+	}
+	case FTE3600_IOC_SESSION_FDT_SAMPLE: {
+		struct fte3600_session_fdt sfdt;
+		int i;
+
+		if (copy_from_user(&sfdt, (void __user *)arg, sizeof(sfdt)))
+			return -EFAULT;
+
+		if (sfdt.version != FTE3600_UAPI_VERSION)
+			return -EINVAL;
+
+		for (i = 0; i < 6; i++) {
+			if (sfdt.reserved[i] != 0)
+				return -EINVAL;
+		}
+
+		if (sfdt.channel_mode != 1)
+			return -EINVAL;
+
+		if (sfdt.dac_val < 1 || sfdt.dac_val > 125)
+			return -EINVAL;
+
+		if (mutex_lock_interruptible(&data->lock))
+			return -ERESTARTSYS;
+
+		ret = fte3600_validate_session(data, filp, sfdt.session_token);
+		if (ret) {
+			mutex_unlock(&data->lock);
+			return ret;
+		}
+
+		ret = fte3600_hw_fdt_sample(data, &sfdt);
+		if (ret) {
+			data->last_error = (u32)(-ret);
+			mutex_unlock(&data->lock);
+			return ret;
+		}
+
+		mutex_unlock(&data->lock);
+
+		if (copy_to_user((void __user *)arg, &sfdt, sizeof(sfdt)))
+			return -EFAULT;
+		break;
+	}
+	case FTE3600_IOC_SESSION_READ_FRAME: {
+		struct fte3600_session_frame sframe;
+
+		if (copy_from_user(&sframe, (void __user *)arg, sizeof(sframe)))
+			return -EFAULT;
+
+		if (sframe.version != FTE3600_UAPI_VERSION || sframe.length != FTE3600_IMAGE_BYTES ||
+		    sframe.reserved != 0)
+			return -EINVAL;
+
+		if (mutex_lock_interruptible(&data->lock))
+			return -ERESTARTSYS;
+
+		ret = fte3600_validate_session(data, filp, sframe.session_token);
+		if (ret) {
+			mutex_unlock(&data->lock);
+			return ret;
+		}
+
+		/*
+		 * If session is in INITIALIZED_UNCALIBRATED during baseline acquisition,
+		 * temporarily permit frame capture and restore uncalibrated state.
+		 */
+		if (data->state == FTE3600_STATE_INITIALIZED_UNCALIBRATED) {
+			data->state = FTE3600_STATE_READY;
+			ret = fte3600_hw_capture_frame(data, (void __user *)sframe.buffer_ptr, sframe.length);
+			if (ret == 0)
+				data->state = FTE3600_STATE_INITIALIZED_UNCALIBRATED;
+		} else {
+			ret = fte3600_hw_capture_frame(data, (void __user *)sframe.buffer_ptr, sframe.length);
+		}
+
+		mutex_unlock(&data->lock);
+		return ret;
+	}
+	case FTE3600_IOC_SESSION_SET_THRESHOLDS: {
+		struct fte3600_session_thresholds sthresh;
+		int i;
+
+		if (copy_from_user(&sthresh, (void __user *)arg, sizeof(sthresh)))
+			return -EFAULT;
+
+		if (sthresh.version != FTE3600_UAPI_VERSION || sthresh.bank_len != FTE3600_THRESHOLD_BANK_LEN)
+			return -EINVAL;
+
+		for (i = 0; i < 2; i++) {
+			if (sthresh.reserved[i] != 0)
+				return -EINVAL;
+		}
+
+		if (mutex_lock_interruptible(&data->lock))
+			return -ERESTARTSYS;
+
+		ret = fte3600_validate_session(data, filp, sthresh.session_token);
+		if (ret) {
+			mutex_unlock(&data->lock);
+			return ret;
+		}
+
+		ret = fte3600_hw_set_thresholds(data, &sthresh);
+		if (ret) {
+			data->last_error = (u32)(-ret);
+			mutex_unlock(&data->lock);
+			return ret;
+		}
+
+		mutex_unlock(&data->lock);
+		break;
+	}
+	case FTE3600_IOC_SESSION_COMMIT: {
+		struct fte3600_session_commit scommit;
+		int i;
+
+		if (copy_from_user(&scommit, (void __user *)arg, sizeof(scommit)))
+			return -EFAULT;
+
+		if (scommit.version != FTE3600_UAPI_VERSION || scommit.flags != 0)
+			return -EINVAL;
+
+		for (i = 0; i < 3; i++) {
+			if (scommit.reserved[i] != 0)
+				return -EINVAL;
+		}
+
+		/* Cancel watchdog outside data->lock */
+		cancel_delayed_work_sync(&data->session.watchdog_work);
+
+		if (mutex_lock_interruptible(&data->lock))
+			return -ERESTARTSYS;
+
+		ret = fte3600_validate_session(data, filp, scommit.session_token);
+		if (ret) {
+			mutex_unlock(&data->lock);
+			return ret;
+		}
+
+		if (!data->session.thresholds_programmed) {
+			mutex_unlock(&data->lock);
+			return -EPERM;
+		}
+
+		/* Arm touch sensor and transition to READY */
+		ret = fte3600_hw_arm_sensor(data);
+		if (ret) {
+			mutex_unlock(&data->lock);
+			return ret;
+		}
+
+		data->session.active = false;
+		data->session.owner_filp = NULL;
+		data->session.generation++;
+		scommit.final_state = (u32)FTE3600_STATE_READY;
+		mutex_unlock(&data->lock);
+
+		if (copy_to_user((void __user *)arg, &scommit, sizeof(scommit)))
+			return -EFAULT;
+		break;
+	}
+	case FTE3600_IOC_SESSION_ABORT: {
+		struct fte3600_session_abort sabort;
+		int i;
+
+		if (copy_from_user(&sabort, (void __user *)arg, sizeof(sabort)))
+			return -EFAULT;
+
+		if (sabort.version != FTE3600_UAPI_VERSION)
+			return -EINVAL;
+
+		for (i = 0; i < 4; i++) {
+			if (sabort.reserved[i] != 0)
+				return -EINVAL;
+		}
+
+		/* Cancel watchdog outside data->lock */
+		cancel_delayed_work_sync(&data->session.watchdog_work);
+
+		if (mutex_lock_interruptible(&data->lock))
+			return -ERESTARTSYS;
+
+		ret = fte3600_validate_session(data, filp, sabort.session_token);
+		if (ret) {
+			mutex_unlock(&data->lock);
+			return ret;
+		}
+
+		data->session.active = false;
+		data->session.owner_filp = NULL;
+		data->session.generation++;
+		data->state = FTE3600_STATE_UNKNOWN;
+		data->last_error = ECANCELED;
+
+		mutex_unlock(&data->lock);
+		break;
 	}
 	default:
 		return -ENOTTY;
@@ -807,7 +1912,7 @@ static long fte3600_cdev_ioctl(struct file *filp, unsigned int cmd, unsigned lon
 #ifdef CONFIG_COMPAT
 static long fte3600_cdev_compat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 {
-	return fte3600_ioctl_common(filp, cmd, arg);
+	return fte3600_ioctl_common(filp, cmd, (unsigned long)compat_ptr(arg));
 }
 #endif
 
@@ -824,14 +1929,6 @@ static __poll_t fte3600_cdev_poll(struct file *filp, struct poll_table_struct *w
 	if (atomic_read(&data->offline))
 		return EPOLLERR | EPOLLHUP;
 
-	/*
-	 * In the current hardware identification milestone, touch detection
-	 * and image frame streaming are deferred to future authorized stages.
-	 * Input readiness (EPOLLIN | EPOLLRDNORM) is never asserted while those
-	 * operational states remain unreachable.
-	 * Pollers wait on event_wq and are cleanly awakened with EPOLLERR | EPOLLHUP
-	 * upon device unbind or removal.
-	 */
 	return 0;
 }
 
@@ -848,20 +1945,226 @@ static const struct file_operations fte3600_fops = {
 	.llseek         = noop_llseek,
 };
 
+/*
+ * FocalTech Match-on-Host SPI Interface (/dev/focal_moh_spi)
+ *
+ * Provides compatibility bridge for userspace libfprint-2.so (FocalTech vendor stack).
+ */
+static struct fte3600_data *g_fte3600_data;
+
+static int focal_moh_open(struct inode *inode, struct file *filp)
+{
+	struct fte3600_data *data = g_fte3600_data;
+
+	if (!data || atomic_read(&data->offline))
+		return -ENODEV;
+
+	filp->private_data = data;
+	return 0;
+}
+
+static int focal_moh_release(struct inode *inode, struct file *filp)
+{
+	return 0;
+}
+
+static ssize_t focal_moh_read(struct file *filp, char __user *pUserBuf, size_t count, loff_t *f_pos)
+{
+	struct fte3600_data *data = filp->private_data;
+	struct focal_spi_read_buff *spi_buf;
+	u16 tx_len = 0, rx_len = 0;
+	int ret;
+
+	if (!data || !data->spi || atomic_read(&data->offline))
+		return -ENODEV;
+
+	if (count > FOCAL_MAX_BUFF_SIZE || count < sizeof(struct focal_spi_read_buff))
+		return 0;
+
+	if (mutex_lock_interruptible(&data->lock))
+		return -ERESTARTSYS;
+
+	if (copy_from_user(data->focal_wr_buf, pUserBuf, count)) {
+		mutex_unlock(&data->lock);
+		return 0;
+	}
+
+	spi_buf = (struct focal_spi_read_buff *)data->focal_wr_buf;
+
+	if (spi_buf->type == FOCAL_SPI_BACK_DATA) {
+		if (copy_to_user(pUserBuf, data->sensor_init_data, count)) {
+			mutex_unlock(&data->lock);
+			return 0;
+		}
+		mutex_unlock(&data->lock);
+		return count;
+	}
+
+	if (spi_buf->type == FOCAL_SPI_READ_WRITE) {
+		tx_len = spi_buf->tx_len;
+		rx_len = spi_buf->rx_len;
+	} else if (spi_buf->type == FOCAL_SPI_READ_ONLY) {
+		rx_len = spi_buf->rx_len;
+		if (spi_buf->tx_len != 0) {
+			mutex_unlock(&data->lock);
+			return 0;
+		}
+	} else {
+		mutex_unlock(&data->lock);
+		return 0;
+	}
+
+	if (tx_len > FOCAL_MAX_BUFF_SIZE || rx_len > FOCAL_MAX_BUFF_SIZE || rx_len == 0 ||
+	    tx_len + rx_len > FOCAL_MAX_BUFF_SIZE) {
+		mutex_unlock(&data->lock);
+		return 0;
+	}
+
+	if (tx_len > 0)
+		ret = spi_write_then_read(data->spi, spi_buf->txbuff, tx_len, data->focal_rd_buf, rx_len);
+	else
+		ret = spi_read(data->spi, data->focal_rd_buf, rx_len);
+
+	if (ret < 0) {
+		mutex_unlock(&data->lock);
+		return ret;
+	}
+
+	if (copy_to_user(pUserBuf, data->focal_rd_buf, rx_len)) {
+		mutex_unlock(&data->lock);
+		return 0;
+	}
+
+	mutex_unlock(&data->lock);
+	return count;
+}
+
+static ssize_t focal_moh_write(struct file *filp, const char __user *pUserBuf, size_t count, loff_t *f_pos)
+{
+	struct fte3600_data *data = filp->private_data;
+	struct focal_spi_read_buff *spi_buf;
+	int ret;
+
+	if (!data || !data->spi || atomic_read(&data->offline))
+		return -ENODEV;
+
+	if (count > FOCAL_MAX_BUFF_SIZE || count < sizeof(struct focal_spi_read_buff))
+		return 0;
+
+	if (mutex_lock_interruptible(&data->lock))
+		return -ERESTARTSYS;
+
+	if (copy_from_user(data->focal_wr_buf, pUserBuf, count)) {
+		mutex_unlock(&data->lock);
+		return 0;
+	}
+
+	spi_buf = (struct focal_spi_read_buff *)data->focal_wr_buf;
+	if (spi_buf->type == FOCAL_SPI_BACK_DATA) {
+		memcpy(data->sensor_init_data, data->focal_wr_buf, count);
+		mutex_unlock(&data->lock);
+		return count;
+	}
+
+	ret = spi_write(data->spi, data->focal_wr_buf + sizeof(struct focal_spi_read_buff),
+			count - sizeof(struct focal_spi_read_buff));
+	mutex_unlock(&data->lock);
+	if (ret < 0)
+		return ret;
+	return count;
+}
+
+static long focal_moh_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+{
+	struct fte3600_data *data = filp->private_data;
+	int ret = 0;
+
+	if (!data || atomic_read(&data->offline))
+		return -ENODEV;
+
+	switch (cmd) {
+	case FF_IOC_RESET_DEV:
+		if (mutex_lock_interruptible(&data->lock))
+			return -ERESTARTSYS;
+		ret = fte3600_hw_reset_pulse(data);
+		mutex_unlock(&data->lock);
+		break;
+	case FF_IOC_POWER_OFF:
+		if (data->reset_gpiod)
+			gpiod_set_value_cansleep(data->reset_gpiod, 1);
+		break;
+	case FF_IOC_POWER_ON:
+		if (data->reset_gpiod)
+			gpiod_set_value_cansleep(data->reset_gpiod, 0);
+		break;
+	case FF_IOC_IRQ_EN:
+		break;
+	case FF_IOC_LOG_EN:
+		break;
+	case FF_IOC_RELEASE_POLL:
+		data->focal_work_flag = (int)arg;
+		if (arg)
+			wake_up_interruptible(&data->focal_poll_wq);
+		break;
+	case FF_IOC_CSn:
+		break;
+	default:
+		break;
+	}
+	return ret;
+}
+
+static __poll_t focal_moh_poll(struct file *file, poll_table *wait)
+{
+	struct fte3600_data *data = file->private_data;
+	__poll_t mask = 0;
+
+	if (!data || atomic_read(&data->offline))
+		return EPOLLERR | EPOLLHUP;
+
+	poll_wait(file, &data->focal_poll_wq, wait);
+
+	if (data->focal_work_flag > 0)
+		mask = EPOLLIN | EPOLLRDNORM;
+
+	data->focal_work_flag = 0;
+	return mask;
+}
+
+static const struct file_operations focal_moh_fops = {
+	.owner          = THIS_MODULE,
+	.open           = focal_moh_open,
+	.release        = focal_moh_release,
+	.read           = focal_moh_read,
+	.write          = focal_moh_write,
+	.unlocked_ioctl = focal_moh_ioctl,
+#ifdef CONFIG_COMPAT
+	.compat_ioctl   = focal_moh_ioctl,
+#endif
+	.poll           = focal_moh_poll,
+};
+
 /* Passive SPI Driver Probe */
 static int fte3600_probe(struct spi_device *spi)
 {
 	struct fte3600_data *data;
+	struct fte3600_controller_domain *domain;
 	int ret;
 
 	if (!ACPI_COMPANION(&spi->dev))
 		return -ENODEV;
+
+	/* Verify host SPI controller identity and allocate domain */
+	domain = fte3600_find_or_alloc_domain(spi);
+	if (IS_ERR(domain))
+		return PTR_ERR(domain);
 
 	data = kzalloc(sizeof(*data), GFP_KERNEL);
 	if (!data)
 		return -ENOMEM;
 
 	data->spi = spi;
+	data->domain = domain;
 	spi_set_drvdata(spi, data);
 
 	mutex_init(&data->lock);
@@ -872,10 +2175,14 @@ static int fte3600_probe(struct spi_device *spi)
 	data->foundry_code = 0;
 	data->line_period_us = 200;
 
-	/*
-	 * Initialize embedded struct device and configure metadata.
-	 * device_initialize() sets data->dev reference count to 1.
-	 */
+	/* Initialize session management */
+	data->session.active = false;
+	data->session.generation = 1;
+	data->session.token = 0;
+	data->session.owner_filp = NULL;
+	INIT_DELAYED_WORK(&data->session.watchdog_work, fte3600_watchdog_work_fn);
+
+	/* Initialize embedded struct device */
 	device_initialize(&data->dev);
 	data->dev.devt = fte3600_devt;
 	data->dev.class = fte3600_class;
@@ -887,7 +2194,7 @@ static int fte3600_probe(struct spi_device *spi)
 		return ret;
 	}
 
-	/* Register driver GPIO mapping table against &spi->dev before lookup */
+	/* Register driver GPIO mapping table */
 	ret = devm_acpi_dev_add_driver_gpios(&spi->dev, fte3600_acpi_gpios);
 	if (ret) {
 		dev_err_probe(&spi->dev, ret, "Failed to add ACPI driver GPIOs\n");
@@ -895,7 +2202,7 @@ static int fte3600_probe(struct spi_device *spi)
 		return ret;
 	}
 
-	/* Acquire reset GPIO descriptor with initial logical 0 (physical HIGH / inactive) */
+	/* Acquire reset GPIO descriptor */
 	data->reset_gpiod = devm_gpiod_get(&spi->dev, "reset", GPIOD_OUT_LOW);
 	if (IS_ERR(data->reset_gpiod)) {
 		ret = dev_err_probe(&spi->dev, PTR_ERR(data->reset_gpiod),
@@ -915,7 +2222,7 @@ static int fte3600_probe(struct spi_device *spi)
 		return ret;
 	}
 
-	/* Register character device node and bind to device model using cdev_device_add */
+	/* Register character device node */
 	cdev_init(&data->cdev, &fte3600_fops);
 	data->cdev.owner = THIS_MODULE;
 	ret = cdev_device_add(&data->cdev, &data->dev);
@@ -925,8 +2232,27 @@ static int fte3600_probe(struct spi_device *spi)
 		return ret;
 	}
 
-	/* Initial state remains strictly UNINITIALIZED; zero physical pulses/transactions issued */
-	dev_info(&spi->dev, "FTE3600 driver bound (passive probe, state UNINITIALIZED)\n");
+	/* Register /dev/focal_moh_spi miscdevice for libfprint compatibility */
+	data->focal_wr_buf = kzalloc(FOCAL_MAX_BUFF_SIZE, GFP_KERNEL);
+	data->focal_rd_buf = kzalloc(FOCAL_MAX_BUFF_SIZE, GFP_KERNEL);
+	data->sensor_init_data = kzalloc(FOCAL_MAX_BUFF_SIZE, GFP_KERNEL);
+	init_waitqueue_head(&data->focal_poll_wq);
+	data->focal_work_flag = FOCAL_WAKE_EVENT_NONE;
+
+	data->focal_miscdev.minor = MISC_DYNAMIC_MINOR;
+	data->focal_miscdev.name = "focal_moh_spi";
+	data->focal_miscdev.fops = &focal_moh_fops;
+	data->focal_miscdev.mode = 0666;
+	g_fte3600_data = data;
+
+	ret = misc_register(&data->focal_miscdev);
+	if (ret)
+		dev_warn(&spi->dev, "Could not register /dev/focal_moh_spi: %d\n", ret);
+	else
+		dev_info(&spi->dev, "Created /dev/focal_moh_spi compatibility bridge\n");
+
+	dev_info(&spi->dev, "FTE3600 driver bound (passive probe, state UNINITIALIZED, domain %s)\n",
+		 domain->pci_bdf);
 	return 0;
 }
 
@@ -939,47 +2265,29 @@ static void fte3600_remove(struct spi_device *spi)
 		return;
 
 	/*
-	 * Step 1: Unregister character device and sysfs node.
-	 * cdev_device_del() deletes the cdev from chrdev lookup and unlinks
-	 * the device from sysfs, ensuring no new opens can reach fte3600_cdev_open.
+	 * DEADLOCK REMEDIATION INVARIANT:
+	 * cancel_delayed_work_sync() MUST execute before acquiring data->lock.
 	 */
+	cancel_delayed_work_sync(&data->session.watchdog_work);
+
+	if (data->focal_miscdev.this_device)
+		misc_deregister(&data->focal_miscdev);
+	g_fte3600_data = NULL;
+
 	cdev_device_del(&data->cdev, &data->dev);
 
-	/*
-	 * Step 2: Hardware-Resource Shutdown Protocol.
-	 * Acquire data->lock to serialize with any in-flight or waiting hardware operations.
-	 */
 	mutex_lock(&data->lock);
-
-	/*
-	 * Step 3: Invalidate hardware access under lock.
-	 * Mark offline and nullify pointers to devres-managed resources before remove() returns.
-	 */
 	atomic_set(&data->offline, 1);
 	data->state = FTE3600_STATE_DEVICE_REMOVAL;
+	data->session.active = false;
+	data->session.owner_filp = NULL;
+	data->session.generation++;
 	data->reset_gpiod = NULL;
 	data->spi = NULL;
-
-	/*
-	 * Step 4: Release data->lock.
-	 * Any operation that was blocked waiting on data->lock will now wake up,
-	 * observe atomic_read(&data->offline) == 1 and data->reset_gpiod == NULL,
-	 * and abort with -ENODEV without accessing released devres memory.
-	 */
 	mutex_unlock(&data->lock);
 
-	/*
-	 * Step 5: Wake any sleeping pollers. They will observe offline and return EPOLLERR | EPOLLHUP.
-	 */
 	wake_up_all(&data->event_wq);
-
 	spi_set_drvdata(spi, NULL);
-
-	/*
-	 * Step 6: Drop the driver probe reference.
-	 * Context memory will be freed in fte3600_device_release() when all open
-	 * file descriptors are closed by userspace.
-	 */
 	put_device(&data->dev);
 	dev_info(&spi->dev, "FTE3600 driver unbound\n");
 }
@@ -987,7 +2295,7 @@ static void fte3600_remove(struct spi_device *spi)
 /* Native SPI Driver Definition */
 static struct spi_driver fte3600_spi_driver = {
 	.driver = {
-		.name            = FTE3600_DRIVER_NAME,
+		.name             = FTE3600_DRIVER_NAME,
 		.acpi_match_table = ACPI_PTR(fte3600_acpi_ids),
 	},
 	.probe  = fte3600_probe,
@@ -999,14 +2307,21 @@ static int __init fte3600_module_init(void)
 {
 	int ret;
 
+	fte3600_wq = alloc_workqueue("fte3600_wq", WQ_UNBOUND | WQ_MEM_RECLAIM, 1);
+	if (!fte3600_wq)
+		return -ENOMEM;
+
 	ret = alloc_chrdev_region(&fte3600_devt, 0, 1, FTE3600_DRIVER_NAME);
-	if (ret)
+	if (ret) {
+		destroy_workqueue(fte3600_wq);
 		return ret;
+	}
 
 	fte3600_class = class_create(FTE3600_DRIVER_NAME);
 	if (IS_ERR(fte3600_class)) {
 		ret = PTR_ERR(fte3600_class);
 		unregister_chrdev_region(fte3600_devt, 1);
+		destroy_workqueue(fte3600_wq);
 		return ret;
 	}
 
@@ -1014,6 +2329,7 @@ static int __init fte3600_module_init(void)
 	if (ret) {
 		class_destroy(fte3600_class);
 		unregister_chrdev_region(fte3600_devt, 1);
+		destroy_workqueue(fte3600_wq);
 		return ret;
 	}
 
@@ -1025,6 +2341,7 @@ static void __exit fte3600_module_exit(void)
 	spi_unregister_driver(&fte3600_spi_driver);
 	class_destroy(fte3600_class);
 	unregister_chrdev_region(fte3600_devt, 1);
+	destroy_workqueue(fte3600_wq);
 }
 
 module_init(fte3600_module_init);

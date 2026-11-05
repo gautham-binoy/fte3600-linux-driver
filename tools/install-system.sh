@@ -65,7 +65,27 @@ else
     echo "[-] Warning: /dev/focal_moh_spi not found."
 fi
 
-echo "[*] 3. Installing FT9362-compatible libfprint userspace driver..."
+echo "[*] 3. Ensuring fprintd service and Omarchy platform registration..."
+if ! command -v fprintd >/dev/null 2>&1; then
+    echo "[*] Installing fprintd daemon via package manager..."
+    if command -v pacman >/dev/null 2>&1; then
+        pacman -S --needed --noconfirm fprintd
+    elif command -v apt-get >/dev/null 2>&1; then
+        apt-get update && apt-get install -y fprintd libpam-fprintd
+    elif command -v dnf >/dev/null 2>&1; then
+        dnf install -y fprintd fprintd-pam
+    fi
+fi
+
+if [[ -d /usr/share/omarchy || -d /usr/share/omarchy-platform ]]; then
+    echo "[*] Registering FTE3600 with Omarchy hardware platform detector..."
+    mkdir -p /usr/share/omarchy-platform
+    if ! grep -q "spi-FTE3600:00" /usr/share/omarchy-platform/fingerprint-readers 2>/dev/null; then
+        echo "/sys/bus/spi/devices/spi-FTE3600:00/modalias acpi:FTE3600:FTE3600:" >> /usr/share/omarchy-platform/fingerprint-readers
+    fi
+fi
+
+echo "[*] 4. Installing FT9362-compatible libfprint userspace driver..."
 if [[ -f /usr/lib/libfprint-2.so.2.0.0 && ! -f /usr/lib/libfprint-2.so.2.0.0.stock_bak ]]; then
     cp /usr/lib/libfprint-2.so.2.0.0 /usr/lib/libfprint-2.so.2.0.0.stock_bak
     echo "[+] Backed up original libfprint to /usr/lib/libfprint-2.so.2.0.0.stock_bak"
@@ -76,7 +96,7 @@ chmod 755 /usr/lib/libfprint-2.so.2.0.0
 ln -sf libfprint-2.so.2.0.0 /usr/lib/libfprint-2.so.2
 ln -sf libfprint-2.so.2.0.0 /usr/lib/libfprint-2.so
 
-echo "[*] 4. Configuring fprintd systemd service override..."
+echo "[*] 5. Configuring fprintd systemd service override..."
 mkdir -p /etc/systemd/system/fprintd.service.d
 cp "${SCRIPT_DIR}/libfprint-package/override.conf" /etc/systemd/system/fprintd.service.d/override.conf
 

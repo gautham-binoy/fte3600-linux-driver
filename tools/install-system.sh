@@ -69,7 +69,7 @@ echo "[*] 3. Ensuring fprintd service and Omarchy platform registration..."
 if ! command -v fprintd >/dev/null 2>&1; then
     echo "[*] Installing fprintd daemon via package manager..."
     if command -v pacman >/dev/null 2>&1; then
-        pacman -S --needed --noconfirm fprintd
+        pacman -S --needed --noconfirm --overwrite '/usr/lib/libfprint*' fprintd
     elif command -v apt-get >/dev/null 2>&1; then
         apt-get update && apt-get install -y fprintd libpam-fprintd
     elif command -v dnf >/dev/null 2>&1; then

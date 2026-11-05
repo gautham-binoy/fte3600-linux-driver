@@ -30,6 +30,27 @@ echo "[*] 2. Reloading kernel driver module..."
 rmmod fte3600 2>/dev/null || true
 modprobe fte3600
 
+echo "[*] Configuring module auto-load on boot..."
+mkdir -p /etc/modules-load.d
+echo "fte3600" > /etc/modules-load.d/fte3600.conf
+
+if [[ -d /etc/pacman.d/hooks ]]; then
+    echo "[*] Installing pacman hook for automatic driver rebuilds on kernel updates..."
+    cat <<'HOOKEOF' > /etc/pacman.d/hooks/95-fte3600.hook
+[Trigger]
+Type = Path
+Operation = Install
+Operation = Upgrade
+Target = usr/lib/modules/*/vmlinuz
+Target = usr/lib/modules/*/modules.builtin
+
+[Action]
+Description = Rebuilding FTE3600 Linux Fingerprint Driver for updated kernel...
+When = PostTransaction
+Exec = /bin/bash /home/titan/fte3600-linux-driver/tools/install-system.sh
+HOOKEOF
+fi
+
 echo "[*] Checking device nodes..."
 if [[ -c /dev/fte3600 ]]; then
     echo "[+] /dev/fte3600 created successfully."

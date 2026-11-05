@@ -4,7 +4,7 @@
  Host: Dynabook Satellite Pro C40-J (PYS46G-06J02D)
  Target: spi-FTE3600:00 (FocalTech FT9362 / FW9369)
  Kernel: 7.2.8-9-omarchy
- Timestamp: 2026-11-03T22:23:31+05:30
+ Timestamp: 2026-11-04T09:32:17+05:30
 ===============================================================================
 
 --- [PHASE 1] Pre-Flight System & Safety Inspection ---
@@ -12,14 +12,80 @@ Acquiring fail-closed cooperative test runner lock: /run/lock/fte3600-test.lock 
 Checking kernel version: 7.2.8-9-omarchy ... [PASS]
 Checking module file: /home/titan/fte3600-linux-driver/kernel/fte3600.ko ... [PASS]
 Module vermagic: 7.2.8-9-omarchy SMP preempt mod_unload  ... [PASS]
-Checking existing module loading ... 
+Checking existing module loading ... [PASS] (Neither fte3600 nor spidev loaded)
+Checking SPI device presence: /sys/bus/spi/devices/spi-FTE3600:00 ... [PASS]
+Checking SPI device binding status ... [PASS] (Device unbound)
+Checking character device node presence: /dev/fte3600 ... [PASS] (Node absent)
+Checking validation utility: /home/titan/fte3600-linux-driver/bin/fte3600-tool ... [PASS]
+Auditing legacy userspace safety gate ... [PASS] (Legacy spidev gate SEALED, exit code 1 verified via policy banner)
+
+--- Baseline Hardware & Register State ---
+PCH Pad 14 (Reset):   pin 14 (SPKR) 14:INT34C5:00 GPIO 0x84000201 0x0003c026 0x00000000 [LOCKED]
+PCH Pad 229 (IRQ):    pin 229 (CPU_GP_0) 323:INT34C5:00 GPIO 0x80100100 0x00000029 0x00000000 [LOCKED tx]
+GPIO lines claimed by fte3600: None
+Dmesg baseline line count: 1121
+
+--- [PHASE 2] Module Insertion & Driver Probe ---
+Executing: insmod /home/titan/fte3600-linux-driver/kernel/fte3600.ko
+[PASS] (insmod succeeded; ownership verified and committed)
+
+--- Post-Probe Verification ---
+Checking module loading state ... [PASS]
+fte3600                20480  0
+Checking SPI driver binding link ... [PASS] Bound to: ../../../../../../../bus/spi/drivers/fte3600
+Checking character device node /dev/fte3600 ... [PASS] (Character device node present)
+crw------- 1 root root 511, 0 Nov  4 09:32 /dev/fte3600
+[INFO] Character device identity validated & recorded: rdev=130816 (hex: 1ff:0, sysfs: 511:0)
+
+Checking GPIO allocation in debugfs ...
+ gpio-14  (                    |reset               ) out hi ACTIVE LOW
+PCH Pad 14 under probe: pin 14 (SPKR) 14:INT34C5:00 GPIO 0x84000201 0x0003c026 0x00000000 [LOCKED]
+PCH Pad 229 under probe: pin 229 (CPU_GP_0) 323:INT34C5:00 GPIO 0x82000100 0x00000029 0x00000000 [LOCKED tx]
+
+--- [PHASE 3] Telemetry Snapshot 1: Pre-Reset State ---
+>> FTE3600 State Snapshot:
+   Version:    1
+   State:      0 (UNINITIALIZED)
+   Flags:      0x00000000
+   Last Error: 0 (None)
+
+--- [PHASE 4] Executing Exactly ONE Controlled Reset IOCTL ---
+Invoking: /home/titan/fte3600-linux-driver/bin/fte3600-tool reset
+>> Issuing FTE3600_IOC_RESET...
+>> Reset ioctl returned 0 (Success).
+Reset ioctl process return code: 0
+
+--- [PHASE 5] Telemetry Snapshot 2: Post-Reset State ---
+>> FTE3600 State Snapshot:
+   Version:    1
+   State:      2 (RESET_SEQUENCE_ISSUED)
+   Flags:      0x00000002 [RESET_ISSUED]
+   Last Error: 0 (None)
+
+--- Hardware Pad Registers Post-Reset ---
+PCH Pad 14 post-reset: pin 14 (SPKR) 14:INT34C5:00 GPIO 0x84000201 0x0003c026 0x00000000 [LOCKED]
+PCH Pad 229 post-reset: pin 229 (CPU_GP_0) 323:INT34C5:00 GPIO 0x82000100 0x00000029 0x00000000 [LOCKED tx]
+
+--- Kernel Ring Buffer Messages During Probe & Reset ---
+[  295.296137] fte3600: loading out-of-tree module taints kernel.
+[  295.296141] fte3600: module verification failed: signature and/or required key missing - tainting kernel
+[  295.310918] fte3600 spi-FTE3600:00: FTE3600 driver bound (passive probe, state UNINITIALIZED)
+
+[PASS] Stage B operations (Probe, Snapshot 1, Reset, Snapshot 2) executed with status 0.
+
 --- [CLEANUP] Post-Test Diagnostic & Resource Release Handler ---
-Invoked via: EXIT (incoming exit status: 1)
+Invoked via: EXIT (incoming exit status: 0)
 
 --- Module & Device State Audit ---
-[INFO] fte3600 module is confirmed absent from kernel.
-Checking character device node /dev/fte3600 ... [INFO] /dev/fte3600 is ABSENT
-Checking SPI driver binding link ... [INFO] SPI device is UNBOUND
+[INFO] fte3600 module is currently loaded in kernel.
+Checking character device node /dev/fte3600 ... [INFO] /dev/fte3600 is PRESENT
+Checking SPI driver binding link ... [INFO] SPI device is BOUND to: ../../../../../../../bus/spi/drivers/fte3600
+
+--- Informative Open-Descriptor Audit ---
+Performing fail-closed descriptor inspection on /dev/fte3600 ... 
+  [DIAG] lsof: reported no match (rc=1, zero output).
+  [DIAG] fuser: reported no match (rc=1, zero output).
+[PASS] Zero open descriptors confirmed across 333 active processes (5037 fds inspected).
 
 --- Post-Test Hardware State ---
 PCH Pad 14 post-test: pin 14 (SPKR) 14:INT34C5:00 GPIO 0x84000201 0x0003c026 0x00000000 [LOCKED]
@@ -27,28 +93,29 @@ PCH Pad 229 post-test: pin 229 (CPU_GP_0) 323:INT34C5:00 GPIO 0x82000100 0x00000
 GPIO lines claimed by fte3600 post-test: None
 
 --- Kernel Ring Buffer Messages ---
-[48531.270305] IPv6: MLD: clamping QRV from 1 to 2!
-[48537.209527] IPv6: MLD: clamping QRV from 1 to 2!
-[48537.209531] IPv6: MLD: clamping QRV from 1 to 2!
-[48543.353526] IPv6: MLD: clamping QRV from 1 to 2!
-[48543.353532] IPv6: MLD: clamping QRV from 1 to 2!
-[48549.292637] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=16686 DF PROTO=2 
-[48549.292638] IPv6: MLD: clamping QRV from 1 to 2!
-[48549.292643] IPv6: MLD: clamping QRV from 1 to 2!
-[48555.231845] IPv6: MLD: clamping QRV from 1 to 2!
-[48555.231851] IPv6: MLD: clamping QRV from 1 to 2!
-[48561.375906] IPv6: MLD: clamping QRV from 1 to 2!
-[48561.375912] IPv6: MLD: clamping QRV from 1 to 2!
-[48567.314931] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=17135 DF PROTO=2 
-[48567.315009] IPv6: MLD: clamping QRV from 1 to 2!
-[48567.315013] IPv6: MLD: clamping QRV from 1 to 2!
+[  285.274588] IPv6: MLD: clamping QRV from 1 to 2!
+[  291.415642] IPv6: MLD: clamping QRV from 1 to 2!
+[  291.415649] IPv6: MLD: clamping QRV from 1 to 2!
+[  295.296137] fte3600: loading out-of-tree module taints kernel.
+[  295.296141] fte3600: module verification failed: signature and/or required key missing - tainting kernel
+[  295.310918] fte3600 spi-FTE3600:00: FTE3600 driver bound (passive probe, state UNINITIALIZED)
+[  297.354987] IPv6: MLD: clamping QRV from 1 to 2!
+[  297.354990] [UFW BLOCK] IN=wlo1 OUT= MAC=01:00:5e:00:00:01:94:32:51:6c:4c:c5:08:00 SRC=192.168.31.1 DST=224.0.0.1 LEN=36 TOS=0x00 PREC=0xC0 TTL=1 ID=40581 DF PROTO=2 
+[  297.354993] IPv6: MLD: clamping QRV from 1 to 2!
+[  303.293832] IPv6: MLD: clamping QRV from 1 to 2!
+[  303.293838] IPv6: MLD: clamping QRV from 1 to 2!
+[  309.437806] IPv6: MLD: clamping QRV from 1 to 2!
+[  309.437811] IPv6: MLD: clamping QRV from 1 to 2!
+[  315.377183] IPv6: MLD: clamping QRV from 1 to 2!
+[  315.377188] IPv6: MLD: clamping QRV from 1 to 2!
 
 ===============================================================================
  OPTION 1 POLICY: AUTOMATIC MODULE UNLOAD IS PERMANENTLY DISABLED
 ===============================================================================
-[POLICY] Insertion state: NOT_ATTEMPTED. No automatic unload performed.
+[POLICY] MODULE LEFT LOADED BY POLICY — MANUAL CLEANUP REQUIRED
+[POLICY] To manually unload after inspection: sudo rmmod fte3600
 ===============================================================================
 
 [INFO] Script-owned cooperative lock released (FD 200 closed).
 
-[INFO] Script terminated with exit status 1 (trigger: EXIT).
+[PASS] Stage B test execution completed successfully (status 0).

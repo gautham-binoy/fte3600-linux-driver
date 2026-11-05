@@ -37,11 +37,13 @@ struct fte3600_data {
 	struct cdev cdev;
 	struct device dev;             /* Embedded device providing kobject refcounting */
 	struct mutex lock;             /* Serializes reset, transport, and shutdown */
-	wait_queue_head_t event_wq;
+	wait_queue_head_t event_wq;    /* Waitqueue for pollers; awakened on device unbind */
 	enum fte3600_state state;
 	atomic_t is_open;              /* Driver-owned single-client exclusive lease */
 	atomic_t offline;              /* Set to 1 on unbind/shutdown */
 	u32 last_error;
+	u8 foundry_code;               /* Silicon foundry fabrication code (e.g. 0xAA for SMIC) */
+	u16 line_period_us;            /* Configured line timing period (150 us or 200 us) */
 	u8 tx_buf[32] ____cacheline_aligned;
 	u8 rx_buf[32] ____cacheline_aligned;
 };
@@ -108,6 +110,7 @@ static void fte3600_device_release(struct device *dev)
 	mutex_destroy(&data->lock);
 	kfree(data);
 }
+
 
 /*
  * Active-Low Reset Sequence Helper (Policy A: Triggered Exclusively via IOCTL)
@@ -220,6 +223,88 @@ static int fte3600_spi_sync_transfer(struct fte3600_data *data,
 		return -EIO;
 	}
 
+	return 0;
+}
+
+/*
+ * Protocol Framing Helpers for FocalTech FT9362 / FW9369
+ *
+ * 1. Command Strobe (3 bytes): { opcode, ~opcode, 0x00 }
+ *    - Transmits 3 bytes matching factory reference drivers (fw9369_startup.c,
+ *      fw9369_fdt.c, capture.c, ft93xx.c) and mock test fixture assertions.
+ * 2. SFR 8-bit Register Write (4 bytes): { 0x09, 0xF6, address, value }
+ * 3. SFR 8-bit Register Read (5 bytes): { 0x08, 0xF7, address, 0x00, 0x00 } -> return rx[4]
+ * 4. 16-bit Configuration Register Write (8 bytes):
+ *    { 0x05, 0xFA, 0x80 | (addr >> 8), (u8)addr, 0x00, 0x01, (u8)(val >> 8), (u8)val }
+ * 5. 16-bit Configuration Register Read (12 bytes):
+ *    { 0x04, 0xFB, 0x80 | (addr >> 8), (u8)addr, 0x00, 0x01, 0, 0, 0, 0, 0, 0 } -> return rx[6..7]
+ */
+
+static int fte3600_spi_cmd_strobe(struct fte3600_data *data, u8 cmd, u8 complement)
+{
+	data->tx_buf[0] = cmd;
+	data->tx_buf[1] = complement;
+	data->tx_buf[2] = 0x00;
+	return fte3600_spi_sync_transfer(data, data->tx_buf, NULL, 3);
+}
+
+static int fte3600_spi_write_sfr(struct fte3600_data *data, u8 addr, u8 val)
+{
+	data->tx_buf[0] = 0x09;
+	data->tx_buf[1] = 0xF6;
+	data->tx_buf[2] = addr;
+	data->tx_buf[3] = val;
+	return fte3600_spi_sync_transfer(data, data->tx_buf, NULL, 4);
+}
+
+static int fte3600_spi_read_sfr(struct fte3600_data *data, u8 addr, u8 *val)
+{
+	int ret;
+
+	memset(data->rx_buf, 0, 5);
+	data->tx_buf[0] = 0x08;
+	data->tx_buf[1] = 0xF7;
+	data->tx_buf[2] = addr;
+	data->tx_buf[3] = 0x00;
+	data->tx_buf[4] = 0x00;
+	ret = fte3600_spi_sync_transfer(data, data->tx_buf, data->rx_buf, 5);
+	if (ret)
+		return ret;
+	if (val)
+		*val = data->rx_buf[4];
+	return 0;
+}
+
+static int __maybe_unused fte3600_spi_write_reg16(struct fte3600_data *data, u16 addr, u16 val)
+{
+	data->tx_buf[0] = 0x05;
+	data->tx_buf[1] = 0xFA;
+	data->tx_buf[2] = (u8)(0x80 | (addr >> 8));
+	data->tx_buf[3] = (u8)addr;
+	data->tx_buf[4] = 0x00;
+	data->tx_buf[5] = 0x01;
+	data->tx_buf[6] = (u8)(val >> 8);
+	data->tx_buf[7] = (u8)val;
+	return fte3600_spi_sync_transfer(data, data->tx_buf, NULL, 8);
+}
+
+static int __maybe_unused fte3600_spi_read_reg16(struct fte3600_data *data, u16 addr, u16 *val)
+{
+	int ret;
+
+	memset(data->rx_buf, 0, 12);
+	data->tx_buf[0] = 0x04;
+	data->tx_buf[1] = 0xFB;
+	data->tx_buf[2] = (u8)(0x80 | (addr >> 8));
+	data->tx_buf[3] = (u8)addr;
+	data->tx_buf[4] = 0x00;
+	data->tx_buf[5] = 0x01;
+	memset(&data->tx_buf[6], 0, 6);
+	ret = fte3600_spi_sync_transfer(data, data->tx_buf, data->rx_buf, 12);
+	if (ret)
+		return ret;
+	if (val)
+		*val = ((u16)data->rx_buf[6] << 8) | data->rx_buf[7];
 	return 0;
 }
 
@@ -364,6 +449,158 @@ static int fte3600_hw_identify(struct fte3600_data *data)
 	return 0;
 }
 
+/*
+ * FT9362 Volatile Hardware Startup Prefix Sequence (Stage D6.4 Truthful Semantics)
+ *
+ * Implements the verified post-identification volatile prefix sequence (6 steps),
+ * corresponding to the vendor reference driver's prefix() routine (fw9369_startup.c:321-384):
+ * Step 1: Wake strobe 1: CMD_WAKE { 0x5A, 0xA5, 0x00 } (3-byte framing)
+ * Step 2: Stabilization delay 1 ms
+ * Step 3: Verify HW_STATUS (0x80) enters idle state 0x50 (with abort recovery)
+ * Step 4: Wake strobe 2: CMD_IDLE_ACK { 0xA5, 0x5A, 0x00 } (3-byte framing)
+ * Step 5: Foundry interrogation: 2 loop iterations of sense-amp register index (0x03 and 0x13),
+ *         strobe sequence on 0xF4 (0xC0, 0xC1, 0xC0, 0xC0), and dummy read 0xF3 (12 transfers)
+ * Step 6: Read silicon fab identity from register 0x9B (detect SMIC 0xAA vs default)
+ *
+ * Reassessment of Interrupt Register (0x1A84) and NVM Storage:
+ * - Interrupt register 0x1A84: Vendor reference source contains write_word(op, 0x1A84, 0xFFFF)
+ *   calls in fw9369_startup.c:343, 371 and ft93xx.c:547, 797. However, the physical silicon
+ *   semantics and bit definitions of upper bits 6–15 remain NOT ESTABLISHED in public documentation.
+ *   These writes remain excluded from baseline kernel startup pending dedicated Stage D7 IRQ
+ *   investigation. Interrupt clearing is not presumed unnecessary, and no guessed replacement
+ *   value is introduced.
+ * - OTP / eFuse macro storage: Access facilities via registers 0xF1, 0xF4, and 0xF3 are
+ *   SOURCE-OBSERVED. Persistent programming capability is NOT ESTABLISHED. Zero persistent
+ *   programming operations are authorized or permitted. The driver issues only read-clocking
+ *   sequences for wafer identification.
+ *
+ * State Transitions & Capture-Gating Boundary:
+ * - Precondition: data->state MUST be FTE3600_STATE_IDENTIFIED.
+ * - On success: data->state = FTE3600_STATE_INITIALIZED_UNCALIBRATED, last_error = 0.
+ * - On failure: data->state = FTE3600_STATE_UNKNOWN, last_error = -ret.
+ * - State READY is strictly withheld: Authoritative vendor source establishes that
+ *   operational capture readiness requires subsequent analog differential DAC calibration
+ *   (fdt_baseline), sample noise acquisition (image_baseline), and threshold arming (arm).
+ *   Those operations are deferred to future stages. Capture is strictly gated against
+ *   all non-READY states.
+ */
+static int fte3600_hw_startup(struct fte3600_data *data)
+{
+	u8 status_80, fab_byte, dummy;
+	int ret, i;
+
+	lockdep_assert_held(&data->lock);
+
+	if (atomic_read(&data->offline) || !data->spi)
+		return -ENODEV;
+
+	if (data->state != FTE3600_STATE_IDENTIFIED)
+		return -EPERM;
+
+	data->state = FTE3600_STATE_INITIALIZING;
+
+	/* Step 1: Wake strobe 1 { 0x5A, 0xA5, 0x00 } */
+	ret = fte3600_spi_cmd_strobe(data, 0x5A, 0xA5);
+	if (ret) {
+		dev_err(&data->spi->dev, "Startup wake strobe 1 failed: %d\n", ret);
+		goto err;
+	}
+
+	/* Step 2: Stabilization wait 1 ms */
+	usleep_range(1000, 1500);
+
+	/* Step 3: Verify HW_STATUS (0x80) enters idle state 0x50 */
+	ret = fte3600_spi_read_sfr(data, 0x80, &status_80);
+	if (ret) {
+		dev_err(&data->spi->dev, "Startup status 0x80 read failed: %d\n", ret);
+		goto err;
+	}
+
+	if (status_80 != 0x50) {
+		dev_warn(&data->spi->dev,
+			 "Status 0x80 not idle (0x%02x), issuing abort strobe\n",
+			 status_80);
+		ret = fte3600_spi_cmd_strobe(data, 0xC0, 0x3F);
+		if (ret)
+			goto err;
+		usleep_range(1000, 1500);
+		ret = fte3600_spi_read_sfr(data, 0x80, &status_80);
+		if (ret || status_80 != 0x50) {
+			dev_err(&data->spi->dev,
+				"Controller failed to reach idle state: 0x%02x\n",
+				status_80);
+			ret = -EIO;
+			goto err;
+		}
+	}
+
+	/* Step 4: Wake strobe 2 { 0xA5, 0x5A, 0x00 } */
+	ret = fte3600_spi_cmd_strobe(data, 0xA5, 0x5A);
+	if (ret) {
+		dev_err(&data->spi->dev, "Startup wake strobe 2 failed: %d\n", ret);
+		goto err;
+	}
+
+	/* Step 5: Foundry Interrogation (two loop iterations: index 0x03 and index 0x13) */
+	for (i = 0; i < 2; i++) {
+		u8 idx = (i == 0) ? 0x03 : 0x13;
+
+		ret = fte3600_spi_write_sfr(data, 0xF1, idx);
+		if (ret)
+			goto err;
+		ret = fte3600_spi_write_sfr(data, 0xF4, 0xC0);
+		if (ret)
+			goto err;
+		ret = fte3600_spi_write_sfr(data, 0xF4, 0xC1);
+		if (ret)
+			goto err;
+		ret = fte3600_spi_write_sfr(data, 0xF4, 0xC0);
+		if (ret)
+			goto err;
+		ret = fte3600_spi_write_sfr(data, 0xF4, 0xC0);
+		if (ret)
+			goto err;
+		ret = fte3600_spi_read_sfr(data, 0xF3, &dummy);
+		if (ret)
+			goto err;
+	}
+
+	/* Step 6: Read foundry identification code from register 0x9B (up to 10 attempts) */
+	data->foundry_code = 0;
+	for (i = 0; i < 10; i++) {
+		ret = fte3600_spi_read_sfr(data, 0x9B, &fab_byte);
+		if (ret)
+			goto err;
+
+		if ((fab_byte >> 2) == 0x13) {
+			data->foundry_code = 0xAA; /* SMIC Fab AA */
+			break;
+		}
+		if ((fab_byte >> 2) == 0)
+			break;
+	}
+
+	data->line_period_us = (data->foundry_code == 0xAA) ? 150 : 200;
+
+	/*
+	 * Volatile startup prefix successful: transition to INITIALIZED_UNCALIBRATED.
+	 * State READY is withheld until analog DAC calibration (fdt_baseline),
+	 * sample noise acquisition (image_baseline), and threshold arming (arm)
+	 * are completed in future authorized stages.
+	 */
+	data->state = FTE3600_STATE_INITIALIZED_UNCALIBRATED;
+	data->last_error = 0;
+	dev_info(&data->spi->dev,
+		 "FocalTech FT9362 startup prefix complete (foundry 0x%02x, line period %u us, state INITIALIZED_UNCALIBRATED)\n",
+		 data->foundry_code, data->line_period_us);
+	return 0;
+
+err:
+	data->state = FTE3600_STATE_UNKNOWN;
+	data->last_error = (u32)(-ret);
+	return ret;
+}
+
 /* Character Device: Open with Single-Client Exclusive Lease */
 static int fte3600_cdev_open(struct inode *inode, struct file *filp)
 {
@@ -420,11 +657,13 @@ static long fte3600_ioctl_common(struct file *filp, unsigned int cmd, unsigned l
 
 		memset(&snap, 0, sizeof(snap));
 		snap.version = FTE3600_UAPI_VERSION;
-		snap.state = (u32)data->state;
-		if (atomic_read(&data->offline))
+		snap.state = fte3600_state_to_uapi(data->state);
+		if (atomic_read(&data->offline) || data->state == FTE3600_STATE_DEVICE_REMOVAL)
 			snap.flags |= FTE3600_FLAG_OFFLINE;
 		if (data->state == FTE3600_STATE_RESET_SEQUENCE_ISSUED)
 			snap.flags |= FTE3600_FLAG_RESET_SEQUENCE_ISSUED;
+		if (data->state == FTE3600_STATE_INITIALIZED_UNCALIBRATED)
+			snap.flags |= FTE3600_FLAG_STARTUP_PREFIX_COMPLETED | FTE3600_FLAG_CALIBRATION_PENDING;
 		snap.last_error = data->last_error;
 
 		mutex_unlock(&data->lock);
@@ -465,6 +704,9 @@ static long fte3600_ioctl_common(struct file *filp, unsigned int cmd, unsigned l
 		if (params.version != FTE3600_UAPI_VERSION)
 			return -EINVAL;
 
+		if (params.flags & ~FTE3600_INIT_FLAGS_MASK)
+			return -EINVAL;
+
 		for (i = 0; i < 6; i++) {
 			if (params.reserved[i] != 0)
 				return -EINVAL;
@@ -479,7 +721,28 @@ static long fte3600_ioctl_common(struct file *filp, unsigned int cmd, unsigned l
 			return -ENODEV;
 		}
 
-		ret = fte3600_hw_identify(data);
+		/*
+		 * Initialization State Machine:
+		 * Case 1: Driver is in RESET_SEQUENCE_ISSUED (state 2).
+		 *         Executes fte3600_hw_identify() to verify bus responsiveness and chip ID.
+		 *         If params.flags specifies FTE3600_INIT_FLAG_FULL_STARTUP, automatically
+		 *         advances through fte3600_hw_startup() to enter INITIALIZED_UNCALIBRATED.
+		 * Case 2: Driver is already in IDENTIFIED (state 8).
+		 *         Executes fte3600_hw_startup() to transition to INITIALIZED_UNCALIBRATED.
+		 * Any other state: Returns -EPERM (reset sequence required first).
+		 */
+		if (data->state == FTE3600_STATE_RESET_SEQUENCE_ISSUED) {
+			ret = fte3600_hw_identify(data);
+			if (ret == 0 && (params.flags & FTE3600_INIT_FLAG_FULL_STARTUP))
+				ret = fte3600_hw_startup(data);
+		} else if (data->state == FTE3600_STATE_IDENTIFIED) {
+			ret = fte3600_hw_startup(data);
+		} else {
+			ret = -EPERM;
+		}
+
+		if (ret)
+			data->last_error = (u32)(-ret);
 
 		mutex_unlock(&data->lock);
 		break;
@@ -502,7 +765,31 @@ static long fte3600_ioctl_common(struct file *filp, unsigned int cmd, unsigned l
 				return -EINVAL;
 		}
 
+		if (mutex_lock_interruptible(&data->lock))
+			return -ERESTARTSYS;
+
+		/* Re-check offline status and SPI bus pointer under data->lock */
+		if (atomic_read(&data->offline) || !data->spi) {
+			mutex_unlock(&data->lock);
+			return -ENODEV;
+		}
+
+		/*
+		 * Capture-Gating Enforcement:
+		 * Capture is strictly prohibited unless the device has completed all
+		 * required initialization, analog baseline calibration, and touch arming stages.
+		 * In the current driver milestone, volatile startup prefix has completed,
+		 * but calibration (fdt_baseline, image_baseline) and touch arming (arm)
+		 * are deferred to future authorized stages.
+		 * Therefore, capture is rejected in all non-READY states with -EPERM.
+		 */
+		if (data->state != FTE3600_STATE_READY) {
+			mutex_unlock(&data->lock);
+			return -EPERM;
+		}
+
 		/* Physical FIFO capture deferred in Stage 2E.2 software milestone */
+		mutex_unlock(&data->lock);
 		return -EOPNOTSUPP;
 	}
 	default:
@@ -537,6 +824,14 @@ static __poll_t fte3600_cdev_poll(struct file *filp, struct poll_table_struct *w
 	if (atomic_read(&data->offline))
 		return EPOLLERR | EPOLLHUP;
 
+	/*
+	 * In the current hardware identification milestone, touch detection
+	 * and image frame streaming are deferred to future authorized stages.
+	 * Input readiness (EPOLLIN | EPOLLRDNORM) is never asserted while those
+	 * operational states remain unreachable.
+	 * Pollers wait on event_wq and are cleanly awakened with EPOLLERR | EPOLLHUP
+	 * upon device unbind or removal.
+	 */
 	return 0;
 }
 
@@ -574,6 +869,8 @@ static int fte3600_probe(struct spi_device *spi)
 	atomic_set(&data->is_open, 0);
 	atomic_set(&data->offline, 0);
 	data->state = FTE3600_STATE_UNINITIALIZED;
+	data->foundry_code = 0;
+	data->line_period_us = 200;
 
 	/*
 	 * Initialize embedded struct device and configure metadata.
@@ -659,6 +956,7 @@ static void fte3600_remove(struct spi_device *spi)
 	 * Mark offline and nullify pointers to devres-managed resources before remove() returns.
 	 */
 	atomic_set(&data->offline, 1);
+	data->state = FTE3600_STATE_DEVICE_REMOVAL;
 	data->reset_gpiod = NULL;
 	data->spi = NULL;
 

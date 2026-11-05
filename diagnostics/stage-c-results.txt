@@ -1,0 +1,74 @@
+===============================================================================
+ Stage C — Authorized FT9362 Silicon Identification Sequence
+ Timestamp: 2026-11-04T10:20:53+05:30
+ Target Device: /dev/fte3600 (spi-FTE3600:00)
+ Policy: Option 1 Retention (Driver retained loaded and bound post-test)
+===============================================================================
+
+[PASS] Cooperative lock acquired on /run/lock/fte3600-test.lock (FD 200)
+/home/titan/fte3600-linux-driver/scripts/stage-c-test.sh: line 42: printf: --: invalid option
+printf: usage: printf [-v var] format [arguments]
+Kernel Release:           7.2.8-9-omarchy
+Driver Module:            fte3600 (Loaded: fte3600                20480  0)
+Device Node:              /dev/fte3600 (crw------- 1 root root 511, 0 Nov  4 09:32 /dev/fte3600)
+Validation Utility:       /home/titan/fte3600-linux-driver/bin/fte3600-tool (Executable)
+SPI Link:                 /sys/bus/spi/devices/spi-FTE3600:00 (Bound to ../../../../../../../bus/spi/drivers/fte3600)
+
+--- Baseline Telemetry & SPI Statistics ---
+Dmesg Baseline Lines:     1972
+Baseline SPI Statistics:
+  bytes       : 0
+  bytes_rx    : 0
+  bytes_tx    : 0
+  messages    : 0
+  transfers   : 0
+  errors      : 0
+
+Initial Driver State (Snapshot 1):
+>> FTE3600 State Snapshot:
+   Version:    1
+   State:      2 (RESET_SEQUENCE_ISSUED)
+   Flags:      0x00000002 [RESET_ISSUED]
+   Last Error: 0 (None)
+
+===============================================================================
+ EXECUTING AUTHORIZED IDENTIFICATION IOCTL: bin/fte3600-tool init
+ Frame 1: Write 0xC6 = 0x01 (transceiver clock un-gate)
+ Delay:   4-5 ms stabilization
+ Frame 2: Readback 0xC6 (expect 0x01)
+ Frame 3: Read 0x1A8B (expect ID 0x9362, CRC 0x1C53)
+===============================================================================
+
+>> Issuing FTE3600_IOC_INIT...
+>> Init ioctl returned 0 (Identification Success).
+
+Identification ioctl completed with return code: 0 (duration: 18 ms)
+
+--- Post-Identification Telemetry & Diagnostics ---
+Post-Identification Driver State (Snapshot 2):
+>> FTE3600 State Snapshot:
+   Version:    1
+   State:      8 (IDENTIFIED)
+   Flags:      0x00000000
+   Last Error: 0 (None)
+
+Post-Identification SPI Statistics:
+  bytes       : 19
+  bytes_rx    : 15
+  bytes_tx    : 19
+  messages    : 3
+  transfers   : 3
+  errors      : 0
+
+Kernel Ring Buffer Messages (dmesg delta since baseline):
+  (No new fte3600 kernel messages logged)
+
+--- Option 1 Retention Policy Enforcement ---
+Module fte3600 retained loaded: fte3600                20480  0
+Device node retained:          crw------- 1 root root 511, 0 Nov  4 09:32 /dev/fte3600
+SPI link retained:             ../../../../../../../bus/spi/drivers/fte3600
+[PASS] Zero automatic unloads or unbinds performed.
+
+[PASS] Cooperative lock released.
+
+>>> STAGE C IDENTIFICATION SUCCESSFUL (STATUS 0) <<<

@@ -1,0 +1,88 @@
+# ==========================================
+# Linux Kernel Driver Build Artifacts
+# ==========================================
+*.o
+*.ko
+*.mod
+*.mod.c
+*.mod.o
+*.o.ur-safe
+.*.cmd
+.*.d
+*.ko.unsigned
+*.order
+modules.order
+.modules.order.cmd
+Module.symvers
+.Module.symvers.cmd
+.tmp_versions/
+modules.builtin
+modules.builtin.modinfo
+Module.markers
+kernel/fte3600.ko
+kernel/*.o
+kernel/.*.cmd
+kernel/..module-common.o.cmd
+kernel/fte3600.mod*
+kernel/modules.order
+kernel/Module.symvers
+kernel/.modules.order.cmd
+kernel/.Module.symvers.cmd
+
+# ==========================================
+# Compiled Test & Tool Executables
+# ==========================================
+kernel/fte3600-test
+kernel/fte3600-policy-test
+tools/fte3600-tool
+bin/fte3600-tool
+bin/fw9369-hw-tool
+bin/fw9369-tests
+bin/fw9369-tool
+bin/stage2a-identify
+tools/fw9369-mock/src/*.o
+tools/fw9369-mock/tests/*.o
+
+# ==========================================
+# Fingerprint & Sensor Raw Image Captures
+# ==========================================
+*.pgm
+*.raw
+*.ppm
+/tmp/*.pgm
+/tmp/*.raw
+
+# ==========================================
+# Local Scratch & Assistant Workspace
+# ==========================================
+scratch
+scratch/
+*.tmp
+*.log
+core
+core.*
+
+# ==========================================
+# Editor, IDE, and OS Metadata
+# ==========================================
+*~
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.patch
+
+# ==========================================
+# Python Cache
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ==========================================
+# Package Distribution Whitelist
+# ==========================================
+!libfprint-package/libfprint-2.so*
+!research/dynabook-windows-driver/**

@@ -1,0 +1,18 @@
+[submodule "research/aur-focaltech-spi-dkms"]
+	path = research/aur-focaltech-spi-dkms
+	url = https://aur.archlinux.org/focaltech-spi-dkms.git
+[submodule "research/aur-libfprint-ftexx00"]
+	path = research/aur-libfprint-ftexx00
+	url = https://aur.archlinux.org/libfprint-ftexx00.git
+[submodule "research/fte3600-kvadra-notes"]
+	path = research/fte3600-kvadra-notes
+	url = https://github.com/Onix-tech/fte3600-kvadra-notes.git
+[submodule "research/fte-spi-arch"]
+	path = research/fte-spi-arch
+	url = https://github.com/alfaonyt/fte-spi-arch.git
+[submodule "research/ftexx00-ubuntu"]
+	path = research/ftexx00-ubuntu
+	url = https://github.com/vobademi/FTEXX00-Ubuntu.git
+[submodule "research/libfprint-fte3600"]
+	path = research/libfprint-fte3600
+	url = https://github.com/SamSeven777/libfprint-fte3600.git

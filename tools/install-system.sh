@@ -10,7 +10,18 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 KVER="$(uname -r)"
 
-echo "[*] 1. Installing FTE3600 Unified Kernel Driver..."
+echo "[*] 1. Preparing and Installing FTE3600 Unified Kernel Driver..."
+if [[ ! -f "${SCRIPT_DIR}/kernel/fte3600.ko" ]] || ! modinfo "${SCRIPT_DIR}/kernel/fte3600.ko" 2>/dev/null | grep -q "${KVER}"; then
+    echo "[*] Compiling fte3600.ko module for kernel ${KVER}..."
+    make -C "${SCRIPT_DIR}/kernel" clean
+    make -C "${SCRIPT_DIR}/kernel" modules
+fi
+
+if [[ ! -x "${SCRIPT_DIR}/tools/fte3600-tool" ]]; then
+    echo "[*] Compiling tools/fte3600-tool..."
+    gcc -std=c11 -O2 "${SCRIPT_DIR}/tools/fte3600-tool.c" -o "${SCRIPT_DIR}/tools/fte3600-tool"
+fi
+
 mkdir -p "/lib/modules/${KVER}/extra"
 cp "${SCRIPT_DIR}/kernel/fte3600.ko" "/lib/modules/${KVER}/extra/"
 depmod -a

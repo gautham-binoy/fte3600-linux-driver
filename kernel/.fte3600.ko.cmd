@@ -1,1 +1,0 @@
-savedcmd_fte3600.ko := ld -r -m elf_x86_64 -z noexecstack --no-warn-rwx-segments --build-id=sha1  -T /usr/lib/modules/7.2.8-9-omarchy/build/scripts/module.lds -o fte3600.ko fte3600.o fte3600.mod.o .module-common.o

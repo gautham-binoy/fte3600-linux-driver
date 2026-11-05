@@ -43,9 +43,10 @@ Operation = Install
 Operation = Upgrade
 Target = usr/lib/modules/*/vmlinuz
 Target = usr/lib/modules/*/modules.builtin
+Target = usr/lib/libfprint-2.so*
 
 [Action]
-Description = Rebuilding FTE3600 Linux Fingerprint Driver for updated kernel...
+Description = Rebuilding & Restoring FTE3600 Fingerprint Stack...
 When = PostTransaction
 Exec = /bin/bash /home/titan/fte3600-linux-driver/tools/install-system.sh
 HOOKEOF

@@ -221,8 +221,9 @@ sudo rm -f "/lib/modules/$(uname -r)/extra/fte3600.ko"
 sudo depmod -a
 
 # 2. Restore original libfprint (if backup was created)
-if [[ -f /usr/lib/libfprint-2.so.2.0.0.stock_bak ]]; then
-    sudo cp /usr/lib/libfprint-2.so.2.0.0.stock_bak /usr/lib/libfprint-2.so.2.0.0
+if [[ -f /var/backups/fte3600/libfprint-2.so.2.0.0.stock_bak ]]; then
+    sudo cp /var/backups/fte3600/libfprint-2.so.2.0.0.stock_bak /usr/lib/libfprint-2.so.2.0.0
+    sudo ldconfig
 fi
 
 # 3. Remove fprintd override and restart service

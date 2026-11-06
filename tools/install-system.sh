@@ -88,15 +88,23 @@ if [[ -d /usr/share/omarchy || -d /usr/share/omarchy-platform ]]; then
 fi
 
 echo "[*] 4. Installing FT9362-compatible libfprint userspace driver..."
-if [[ -f /usr/lib/libfprint-2.so.2.0.0 && ! -f /usr/lib/libfprint-2.so.2.0.0.stock_bak ]]; then
-    cp /usr/lib/libfprint-2.so.2.0.0 /usr/lib/libfprint-2.so.2.0.0.stock_bak
-    echo "[+] Backed up original libfprint to /usr/lib/libfprint-2.so.2.0.0.stock_bak"
+BACKUP_DIR="/var/backups/fte3600"
+mkdir -p "${BACKUP_DIR}"
+if [[ -f /usr/lib/libfprint-2.so.2.0.0 && ! -f "${BACKUP_DIR}/libfprint-2.so.2.0.0.stock_bak" ]]; then
+    if [[ $(stat -c%s /usr/lib/libfprint-2.so.2.0.0 2>/dev/null) -ne 2154176 ]]; then
+        cp /usr/lib/libfprint-2.so.2.0.0 "${BACKUP_DIR}/libfprint-2.so.2.0.0.stock_bak"
+        echo "[+] Backed up original libfprint to ${BACKUP_DIR}/libfprint-2.so.2.0.0.stock_bak"
+    fi
 fi
+
+# Critical: Remove any backup files from /usr/lib/ so ldconfig does not accidentally bind to them
+rm -f /usr/lib/libfprint-2.so.2.0.0.stock_bak /usr/lib/*stock_bak*
 
 cp "${SCRIPT_DIR}/libfprint-package/libfprint-2.so.2.0.0" /usr/lib/libfprint-2.so.2.0.0
 chmod 755 /usr/lib/libfprint-2.so.2.0.0
 ln -sf libfprint-2.so.2.0.0 /usr/lib/libfprint-2.so.2
 ln -sf libfprint-2.so.2.0.0 /usr/lib/libfprint-2.so
+ldconfig
 
 echo "[*] 5. Configuring fprintd systemd service override..."
 mkdir -p /etc/systemd/system/fprintd.service.d

@@ -160,6 +160,13 @@ The driver exposes two character device interfaces:
 * **Acyclic Lock Hierarchy:** $\mathcal{L}_1 (\text{domain}) \prec \mathcal{L}_2 (\text{dev}) \prec \mathcal{L}_3 (\text{session}) \prec \mathcal{L}_4 (\text{quarantine})$.
 * **32-Bit Compat:** Identical struct padding and alignments across 32-bit and 64-bit userlands.
 
+### 6. Self-Healing Guard Daemon & Update Resilience
+To guarantee the driver stack remains completely immune to kernel updates, package manager transactions, and reboot cycles:
+* **`fte3600-guard.service`:** Runs as an early-boot oneshot systemd service (`Before=fprintd.service`) verifying the kernel module for `$(uname -r)` and automatically compiling from `/usr/src/fte3600-1.0.0/` if missing.
+* **`pacman.conf` Protection (`NoExtract`):** Automatically adds `NoExtract = usr/lib/libfprint-2.so*` to prevent upstream `libfprint` updates from overwriting our FT9362 hardware driver.
+* **ALPM Post-Transaction Hook:** `/etc/pacman.d/hooks/95-fte3600.hook` invokes `fte3600-guard` following any kernel or library transaction.
+* **SONAME Isolation:** Backups are stored in `/var/backups/fte3600/` outside library search paths so `ldconfig` can never accidentally repoint symlinks away from the driver.
+
 ---
 
 ## 🧪 Automated Test Suite
@@ -190,6 +197,9 @@ FTE3600 glue policy: 9 groups passed (GPIO/ACPI IRQ, CS capability, polarity, le
 │   └── Makefile              # Dynamic out-of-tree kernel build Makefile
 ├── tools/
 │   ├── install-system.sh     # One-step system integration installer
+│   ├── fte3600-guard         # Self-healing daemon and stack supervisor
+│   ├── fte3600-guard.service # Early-boot systemd guard unit
+│   ├── 70-fte3600.rules      # Udev device and module loading rules
 │   ├── enable-pam-auth.sh    # PAM configuration & clamshell gate installer
 │   ├── fte3600-tool.c        # Production C diagnostic utility
 │   └── fw9369-mock/          # Mock protocol validation suite

@@ -1,0 +1,4 @@
+# FTE3600 / FT9362 Fingerprint Sensor Rules
+ACTION=="add", SUBSYSTEM=="spi", ATTRS{modalias}=="acpi:FTE3600:*", RUN+="/usr/bin/modprobe fte3600"
+KERNEL=="fte3600", MODE="0660", GROUP="input"
+KERNEL=="focal_moh_spi", MODE="0666"

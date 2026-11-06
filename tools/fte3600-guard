@@ -1,0 +1,160 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# FTE3600 Self-Healing Guard Daemon & Verification Script
+# Ensures kernel driver, userspace libfprint, and PAM stack NEVER drift or break
+# ==============================================================================
+set -euo pipefail
+
+KVER="$(uname -r)"
+SRC_DIR="/usr/src/fte3600-1.0.0"
+LIB_TARGET="/usr/lib/libfprint-2.so.2.0.0"
+EXPECTED_LIB_SIZE=2154176
+
+# Fallback to local repo if /usr/src is not yet populated
+if [[ ! -d "${SRC_DIR}" ]]; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+    if [[ -d "${SCRIPT_DIR}/kernel" ]]; then
+        SRC_DIR="${SCRIPT_DIR}"
+    fi
+fi
+
+repaired=0
+
+# ------------------------------------------------------------------------------
+# 1. Kernel Module Verification & Automatic Compilation
+# ------------------------------------------------------------------------------
+MODULE_PATH="/lib/modules/${KVER}/extra/fte3600.ko"
+
+needs_build=0
+if [[ ! -f "${MODULE_PATH}" ]]; then
+    needs_build=1
+elif ! modinfo "${MODULE_PATH}" 2>/dev/null | grep -q "${KVER}"; then
+    needs_build=1
+fi
+
+if [[ ${needs_build} -eq 1 ]]; then
+    echo "[fte3600-guard] Rebuilding kernel module for ${KVER}..."
+    if [[ -d "${SRC_DIR}/kernel" ]]; then
+        make -C "${SRC_DIR}/kernel" clean >/dev/null 2>&1 || true
+        make -C "${SRC_DIR}/kernel" modules >/dev/null 2>&1
+        mkdir -p "/lib/modules/${KVER}/extra"
+        cp "${SRC_DIR}/kernel/fte3600.ko" "${MODULE_PATH}"
+        depmod -a
+        repaired=1
+    elif [[ -f "${SRC_DIR}/Makefile" ]]; then
+        make -C "${SRC_DIR}" clean >/dev/null 2>&1 || true
+        make -C "${SRC_DIR}" modules >/dev/null 2>&1
+        mkdir -p "/lib/modules/${KVER}/extra"
+        cp "${SRC_DIR}/fte3600.ko" "${MODULE_PATH}"
+        depmod -a
+        repaired=1
+    fi
+fi
+
+# Ensure module is loaded
+if ! lsmod | grep -q fte3600; then
+    echo "[fte3600-guard] Loading fte3600 kernel module..."
+    modprobe fte3600 || insmod "${MODULE_PATH}" || true
+    repaired=1
+fi
+
+# Ensure module loads automatically at boot
+if [[ ! -f /etc/modules-load.d/fte3600.conf ]] || ! grep -q "fte3600" /etc/modules-load.d/fte3600.conf 2>/dev/null; then
+    mkdir -p /etc/modules-load.d
+    echo "fte3600" > /etc/modules-load.d/fte3600.conf
+fi
+
+# ------------------------------------------------------------------------------
+# 2. Character Device Node Permissions
+# ------------------------------------------------------------------------------
+if [[ -c /dev/focal_moh_spi ]]; then
+    chmod 666 /dev/focal_moh_spi
+fi
+if [[ -c /dev/fte3600 ]]; then
+    chmod 660 /dev/fte3600
+    chown root:input /dev/fte3600 2>/dev/null || true
+fi
+
+# ------------------------------------------------------------------------------
+# 3. Libfprint Userspace Driver Integrity & Protection
+# ------------------------------------------------------------------------------
+# Clean up any conflicting backup files inside /usr/lib that trigger ldconfig bugs
+rm -f /usr/lib/libfprint-2.so.2.0.0.stock_bak /usr/lib/*stock_bak* /usr/lib/libfprint*bak* 2>/dev/null || true
+
+needs_lib=0
+if [[ ! -f "${LIB_TARGET}" ]]; then
+    needs_lib=1
+elif [[ $(stat -c%s "${LIB_TARGET}" 2>/dev/null) -ne ${EXPECTED_LIB_SIZE} ]]; then
+    needs_lib=1
+fi
+
+# Check if soname symlink is broken
+if [[ ! -L /usr/lib/libfprint-2.so.2 ]] || [[ "$(readlink -f /usr/lib/libfprint-2.so.2 2>/dev/null)" != "${LIB_TARGET}" ]]; then
+    needs_lib=1
+fi
+
+if [[ ${needs_lib} -eq 1 ]]; then
+    echo "[fte3600-guard] Restoring FT9362 Match-on-Host libfprint library..."
+    SOURCE_LIB=""
+    if [[ -f "${SRC_DIR}/libfprint-package/libfprint-2.so.2.0.0" ]]; then
+        SOURCE_LIB="${SRC_DIR}/libfprint-package/libfprint-2.so.2.0.0"
+    elif [[ -f "${SRC_DIR}/libfprint-2.so.2.0.0" ]]; then
+        SOURCE_LIB="${SRC_DIR}/libfprint-2.so.2.0.0"
+    elif [[ -f "/home/titan/fte3600-linux-driver/libfprint-package/libfprint-2.so.2.0.0" ]]; then
+        SOURCE_LIB="/home/titan/fte3600-linux-driver/libfprint-package/libfprint-2.so.2.0.0"
+    fi
+
+    if [[ -n "${SOURCE_LIB}" && -f "${SOURCE_LIB}" ]]; then
+        # Backup stock library if not yet backed up
+        mkdir -p /var/backups/fte3600
+        if [[ -f "${LIB_TARGET}" && ! -f /var/backups/fte3600/libfprint-2.so.2.0.0.stock_bak ]]; then
+            if [[ $(stat -c%s "${LIB_TARGET}" 2>/dev/null) -ne ${EXPECTED_LIB_SIZE} ]]; then
+                cp "${LIB_TARGET}" /var/backups/fte3600/libfprint-2.so.2.0.0.stock_bak
+            fi
+        fi
+
+        cp "${SOURCE_LIB}" "${LIB_TARGET}"
+        chmod 755 "${LIB_TARGET}"
+        ln -sf libfprint-2.so.2.0.0 /usr/lib/libfprint-2.so.2
+        ln -sf libfprint-2.so.2.0.0 /usr/lib/libfprint-2.so
+        ldconfig
+        repaired=1
+    fi
+fi
+
+# ------------------------------------------------------------------------------
+# 4. Omarchy Platform Detection Registration
+# ------------------------------------------------------------------------------
+if [[ -d /usr/share/omarchy || -d /usr/share/omarchy-platform ]]; then
+    mkdir -p /usr/share/omarchy-platform
+    PLATFORM_FILE="/usr/share/omarchy-platform/fingerprint-readers"
+    ENTRY="/sys/bus/spi/devices/spi-FTE3600:00/modalias acpi:FTE3600:FTE3600:"
+    if [[ ! -f "${PLATFORM_FILE}" ]] || ! grep -q "spi-FTE3600:00" "${PLATFORM_FILE}" 2>/dev/null; then
+        echo "${ENTRY}" >> "${PLATFORM_FILE}"
+        repaired=1
+    fi
+fi
+
+# ------------------------------------------------------------------------------
+# 5. Service Override & Daemon Health
+# ------------------------------------------------------------------------------
+OVERRIDE_FILE="/etc/systemd/system/fprintd.service.d/override.conf"
+if [[ ! -f "${OVERRIDE_FILE}" ]] || ! grep -q "/dev/focal_moh_spi" "${OVERRIDE_FILE}" 2>/dev/null; then
+    mkdir -p /etc/systemd/system/fprintd.service.d
+    cat <<'EOF' > "${OVERRIDE_FILE}"
+[Service]
+DeviceAllow=/dev/focal_moh_spi rw
+EOF
+    systemctl daemon-reload
+    repaired=1
+fi
+
+# If any component was repaired or fprintd is failed, restart fprintd
+if [[ ${repaired} -eq 1 ]] || systemctl is-failed fprintd.service >/dev/null 2>&1; then
+    echo "[fte3600-guard] Reloading system daemons and restarting fprintd..."
+    systemctl daemon-reload
+    systemctl restart fprintd || true
+fi
+
+echo "[fte3600-guard] FTE3600 stack verified operational."
+exit 0

@@ -74,7 +74,12 @@ Exec = /usr/local/bin/fte3600-guard
 HOOKEOF
 fi
 
-echo "[*] 8. Executing self-healing guard to configure hardware and daemons..."
+echo "[*] 8. Installing system-sleep hook to eliminate suspend/resume desync..."
+mkdir -p /etc/systemd/system-sleep
+cp "${SCRIPT_DIR}/tools/fprintd-resume" /etc/systemd/system-sleep/fprintd-resume
+chmod 755 /etc/systemd/system-sleep/fprintd-resume
+
+echo "[*] 9. Executing self-healing guard to configure hardware and daemons..."
 /usr/local/bin/fte3600-guard
 
 echo ""

@@ -2292,11 +2292,54 @@ static void fte3600_remove(struct spi_device *spi)
 	dev_info(&spi->dev, "FTE3600 driver unbound\n");
 }
 
+#ifdef CONFIG_PM_SLEEP
+static int fte3600_pm_suspend(struct device *dev)
+{
+	struct spi_device *spi = to_spi_device(dev);
+	struct fte3600_data *data = spi_get_drvdata(spi);
+
+	if (!data)
+		return 0;
+
+	mutex_lock(&data->lock);
+	data->focal_work_flag = FOCAL_WAKE_EVENT_SUSPEND;
+	wake_up_interruptible(&data->focal_poll_wq);
+	mutex_unlock(&data->lock);
+
+	return 0;
+}
+
+static int fte3600_pm_resume(struct device *dev)
+{
+	struct spi_device *spi = to_spi_device(dev);
+	struct fte3600_data *data = spi_get_drvdata(spi);
+
+	if (!data)
+		return 0;
+
+	mutex_lock(&data->lock);
+	/* Pulse Pad 14 GPIO reset to re-synchronize silicon from low-power sleep */
+	fte3600_hw_reset_pulse(data);
+	data->state = FTE3600_STATE_UNINITIALIZED;
+	data->focal_work_flag = FOCAL_WAKE_EVENT_RESUME;
+	wake_up_interruptible(&data->focal_poll_wq);
+	mutex_unlock(&data->lock);
+
+	return 0;
+}
+
+static DEFINE_SIMPLE_DEV_PM_OPS(fte3600_pm_ops, fte3600_pm_suspend, fte3600_pm_resume);
+#define FTE3600_PM_OPS (&fte3600_pm_ops)
+#else
+#define FTE3600_PM_OPS NULL
+#endif
+
 /* Native SPI Driver Definition */
 static struct spi_driver fte3600_spi_driver = {
 	.driver = {
 		.name             = FTE3600_DRIVER_NAME,
 		.acpi_match_table = ACPI_PTR(fte3600_acpi_ids),
+		.pm               = FTE3600_PM_OPS,
 	},
 	.probe  = fte3600_probe,
 	.remove = fte3600_remove,

@@ -1,0 +1,23 @@
+#!/bin/bash
+# ==============================================================================
+# FTE3600 / Omarchy System-Sleep Hook: Fixes Suspend/Resume Race & Desync
+# ==============================================================================
+case "$1" in
+    pre)
+        # Pre-suspend: stop fprintd so no dangling hardware claim exists when
+        # entering low-power s2idle.
+        systemctl stop fprintd.service 2>/dev/null || true
+        ;;
+    post)
+        # Post-resume:
+        # 1. Run fte3600-guard to ensure device nodes, permissions, and module are clean
+        if [[ -x /usr/local/bin/fte3600-guard ]]; then
+            /usr/local/bin/fte3600-guard >/dev/null 2>&1 || true
+        fi
+
+        # 2. Synchronously restart fprintd BEFORE user.slice is thawed.
+        # This eliminates the race condition where the lock screen probes a dying daemon.
+        systemctl restart fprintd.service 2>/dev/null || true
+        ;;
+esac
+exit 0

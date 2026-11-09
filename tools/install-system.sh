@@ -13,13 +13,28 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 KVER="$(uname -r)"
 
-echo "[*] 1. Setting up permanent system source repository in /usr/src/fte3600-1.0.0..."
+echo "[*] 1. Preparing and building FTE3600 Unified Kernel Driver..."
+make -C "${SCRIPT_DIR}/kernel" clean >/dev/null 2>&1 || true
+make -C "${SCRIPT_DIR}/kernel" modules
+mkdir -p "/lib/modules/${KVER}/extra"
+cp "${SCRIPT_DIR}/kernel/fte3600.ko" "/lib/modules/${KVER}/extra/fte3600.ko"
+depmod -a
+
+echo "[*] 2. Loading updated kernel driver module with power management..."
+if lsmod | grep -q fte3600; then
+    rmmod fte3600 2>/dev/null || true
+fi
+modprobe fte3600
+
+echo "[*] 3. Setting up permanent system source repository in /usr/src/fte3600-1.0.0..."
 mkdir -p /usr/src/fte3600-1.0.0
 cp -r "${SCRIPT_DIR}/kernel/"* /usr/src/fte3600-1.0.0/ 2>/dev/null || true
 mkdir -p /usr/src/fte3600-1.0.0/libfprint-package
 cp -r "${SCRIPT_DIR}/libfprint-package/"* /usr/src/fte3600-1.0.0/libfprint-package/ 2>/dev/null || true
+mkdir -p /usr/src/fte3600-1.0.0/tools
+cp -r "${SCRIPT_DIR}/tools/"* /usr/src/fte3600-1.0.0/tools/ 2>/dev/null || true
 
-echo "[*] 2. Ensuring required dependencies are installed..."
+echo "[*] 4. Ensuring required dependencies are installed..."
 if ! command -v fprintd >/dev/null 2>&1; then
     echo "[*] Installing fprintd daemon via package manager..."
     if command -v pacman >/dev/null 2>&1; then
@@ -37,27 +52,29 @@ if [[ ! -x "${SCRIPT_DIR}/tools/fte3600-tool" ]]; then
     echo "[*] Compiling tools/fte3600-tool..."
     gcc -std=c11 -O2 "${SCRIPT_DIR}/tools/fte3600-tool.c" -o "${SCRIPT_DIR}/tools/fte3600-tool"
 fi
+cp "${SCRIPT_DIR}/tools/fte3600-tool" /usr/local/bin/fte3600-tool
+chmod 755 /usr/local/bin/fte3600-tool
 
-echo "[*] 3. Installing FTE3600 self-healing guard executable..."
+echo "[*] 5. Installing FTE3600 self-healing guard executable..."
 cp "${SCRIPT_DIR}/tools/fte3600-guard" /usr/local/bin/fte3600-guard
 chmod 755 /usr/local/bin/fte3600-guard
 
-echo "[*] 4. Installing FTE3600 early-boot systemd service..."
+echo "[*] 6. Installing FTE3600 early-boot systemd service..."
 cp "${SCRIPT_DIR}/tools/fte3600-guard.service" /etc/systemd/system/fte3600-guard.service
 systemctl daemon-reload
 systemctl enable fte3600-guard.service
 
-echo "[*] 5. Installing udev rules..."
+echo "[*] 7. Installing udev rules..."
 cp "${SCRIPT_DIR}/tools/70-fte3600.rules" /etc/udev/rules.d/70-fte3600.rules
 udevadm control --reload-rules 2>/dev/null || true
 
 if [[ -f /etc/pacman.conf ]] && ! grep -q "usr/lib/libfprint-2.so" /etc/pacman.conf; then
-    echo "[*] 6. Protecting libfprint in pacman.conf (NoExtract)..."
+    echo "[*] 8. Protecting libfprint in pacman.conf (NoExtract)..."
     sed -i '/^\[options\]/a NoExtract = usr/lib/libfprint-2.so*' /etc/pacman.conf
 fi
 
 if [[ -d /etc/pacman.d/hooks ]]; then
-    echo "[*] 7. Installing ALPM pacman transaction hook..."
+    echo "[*] 9. Installing ALPM pacman transaction hook..."
     cat <<'HOOKEOF' > /etc/pacman.d/hooks/95-fte3600.hook
 [Trigger]
 Type = Path
@@ -74,18 +91,19 @@ Exec = /usr/local/bin/fte3600-guard
 HOOKEOF
 fi
 
-echo "[*] 8. Installing system-sleep hook to eliminate suspend/resume desync..."
-mkdir -p /etc/systemd/system-sleep
+echo "[*] 10. Installing system-sleep hooks to eliminate suspend/resume desync..."
+mkdir -p /usr/lib/systemd/system-sleep /etc/systemd/system-sleep
+cp "${SCRIPT_DIR}/tools/fprintd-resume" /usr/lib/systemd/system-sleep/fprintd-resume
 cp "${SCRIPT_DIR}/tools/fprintd-resume" /etc/systemd/system-sleep/fprintd-resume
-chmod 755 /etc/systemd/system-sleep/fprintd-resume
+chmod 755 /usr/lib/systemd/system-sleep/fprintd-resume /etc/systemd/system-sleep/fprintd-resume
 
-echo "[*] 9. Executing self-healing guard to configure hardware and daemons..."
+echo "[*] 11. Executing self-healing guard to configure hardware and daemons..."
 /usr/local/bin/fte3600-guard
 
 echo ""
 echo "[+] =========================================================================="
 echo "[+] FTE3600 Full-Stack Driver & Self-Healing Guard successfully provisioned!"
-echo "[+] The stack is now immune to kernel updates, pacman upgrades, and ldconfig."
+echo "[+] The stack is now immune to long sleep, kernel updates, and pacman upgrades."
 echo "[+] =========================================================================="
 echo ""
 echo "Next step: Run 'omarchy setup security fingerprint' or 'fprintd-enroll' to register your fingerprint."

@@ -3,10 +3,12 @@ obj-m += fte3600.o
 KDIR ?= /lib/modules/$(shell uname -r)/build
 HOSTCC ?= cc
 
-.PHONY: all clean check test
+.PHONY: all modules clean check test
 
 all:
 	$(MAKE) -C $(KDIR) M=$(CURDIR) modules
+
+modules: all
 
 clean:
 	$(MAKE) -C $(KDIR) M=$(CURDIR) clean

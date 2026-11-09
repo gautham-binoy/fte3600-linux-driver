@@ -30,29 +30,50 @@ if [[ ! -f "${MODULE_PATH}" ]]; then
     needs_build=1
 elif ! modinfo "${MODULE_PATH}" 2>/dev/null | grep -q "${KVER}"; then
     needs_build=1
+elif [[ -f "${SRC_DIR}/fte3600.c" && "${SRC_DIR}/fte3600.c" -nt "${MODULE_PATH}" ]]; then
+    needs_build=1
+elif [[ -f "${SRC_DIR}/kernel/fte3600.c" && "${SRC_DIR}/kernel/fte3600.c" -nt "${MODULE_PATH}" ]]; then
+    needs_build=1
+elif [[ -f "/home/titan/fte3600-linux-driver/kernel/fte3600.c" && "/home/titan/fte3600-linux-driver/kernel/fte3600.c" -nt "${MODULE_PATH}" ]]; then
+    needs_build=1
 fi
 
 if [[ ${needs_build} -eq 1 ]]; then
     echo "[fte3600-guard] Rebuilding kernel module for ${KVER}..."
-    if [[ -d "${SRC_DIR}/kernel" ]]; then
-        make -C "${SRC_DIR}/kernel" clean >/dev/null 2>&1 || true
-        make -C "${SRC_DIR}/kernel" modules >/dev/null 2>&1
-        mkdir -p "/lib/modules/${KVER}/extra"
-        cp "${SRC_DIR}/kernel/fte3600.ko" "${MODULE_PATH}"
-        depmod -a
-        repaired=1
+    BUILD_DIR=""
+    if [[ -f "/home/titan/fte3600-linux-driver/kernel/fte3600.c" ]]; then
+        BUILD_DIR="/home/titan/fte3600-linux-driver/kernel"
+    elif [[ -d "${SRC_DIR}/kernel" ]]; then
+        BUILD_DIR="${SRC_DIR}/kernel"
     elif [[ -f "${SRC_DIR}/Makefile" ]]; then
-        make -C "${SRC_DIR}" clean >/dev/null 2>&1 || true
-        make -C "${SRC_DIR}" modules >/dev/null 2>&1
+        BUILD_DIR="${SRC_DIR}"
+    fi
+
+    if [[ -n "${BUILD_DIR}" ]]; then
+        make -C "${BUILD_DIR}" clean >/dev/null 2>&1 || true
+        make -C "${BUILD_DIR}" modules >/dev/null 2>&1 || make -C "${BUILD_DIR}" all >/dev/null 2>&1
         mkdir -p "/lib/modules/${KVER}/extra"
-        cp "${SRC_DIR}/fte3600.ko" "${MODULE_PATH}"
+        if [[ -f "${BUILD_DIR}/fte3600.ko" ]]; then
+            cp "${BUILD_DIR}/fte3600.ko" "${MODULE_PATH}"
+        elif [[ -f "${BUILD_DIR}/kernel/fte3600.ko" ]]; then
+            cp "${BUILD_DIR}/kernel/fte3600.ko" "${MODULE_PATH}"
+        fi
         depmod -a
         repaired=1
     fi
 fi
 
-# Ensure module is loaded
-if ! lsmod | grep -q fte3600; then
+# Ensure running module matches disk version and is loaded
+if lsmod | grep -q fte3600; then
+    RUNNING_SRC="$(cat /sys/module/fte3600/srcversion 2>/dev/null || true)"
+    DISK_SRC="$(modinfo -F srcversion "${MODULE_PATH}" 2>/dev/null || true)"
+    if [[ -n "${RUNNING_SRC}" && -n "${DISK_SRC}" && "${RUNNING_SRC}" != "${DISK_SRC}" ]]; then
+        echo "[fte3600-guard] Live module srcversion (${RUNNING_SRC}) differs from disk (${DISK_SRC}). Reloading..."
+        rmmod fte3600 2>/dev/null || true
+        modprobe fte3600 || insmod "${MODULE_PATH}" || true
+        repaired=1
+    fi
+else
     echo "[fte3600-guard] Loading fte3600 kernel module..."
     modprobe fte3600 || insmod "${MODULE_PATH}" || true
     repaired=1
@@ -73,6 +94,21 @@ fi
 if [[ -c /dev/fte3600 ]]; then
     chmod 660 /dev/fte3600
     chown root:input /dev/fte3600 2>/dev/null || true
+fi
+
+# Ensure diagnostic utility is in place
+TOOL_SRC=""
+if [[ -f "/home/titan/fte3600-linux-driver/tools/fte3600-tool" ]]; then
+    TOOL_SRC="/home/titan/fte3600-linux-driver/tools/fte3600-tool"
+elif [[ -f "${SRC_DIR}/tools/fte3600-tool" ]]; then
+    TOOL_SRC="${SRC_DIR}/tools/fte3600-tool"
+fi
+if [[ -n "${TOOL_SRC}" && -f "${TOOL_SRC}" ]]; then
+    if [[ ! -x /usr/local/bin/fte3600-tool ]] || [[ "${TOOL_SRC}" -nt /usr/local/bin/fte3600-tool ]]; then
+        cp "${TOOL_SRC}" /usr/local/bin/fte3600-tool
+        chmod 755 /usr/local/bin/fte3600-tool
+        repaired=1
+    fi
 fi
 
 # ------------------------------------------------------------------------------
@@ -150,20 +186,26 @@ EOF
 fi
 
 # ------------------------------------------------------------------------------
-# 6. Sleep/Resume System Synchronization Hook
+# 6. Sleep/Resume System Synchronization Hooks
 # ------------------------------------------------------------------------------
-SLEEP_HOOK="/etc/systemd/system-sleep/fprintd-resume"
-if [[ ! -x "${SLEEP_HOOK}" ]]; then
-    mkdir -p /etc/systemd/system-sleep
-    if [[ -f "${SRC_DIR}/tools/fprintd-resume" ]]; then
-        cp "${SRC_DIR}/tools/fprintd-resume" "${SLEEP_HOOK}"
-        chmod 755 "${SLEEP_HOOK}"
-        repaired=1
-    elif [[ -f "/home/titan/fte3600-linux-driver/tools/fprintd-resume" ]]; then
-        cp "/home/titan/fte3600-linux-driver/tools/fprintd-resume" "${SLEEP_HOOK}"
-        chmod 755 "${SLEEP_HOOK}"
-        repaired=1
-    fi
+SLEEP_HOOK_LIB="/usr/lib/systemd/system-sleep/fprintd-resume"
+SLEEP_HOOK_ETC="/etc/systemd/system-sleep/fprintd-resume"
+SOURCE_HOOK=""
+if [[ -f "${SRC_DIR}/tools/fprintd-resume" ]]; then
+    SOURCE_HOOK="${SRC_DIR}/tools/fprintd-resume"
+elif [[ -f "/home/titan/fte3600-linux-driver/tools/fprintd-resume" ]]; then
+    SOURCE_HOOK="/home/titan/fte3600-linux-driver/tools/fprintd-resume"
+fi
+
+if [[ -n "${SOURCE_HOOK}" && -f "${SOURCE_HOOK}" ]]; then
+    for target in "${SLEEP_HOOK_LIB}" "${SLEEP_HOOK_ETC}"; do
+        mkdir -p "$(dirname "${target}")"
+        if [[ ! -x "${target}" ]] || [[ "${SOURCE_HOOK}" -nt "${target}" ]] || ! grep -q "Eliminates Suspend/Resume" "${target}" 2>/dev/null; then
+            cp "${SOURCE_HOOK}" "${target}"
+            chmod 755 "${target}"
+            repaired=1
+        fi
+    done
 fi
 
 # If any component was repaired or fprintd is failed, restart fprintd

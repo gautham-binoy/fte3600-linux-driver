@@ -1,22 +1,39 @@
 #!/bin/bash
 # ==============================================================================
-# FTE3600 / Omarchy System-Sleep Hook: Fixes Suspend/Resume Race & Desync
+# FTE3600 / Omarchy System-Sleep Hook: Eliminates Suspend/Resume Desync & Wedges
+# Installed to /usr/lib/systemd/system-sleep/fprintd-resume and /etc/systemd/system-sleep/fprintd-resume
 # ==============================================================================
+
 case "$1" in
     pre)
-        # Pre-suspend: stop fprintd so no dangling hardware claim exists when
-        # entering low-power s2idle.
+        # Pre-suspend: cleanly stop fprintd so no lingering hardware claim or
+        # in-flight SPI transfer exists when the system enters sleep.
+        # This prevents fprintd from freezing mid-claim and wedging the bus.
         systemctl stop fprintd.service 2>/dev/null || true
         ;;
     post)
         # Post-resume:
-        # 1. Run fte3600-guard to ensure device nodes, permissions, and module are clean
-        if [[ -x /usr/local/bin/fte3600-guard ]]; then
-            /usr/local/bin/fte3600-guard >/dev/null 2>&1 || true
+        # Note: user.slice is STILL FROZEN during system-sleep post execution!
+        # Everything done here finishes BEFORE the lock screen or user unfreezes.
+
+        # 1. Ensure device nodes exist and permissions are accessible
+        if [[ -c /dev/focal_moh_spi ]]; then
+            chmod 666 /dev/focal_moh_spi 2>/dev/null || true
+        fi
+        if [[ -c /dev/fte3600 ]]; then
+            chmod 660 /dev/fte3600 2>/dev/null || true
+            chown root:input /dev/fte3600 2>/dev/null || true
         fi
 
-        # 2. Synchronously restart fprintd BEFORE user.slice is thawed.
-        # This eliminates the race condition where the lock screen probes a dying daemon.
+        # 2. Re-synchronize silicon via fte3600-tool reset if available
+        if [[ -x /usr/local/bin/fte3600-tool && -c /dev/fte3600 ]]; then
+            /usr/local/bin/fte3600-tool reset >/dev/null 2>&1 || true
+            sleep 0.05
+        fi
+
+        # 3. Synchronously restart fprintd BEFORE user.slice is thawed.
+        # This eliminates the race condition where the lock screen wakes up,
+        # probes an uninitialized or restarting daemon, and disables fingerprint auth.
         systemctl restart fprintd.service 2>/dev/null || true
         ;;
 esac

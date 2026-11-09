@@ -2318,9 +2318,15 @@ static int fte3600_pm_resume(struct device *dev)
 		return 0;
 
 	mutex_lock(&data->lock);
+	if (data->session.active) {
+		data->session.active = false;
+		data->session.owner_filp = NULL;
+		data->session.generation++;
+	}
+
 	/* Pulse Pad 14 GPIO reset to re-synchronize silicon from low-power sleep */
 	fte3600_hw_reset_pulse(data);
-	data->state = FTE3600_STATE_UNINITIALIZED;
+	msleep(15);
 	data->focal_work_flag = FOCAL_WAKE_EVENT_RESUME;
 	wake_up_interruptible(&data->focal_poll_wq);
 	mutex_unlock(&data->lock);

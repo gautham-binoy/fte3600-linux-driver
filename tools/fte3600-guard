@@ -195,6 +195,7 @@ fi
 # ------------------------------------------------------------------------------
 SLEEP_HOOK_LIB="/usr/lib/systemd/system-sleep/fprintd-resume"
 SLEEP_HOOK_ETC="/etc/systemd/system-sleep/fprintd-resume"
+SLEEP_HOOK_OMARCHY="/usr/share/omarchy/default/systemd/system-sleep/fprintd-resume"
 SOURCE_HOOK=""
 if [[ -f "${SRC_DIR}/tools/fprintd-resume" ]]; then
     SOURCE_HOOK="${SRC_DIR}/tools/fprintd-resume"
@@ -203,7 +204,10 @@ elif [[ -f "/home/titan/fte3600-linux-driver/tools/fprintd-resume" ]]; then
 fi
 
 if [[ -n "${SOURCE_HOOK}" && -f "${SOURCE_HOOK}" ]]; then
-    for target in "${SLEEP_HOOK_LIB}" "${SLEEP_HOOK_ETC}"; do
+    for target in "${SLEEP_HOOK_LIB}" "${SLEEP_HOOK_ETC}" "${SLEEP_HOOK_OMARCHY}"; do
+        if [[ "${target}" == "${SLEEP_HOOK_OMARCHY}" && ! -d "/usr/share/omarchy" ]]; then
+            continue
+        fi
         mkdir -p "$(dirname "${target}")"
         if [[ ! -x "${target}" ]] || [[ "${SOURCE_HOOK}" -nt "${target}" ]] || ! grep -q "Eliminates Suspend/Resume" "${target}" 2>/dev/null; then
             cp "${SOURCE_HOOK}" "${target}"

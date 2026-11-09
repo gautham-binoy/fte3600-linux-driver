@@ -107,6 +107,12 @@ cp "${SCRIPT_DIR}/tools/fprintd-resume" /usr/lib/systemd/system-sleep/fprintd-re
 cp "${SCRIPT_DIR}/tools/fprintd-resume" /etc/systemd/system-sleep/fprintd-resume
 chmod 755 /usr/lib/systemd/system-sleep/fprintd-resume /etc/systemd/system-sleep/fprintd-resume
 
+if [[ -d /usr/share/omarchy/default/systemd/system-sleep ]]; then
+    echo "[*] Updating Omarchy system-sleep template to prevent regression on lock updates..."
+    cp "${SCRIPT_DIR}/tools/fprintd-resume" /usr/share/omarchy/default/systemd/system-sleep/fprintd-resume
+    chmod 755 /usr/share/omarchy/default/systemd/system-sleep/fprintd-resume
+fi
+
 echo "[*] 11. Executing self-healing guard to configure hardware and daemons..."
 /usr/local/bin/fte3600-guard
 

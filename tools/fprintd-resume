@@ -1,7 +1,7 @@
 #!/bin/bash
 # ==============================================================================
 # FTE3600 / Omarchy System-Sleep Hook: Eliminates Suspend/Resume Desync & Wedges
-# Installed to /usr/lib/systemd/system-sleep/fprintd-resume and /etc/systemd/system-sleep/fprintd-resume
+# Synchronizes hardware reset and fprintd lifecycle across suspend/resume
 # ==============================================================================
 
 case "$1" in
@@ -9,7 +9,8 @@ case "$1" in
         # Pre-suspend: cleanly stop fprintd so no lingering hardware claim or
         # in-flight SPI transfer exists when the system enters sleep.
         # This prevents fprintd from freezing mid-claim and wedging the bus.
-        systemctl stop fprintd.service 2>/dev/null || true
+        systemctl stop --timeout=2s fprintd.service 2>/dev/null || true
+        pkill -9 -x fprintd 2>/dev/null || true
         ;;
     post)
         # Post-resume:
@@ -34,7 +35,7 @@ case "$1" in
         # 3. Synchronously restart fprintd BEFORE user.slice is thawed.
         # This eliminates the race condition where the lock screen wakes up,
         # probes an uninitialized or restarting daemon, and disables fingerprint auth.
-        systemctl restart fprintd.service 2>/dev/null || true
+        systemctl restart --timeout=4s fprintd.service 2>/dev/null || true
         ;;
 esac
 exit 0

@@ -39,7 +39,7 @@ if ! command -v fprintd >/dev/null 2>&1; then
     echo "[*] Installing fprintd daemon via package manager..."
     if command -v pacman >/dev/null 2>&1; then
         if [[ ! -f /var/lib/pacman/db.lck ]]; then
-            pacman -S --needed --noconfirm --overwrite '/usr/lib/libfprint*' fprintd
+            pacman -S --needed --noconfirm fprintd
         fi
     elif command -v apt-get >/dev/null 2>&1; then
         apt-get update && apt-get install -y fprintd libpam-fprintd
@@ -68,21 +68,31 @@ echo "[*] 7. Installing udev rules..."
 cp "${SCRIPT_DIR}/tools/70-fte3600.rules" /etc/udev/rules.d/70-fte3600.rules
 udevadm control --reload-rules 2>/dev/null || true
 
-if [[ -f /etc/pacman.conf ]] && ! grep -q "usr/lib/libfprint-2.so" /etc/pacman.conf; then
-    echo "[*] 8. Protecting libfprint in pacman.conf (NoExtract)..."
-    sed -i '/^\[options\]/a NoExtract = usr/lib/libfprint-2.so*' /etc/pacman.conf
+if [[ -f /etc/pacman.conf ]] && grep -q "usr/lib/libfprint-2.so" /etc/pacman.conf; then
+    echo "[*] 8. Removing legacy NoExtract rule from pacman.conf (delegated to ALPM hook)..."
+    sed -i '/NoExtract = usr\/lib\/libfprint-2\.so\*/d' /etc/pacman.conf
 fi
 
 if [[ -d /etc/pacman.d/hooks ]]; then
     echo "[*] 9. Installing ALPM pacman transaction hook..."
     cat <<'HOOKEOF' > /etc/pacman.d/hooks/95-fte3600.hook
 [Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = libfprint
+Target = libfprint-git
+Target = fprintd
+Target = linux*
+
+[Trigger]
 Type = Path
 Operation = Install
 Operation = Upgrade
 Target = usr/lib/modules/*/vmlinuz
 Target = usr/lib/modules/*/modules.builtin
-Target = usr/lib/libfprint-2.so*
+Target = usr/lib/fprintd
+Target = usr/lib/libfprint*
 
 [Action]
 Description = FTE3600 Self-Healing Guard (Kernel Module & Biometric Library)...

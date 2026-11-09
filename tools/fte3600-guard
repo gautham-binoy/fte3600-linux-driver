@@ -20,6 +20,11 @@ fi
 
 repaired=0
 
+# Clean up legacy NoExtract rules from pacman.conf
+if [[ -f /etc/pacman.conf ]] && grep -q "usr/lib/libfprint-2.so" /etc/pacman.conf; then
+    sed -i '/NoExtract = usr\/lib\/libfprint-2\.so\*/d' /etc/pacman.conf
+fi
+
 # ------------------------------------------------------------------------------
 # 1. Kernel Module Verification & Automatic Compilation
 # ------------------------------------------------------------------------------
@@ -208,11 +213,13 @@ if [[ -n "${SOURCE_HOOK}" && -f "${SOURCE_HOOK}" ]]; then
     done
 fi
 
-# If any component was repaired or fprintd is failed, restart fprintd
+# If any component was repaired or fprintd is failed/wedged, restart fprintd
 if [[ ${repaired} -eq 1 ]] || systemctl is-failed fprintd.service >/dev/null 2>&1; then
     echo "[fte3600-guard] Reloading system daemons and restarting fprintd..."
     systemctl daemon-reload
-    systemctl restart fprintd || true
+    systemctl stop --now fprintd.service 2>/dev/null || true
+    pkill -9 -x fprintd 2>/dev/null || true
+    systemctl start --now fprintd.service || true
 fi
 
 echo "[fte3600-guard] FTE3600 stack verified operational."
